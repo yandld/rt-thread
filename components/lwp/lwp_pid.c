@@ -437,7 +437,6 @@ void lwp_free(struct rt_lwp* lwp)
     /* for parent */
     {
         struct termios *old_stdin_termios = get_old_termios();
-        struct rt_lwp *self_lwp = (struct rt_lwp *)lwp_self();
         struct rt_lwp *old_lwp = NULL;
 
         if (lwp->session == -1)
