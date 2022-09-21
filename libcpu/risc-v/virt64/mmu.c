@@ -29,8 +29,6 @@ void rt_hw_cpu_icache_invalidate_all();
 void rt_hw_cpu_dcache_flush_all();
 void rt_hw_cpu_dcache_clean(void *addr, rt_size_t size);
 
-static rt_mutex_t mm_lock;
-
 volatile rt_ubase_t MMUTable[__SIZE(VPN2_BIT)] __attribute__((aligned(4 * 1024)));
 
 static void rt_hw_cpu_tlb_invalidate()

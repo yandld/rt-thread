@@ -465,7 +465,7 @@ void rt_hw_mmu_setmtt(unsigned long vaddrStart,
     _kernel_map_fixed((unsigned long *)MMUTable, vaddrStart, paddrStart, count, attr);
 }
 
-void rt_hw_kernel_mmu_switch(unsigned long tbl)
+void rt_hw_mmu_ktbl_set(unsigned long tbl)
 {
 #ifdef RT_USING_LWP
     tbl += PV_OFFSET;
@@ -487,7 +487,7 @@ void rt_hw_mmu_setup(struct mem_desc *mdesc, int desc_nr)
         mdesc++;
     }
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void *)MMUTable, sizeof MMUTable);
-    rt_hw_kernel_mmu_switch((unsigned long)MMUTable);
+    rt_hw_mmu_ktbl_set((unsigned long)MMUTable);
 }
 
 /**

@@ -21,7 +21,7 @@ void rt_hw_secondary_cpu_bsp_start(void)
 {
     rt_hw_spin_lock(&_cpus_lock);
 
-    rt_hw_kernel_mmu_switch((unsigned long)MMUTable);
+    rt_hw_mmu_ktbl_set((unsigned long)MMUTable);
 
     // interrupt init
     rt_hw_vector_init();
