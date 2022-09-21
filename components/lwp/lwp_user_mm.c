@@ -22,14 +22,15 @@
 #include <lwp_mm_area.h>
 #include <lwp_user_mm.h>
 #include <lwp_arch.h>
+#include <lwp_mm.h>
 
 int lwp_user_space_init(struct rt_lwp *lwp)
 {
     return arch_user_space_init(lwp);
 }
 
-void switch_mmu(void *mtable);
-void *mmu_table_get(void);
+void rt_hw_mmu_switch(void *mtable);
+void *rt_hw_mmu_tbl_get(void);
 void lwp_mmu_switch(struct rt_thread *thread)
 {
     struct rt_lwp *l = RT_NULL;
@@ -45,10 +46,10 @@ void lwp_mmu_switch(struct rt_thread *thread)
         new_mmu_table = arch_kernel_mmu_table_get();
     }
 
-    pre_mmu_table = mmu_table_get();
+    pre_mmu_table = rt_hw_mmu_tbl_get();
     if (pre_mmu_table != new_mmu_table)
     {
-        switch_mmu(new_mmu_table);
+        rt_hw_mmu_switch(new_mmu_table);
     }
 }
 

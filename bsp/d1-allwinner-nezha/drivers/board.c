@@ -108,7 +108,7 @@ void rt_hw_board_init(void)
     MMUTable[0] &= ~PTE_CACHE;
     MMUTable[0] &= ~PTE_SHARE;
     MMUTable[0] |= PTE_SO;
-    switch_mmu((void *)MMUTable);
+    rt_hw_mmu_switch((void *)MMUTable);
 #endif
 }
 

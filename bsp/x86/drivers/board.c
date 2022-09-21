@@ -73,7 +73,7 @@ void rt_hw_board_init(void)
     rt_page_init(init_page_region);
     /* map kernel space, then can read/write this area directly. */
     rt_hw_mmu_kernel_map_init(&mmu_info, HW_KERNEL_START, HW_KERNEL_END);
-    switch_mmu((void *)g_mmu_table);
+    rt_hw_mmu_switch((void *)g_mmu_table);
     mmu_enable();
 #endif
 

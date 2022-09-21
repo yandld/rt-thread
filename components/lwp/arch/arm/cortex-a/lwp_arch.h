@@ -33,7 +33,7 @@ void *arch_kernel_mmu_table_get(void);
 void arch_kuser_init(rt_mmu_info *mmu_info, void *vectors);
 int arch_expand_user_stack(void *addr);
 
-rt_inline unsigned long ffz(unsigned long x)
+rt_inline unsigned long rt_hw_ffz(unsigned long x)
 {
     return __builtin_ffs(~x) - 1;
 }

@@ -132,10 +132,10 @@ void *rt_hw_mmu_map(rt_mmu_info *mmu_info, void* p_addr, size_t size, size_t att
 
 void rt_hw_mmu_unmap(rt_mmu_info *mmu_info, void* v_addr, size_t size);
 void *rt_hw_mmu_v2p(rt_mmu_info *mmu_info, void* v_addr);
-void rt_mm_lock(void);
-void rt_mm_unlock(void);
 
-void kernel_mmu_switch(unsigned long tbl);
+void rt_hw_kernel_mmu_switch(unsigned long tbl);
+void *rt_hw_mmu_tbl_get();
+void rt_hw_mmu_switch(void *mmu_table);
 
 extern rt_mmu_info mmu_info;
 

@@ -41,8 +41,8 @@ typedef struct
     size_t pv_off;
 }rt_mmu_info;
 
-void *mmu_table_get();
-void switch_mmu(void *mmu_table);
+void *rt_hw_mmu_tbl_get();
+void rt_hw_mmu_switch(void *mmu_table);
 int rt_hw_mmu_map_init(rt_mmu_info *mmu_info,void *v_address,rt_size_t size,rt_size_t *vtable,rt_size_t pv_off);
 void rt_hw_mmu_kernel_map_init(rt_mmu_info *mmu_info,rt_size_t vaddr_start,rt_size_t size);
 void *_rt_hw_mmu_map(rt_mmu_info *mmu_info,void *v_addr,void *p_addr,rt_size_t size,rt_size_t attr);
@@ -53,8 +53,5 @@ void *rt_hw_mmu_map_auto(rt_mmu_info *mmu_info,void *v_addr,rt_size_t size,rt_si
 void rt_hw_mmu_unmap(rt_mmu_info *mmu_info,void *v_addr,rt_size_t size);
 void *_rt_hw_mmu_v2p(rt_mmu_info *mmu_info,void *v_addr);
 void *rt_hw_mmu_v2p(rt_mmu_info *mmu_info,void *v_addr);
-
-void rt_mm_lock(void);
-void rt_mm_unlock(void);
 
 #endif

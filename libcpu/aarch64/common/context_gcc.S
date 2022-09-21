@@ -31,10 +31,10 @@ rt_hw_cpu_id:
    ret
 
 /*
-void set_process_id(size_t id)
+void rt_hw_set_process_id(size_t id)
 */
-.global set_process_id
-set_process_id:
+.global rt_hw_set_process_id
+rt_hw_set_process_id:
     msr CONTEXTIDR_EL1, x0
     ret
 
@@ -515,8 +515,8 @@ vector_serror:
     BL      rt_hw_trap_serror
     b .
 
-.global switch_mmu
-switch_mmu:
+.global rt_hw_mmu_switch
+rt_hw_mmu_switch:
     MSR TTBR0_EL1, X0
     MRS X1, TCR_EL1
     CMP X0, XZR
@@ -535,7 +535,7 @@ switch_mmu:
     ISB
     RET
 
-.global mmu_table_get
-mmu_table_get:
+.global rt_hw_mmu_tbl_get
+rt_hw_mmu_tbl_get:
     MRS X0, TTBR0_EL1
     RET

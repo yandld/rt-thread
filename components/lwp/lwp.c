@@ -1341,11 +1341,11 @@ void lwp_user_setting_restore(rt_thread_t thread)
 
         if (l != 0)
         {
-            set_process_id((size_t)l->pid);
+            rt_hw_set_process_id((size_t)l->pid);
         }
         else
         {
-            set_process_id(0);
+            rt_hw_set_process_id(0);
         }
         if (l && l->debug)
         {

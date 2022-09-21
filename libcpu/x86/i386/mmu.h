@@ -127,8 +127,8 @@ void mmu_enable_user_page_access();
 void mmu_disable_user_page_access();
 void mmu_enable();
 
-void *mmu_table_get();
-void switch_mmu(void *mmu_table);
+void *rt_hw_mmu_tbl_get();
+void rt_hw_mmu_switch(void *mmu_table);
 int rt_hw_mmu_map_init(rt_mmu_info *mmu_info,void *v_address,rt_size_t size,rt_size_t *vtable,rt_size_t pv_off);
 void rt_hw_mmu_kernel_map_init(rt_mmu_info *mmu_info,rt_size_t vaddr_start,rt_size_t size);
 
