@@ -19,6 +19,9 @@
 #include <rtdbg.h>
 #include <string.h>
 #include "cpu.h"
+#include "psci_api.h"
+
+void (*system_off)(void);
 
 #ifdef RT_USING_SMP
 void rt_hw_spin_lock_init(rt_hw_spinlock_t *lock)
@@ -325,11 +328,15 @@ RT_WEAK void rt_hw_secondary_cpu_idle_exec(void)
  */
 /*@{*/
 
-/** shutdown CPU */
+/** shutdown CPU is used as system shutdown currently */
 void rt_hw_cpu_shutdown()
 {
     rt_uint32_t level;
     rt_kprintf("shutdown...\n");
+
+    if (system_off)
+        system_off();
+    LOG_E("system shutdown failed");
 
     level = rt_hw_interrupt_disable();
     while (level)
@@ -337,5 +344,6 @@ void rt_hw_cpu_shutdown()
         RT_ASSERT(0);
     }
 }
+MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_shutdown, shutdown, shutdown machine);
 
 /*@}*/

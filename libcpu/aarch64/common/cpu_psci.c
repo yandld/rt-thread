@@ -55,11 +55,16 @@ static int cpu_psci_cpu_boot(rt_uint32_t cpuid)
     return psci_ops.cpu_on(cpuid_to_hwid(cpuid), secondary_entry_pa);
 }
 
+static void cpu_psci_cpu_shutdown()
+{
+    psci_ops.cpu_off(cpuid_to_hwid(rt_hw_cpu_id()));
+}
+
 struct cpu_ops_t cpu_ops_psci = {
     .method = "psci",
     .cpu_boot = cpu_psci_cpu_boot,
     .cpu_init = cpu_psci_cpu_init,
-    .cpu_shutdown = RT_NULL
+    .cpu_shutdown = cpu_psci_cpu_shutdown,
 };
 
 #endif /* RT_USING_SMP */

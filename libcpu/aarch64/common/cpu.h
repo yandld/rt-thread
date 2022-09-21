@@ -13,6 +13,10 @@
 #include <rtthread.h>
 #include <stdbool.h>
 
+#ifndef RT_CPUS_NR
+#define RT_CPUS_NR 1
+#endif /* RT_CPUS_NR */
+
 #ifdef RT_USING_SMP
 struct cpu_ops_t
 {
@@ -53,5 +57,7 @@ extern struct cpu_ops_t cpu_ops_spin_tbl;
 #endif /* RT_USING_SMP */
 
 extern void rt_hw_cpu_shutdown(void);
+
+extern void (*system_off)(void);
 
 #endif /* __RT_HW_CPU_H__ */
