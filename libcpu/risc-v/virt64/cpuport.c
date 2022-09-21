@@ -115,7 +115,7 @@ void rt_hw_cpu_shutdown()
     }
 }
 
-void set_process_id(int pid)
+void rt_hw_set_process_id(int pid)
 {
     //TODO
 }

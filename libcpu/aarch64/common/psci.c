@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include "cpu.h"
 #include "psci.h"
 #include "psci_api.h"
 #include "smccc.h"
@@ -86,11 +87,12 @@ int psci_init()
     psci_node = dtb_node_get_dtb_node_by_path(root, "/psci");
     if (!psci_node)
     {
+        LOG_E("No PSCI node found");
         return -1;
     }
     char *compatible = dtb_node_get_dtb_node_property_value(psci_node, "compatible", NULL);
     char *method = dtb_node_get_dtb_node_property_value(psci_node, "method", NULL);
-    
+
     int retval = 0;
 
     // setup psci-method
@@ -107,6 +109,7 @@ int psci_init()
         LOG_E("Unknown PSCI method: %s", method);
         return -1;
     }
+    LOG_D("Using psci method %s", method);
 
     retval = _psci_probe_version(compatible, &psci_ver_major, &psci_ver_minor);
     if (retval != 0)
@@ -166,7 +169,7 @@ static rt_uint32_t psci_0_2_get_version(void)
 static void psci_0_2_set_basic_ops()
 {
     psci_ops = (struct psci_ops_t){
-        .get_version = psci_0_2_get_version, 
+        .get_version = psci_0_2_get_version,
 
         // followings API are v0.1 compatible
         .cpu_suspend = psci_0_2_cpu_suspend,
@@ -176,12 +179,34 @@ static void psci_0_2_set_basic_ops()
     };
 }
 
+static void psci_0_2_system_off(void)
+{
+    psci_call(PSCI_0_2_FN_SYSTEM_OFF, 0, 0, 0);
+}
+
+static void psci_0_2_system_reset(void)
+{
+    psci_call(PSCI_0_2_FN_SYSTEM_RESET, 0, 0, 0);
+}
+
 static int psci_0_2_init()
 {
     psci_0_2_set_basic_ops();
 
     // TODO init other version 0.2 features...
+    // psci system off and reset which controlling machine
+    psci_ops.system_off = psci_0_2_system_off;
+    psci_ops.system_reset = psci_0_2_system_reset;
+
+    system_off = psci_0_2_system_off;
     return 0;
+}
+
+/* PSCI v1.0 & after */
+static int psci_1_0_features(uint32_t psci_func_id)
+{
+    return psci_call(PSCI_1_0_FN_PSCI_FEATURES,
+                     psci_func_id, 0, 0);
 }
 
 static int psci_1_0_init()
@@ -189,6 +214,19 @@ static int psci_1_0_init()
     psci_0_2_init();
 
     // TODO init other version 1.0 features...
+    // remove unsupported features
+    if (psci_1_0_features(PSCI_0_2_FN_SYSTEM_OFF) == PSCI_RET_NOT_SUPPORTED)
+    {
+        psci_ops.system_off = RT_NULL;
+        system_off = RT_NULL;
+    }
+    else
+        LOG_D("Using SYSTEM OFF feature");
+    if (psci_1_0_features(PSCI_0_2_FN_SYSTEM_RESET) == PSCI_RET_NOT_SUPPORTED)
+        psci_ops.system_reset = RT_NULL;
+    else
+        LOG_D("Using SYSTEM RESET feature");
+
     return 0;
 }
 

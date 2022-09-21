@@ -43,17 +43,17 @@ static void rt_hw_cpu_tlb_invalidate()
     mmu_flush_tlb();
 }
 
-void *mmu_table_get()
+void *rt_hw_mmu_tbl_get()
 {
     return current_mmu_table;
 }
 
-void switch_mmu(void *mmu_table)
+void rt_hw_mmu_switch(void *mmu_table)
 {
     current_mmu_table = mmu_table;
     if (mmu_table == RT_NULL)
     {
-        dbg_log(DBG_ERROR, "switch_mmu: NULL mmu table!\n");
+        dbg_log(DBG_ERROR, "rt_hw_mmu_switch: NULL mmu table!\n");
     }
     else
     {

@@ -94,8 +94,8 @@ typedef struct
     size_t pv_off;
 } rt_mmu_info;
 
-void *mmu_table_get();
-void switch_mmu(void *mmu_table);
+void *rt_hw_mmu_tbl_get();
+void rt_hw_mmu_switch(void *mmu_table);
 
 int rt_hw_mmu_map_init(rt_mmu_info *mmu_info, void* v_address, size_t size, size_t *vtable, size_t pv_off);
 #ifdef RT_USING_USERSPACE

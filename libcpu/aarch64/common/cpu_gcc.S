@@ -86,15 +86,15 @@ rt_cpu_vector_set_base:
     RET
 
 
-.global ffz
-ffz:
+.global rt_hw_ffz
+rt_hw_ffz:
     mvn x1, x0
     clz x0, x1
     mov x1, #0x3f
     sub x0, x1, x0
     ret
 
-.global rt_clz
-rt_clz:
+.global rt_hw_clz
+rt_hw_clz:
     clz x0, x0
     ret

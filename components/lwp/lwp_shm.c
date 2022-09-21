@@ -13,6 +13,7 @@
 #ifdef RT_USING_USERSPACE
 #include <lwp.h>
 #include <lwp_shm.h>
+#include <lwp_mm.h>
 
 #include <lwp_mm_area.h>
 #include <lwp_user_mm.h>

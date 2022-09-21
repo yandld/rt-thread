@@ -14,38 +14,11 @@
 
 #include "cp15.h"
 #include "mmu.h"
+#include <lwp_mm.h>
 
 #ifdef RT_USING_USERSPACE
 #include "page.h"
 #endif
-
-static rt_mutex_t mm_lock;
-
-void rt_mm_lock(void)
-{
-    if (rt_thread_self())
-    {
-        if (!mm_lock)
-        {
-            mm_lock = rt_mutex_create("mm_lock", RT_IPC_FLAG_FIFO);
-        }
-        if (mm_lock)
-        {
-            rt_mutex_take(mm_lock, RT_WAITING_FOREVER);
-        }
-    }
-}
-
-void rt_mm_unlock(void)
-{
-    if (rt_thread_self())
-    {
-        if (mm_lock)
-        {
-            rt_mutex_release(mm_lock);
-        }
-    }
-}
 
 /* dump 2nd level page table */
 void rt_hw_cpu_dump_page_table_2nd(rt_uint32_t *ptb)

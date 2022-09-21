@@ -84,7 +84,7 @@ rt_inline int next_signal(lwp_sigset_t *pending, lwp_sigset_t *mask)
     x = *s & ~*m;
     if (x)
     {
-        sig = ffz(~x) + 1;
+        sig = rt_hw_ffz(~x) + 1;
         return sig;
     }
 
@@ -96,7 +96,7 @@ rt_inline int next_signal(lwp_sigset_t *pending, lwp_sigset_t *mask)
                 x = *++s &~ *++m;
                 if (!x)
                     continue;
-                sig = ffz(~x) + i*_LWP_NSIG_BPW + 1;
+                sig = rt_hw_ffz(~x) + i*_LWP_NSIG_BPW + 1;
                 break;
             }
             break;
@@ -105,7 +105,7 @@ rt_inline int next_signal(lwp_sigset_t *pending, lwp_sigset_t *mask)
             x = s[1] &~ m[1];
             if (!x)
                 break;
-            sig = ffz(~x) + _LWP_NSIG_BPW + 1;
+            sig = rt_hw_ffz(~x) + _LWP_NSIG_BPW + 1;
             break;
 
         case 1:

@@ -176,7 +176,7 @@ bss_loop:
 #ifdef RT_USING_USERSPACE
     ldr r0, =MMUTable     /* vaddr    */
     add r0, r5            /* to paddr */
-    bl  switch_mmu
+    bl  rt_hw_mmu_switch
 #else
     bl rt_hw_mmu_init
 #endif
@@ -261,14 +261,14 @@ enable_mmu:
     isb
     mov pc, lr
 
-.global set_process_id
-set_process_id:
+.global rt_hw_set_process_id
+rt_hw_set_process_id:
     LSL r0, r0, #8
     MCR p15, 0, r0, c13, c0, 1
     mov pc, lr
 
-.global switch_mmu
-switch_mmu:
+.global rt_hw_mmu_switch
+rt_hw_mmu_switch:
     orr r0, #0x18
     mcr p15, 0, r0, c2, c0, 0    /* ttbr0 */
 
@@ -281,8 +281,8 @@ switch_mmu:
     dsb
     isb
     mov pc, lr
-.global mmu_table_get
-mmu_table_get:
+.global rt_hw_mmu_tbl_get
+rt_hw_mmu_tbl_get:
     mrc p15, 0, r0, c2, c0, 0    /* ttbr0 */
     bic r0, #0x18
     mov pc, lr
@@ -604,8 +604,8 @@ vector_resv:
     b       .
 
 #ifdef RT_USING_SMP
-.global rt_clz
-rt_clz:
+.global rt_hw_clz
+rt_hw_clz:
     clz r0, r0
     bx lr
 
@@ -622,7 +622,7 @@ rt_secondary_cpu_entry:
 after_enable_mmu_n:
     ldr     r0, =MMUTable
     add     r0, r5
-    bl      switch_mmu
+    bl      rt_hw_mmu_switch
 #endif
 
 #ifdef RT_USING_FPU

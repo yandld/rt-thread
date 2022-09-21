@@ -22,6 +22,9 @@ struct psci_ops_t
     int32_t (*cpu_off)(uint32_t state);
     int32_t (*cpu_on)(unsigned long cpuid, unsigned long entry_point);
     int32_t (*migrate)(unsigned long cpuid);
+
+    void (*system_off)(void);
+    void (*system_reset)(void);
 };
 
 extern struct psci_ops_t psci_ops;

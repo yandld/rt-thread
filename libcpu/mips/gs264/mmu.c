@@ -19,12 +19,12 @@
 
 void *current_mmu_table = RT_NULL;
 
-void *mmu_table_get()
+void *rt_hw_mmu_tbl_get()
 {
     return current_mmu_table;
 }
 
-void switch_mmu(void *mmu_table)
+void rt_hw_mmu_switch(void *mmu_table)
 {
     current_mmu_table = mmu_table;
 

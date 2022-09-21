@@ -15,6 +15,7 @@
 #ifdef RT_USING_USERSPACE
 #include <mmu.h>
 #include <lwp_mm_area.h>
+#include <lwp_mm.h>
 
 static struct lwp_avl_struct *k_map_area;
 extern rt_mmu_info mmu_info;

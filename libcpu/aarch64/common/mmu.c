@@ -11,6 +11,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include <board.h>
+#include <lwp_mm.h>
 
 #include "mmu.h"
 
@@ -33,34 +34,6 @@
 #define MMU_TBL_BLOCK_2M_LEVEL 2
 #define MMU_TBL_PAGE_4k_LEVEL  3
 #define MMU_TBL_LEVEL_NR       4
-
-static rt_mutex_t mm_lock;
-
-void rt_mm_lock(void)
-{
-    if (rt_thread_self())
-    {
-        if (!mm_lock)
-        {
-            mm_lock = rt_mutex_create("mm_lock", RT_IPC_FLAG_FIFO);
-        }
-        if (mm_lock)
-        {
-            rt_mutex_take(mm_lock, RT_WAITING_FOREVER);
-        }
-    }
-}
-
-void rt_mm_unlock(void)
-{
-    if (rt_thread_self())
-    {
-        if (mm_lock)
-        {
-            rt_mutex_release(mm_lock);
-        }
-    }
-}
 
 void *_rt_hw_mmu_v2p(rt_mmu_info *mmu_info, void *v_addr);
 
@@ -386,7 +359,7 @@ err:
 }
 #endif
 
-int kernel_map_fixed(unsigned long *lv0_tbl, unsigned long va, unsigned long pa, unsigned long count, unsigned long attr)
+static int _kernel_map_fixed(unsigned long *lv0_tbl, unsigned long va, unsigned long pa, unsigned long count, unsigned long attr)
 {
     unsigned long i;
     int ret;
@@ -489,10 +462,10 @@ void rt_hw_mmu_setmtt(unsigned long vaddrStart,
         return;
     }
     count >>= ARCH_SECTION_SHIFT;
-    kernel_map_fixed((unsigned long *)MMUTable, vaddrStart, paddrStart, count, attr);
+    _kernel_map_fixed((unsigned long *)MMUTable, vaddrStart, paddrStart, count, attr);
 }
 
-void kernel_mmu_switch(unsigned long tbl)
+void rt_hw_mmu_ktbl_set(unsigned long tbl)
 {
 #ifdef RT_USING_LWP
     tbl += PV_OFFSET;
@@ -514,7 +487,7 @@ void rt_hw_mmu_setup(struct mem_desc *mdesc, int desc_nr)
         mdesc++;
     }
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void *)MMUTable, sizeof MMUTable);
-    kernel_mmu_switch((unsigned long)MMUTable);
+    rt_hw_mmu_ktbl_set((unsigned long)MMUTable);
 }
 
 /**

@@ -37,7 +37,7 @@ static size_t page_nr;
 
 static struct page *page_list[ARCH_PAGE_LIST_SIZE];
 
-RT_WEAK int rt_clz(size_t n)
+RT_WEAK int rt_hw_clz(size_t n)
 {
     int bits = sizeof(size_t) * 8;
 
@@ -66,20 +66,20 @@ RT_WEAK int rt_clz(size_t n)
     return bits - n;
 }
 
-RT_WEAK int rt_ctz(size_t n)
+RT_WEAK int rt_hw_ctz(size_t n)
 {
     int ret = sizeof(size_t) * 8;
 
     if (n)
     {
-        ret -= (rt_clz(n ^ (n - 1)) + 1);
+        ret -= (rt_hw_clz(n ^ (n - 1)) + 1);
     }
     return ret;
 }
 
 size_t rt_page_bits(size_t size)
 {
-    int bit = sizeof(size_t) * 8 - rt_clz(size) - 1;
+    int bit = sizeof(size_t) * 8 - rt_hw_clz(size) - 1;
 
     if ((size ^ (1UL << bit)) != 0)
     {
@@ -408,8 +408,8 @@ void rt_page_init(rt_region_t reg)
         int align_bits;
         int size_bits;
 
-        size_bits = ARCH_ADDRESS_WIDTH_BITS - 1 - rt_clz(reg.end - reg.start);
-        align_bits = rt_ctz(reg.start);
+        size_bits = ARCH_ADDRESS_WIDTH_BITS - 1 - rt_hw_clz(reg.end - reg.start);
+        align_bits = rt_hw_ctz(reg.start);
         if (align_bits < size_bits)
         {
             size_bits = align_bits;
