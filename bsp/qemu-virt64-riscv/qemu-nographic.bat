@@ -2,6 +2,7 @@
 if exist sd.bin goto run
 qemu-img create -f raw sd.bin 64M
 
+:run
 qemu-system-riscv64 -nographic -machine virt -m 256M -kernel rtthread.bin ^
 -drive if=none,file=sd.bin,format=raw,id=blk0 -device virtio-blk-device,drive=blk0,bus=virtio-mmio-bus.0 ^
 -netdev user,id=tap0 -device virtio-net-device,netdev=tap0,bus=virtio-mmio-bus.1 ^
