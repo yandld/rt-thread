@@ -190,7 +190,12 @@ static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
     }
 
     host = card->host;
-    if (host->flags & MMCSD_SUP_HIGHSPEED_DDR)
+    if (host->flags & MMCSD_SUP_HS200)
+    {
+        card->flags |=  CARD_FLAG_HS200;
+        card->hs_max_data_rate = 200000000; 
+    }
+    else if (host->flags & MMCSD_SUP_HIGHSPEED_DDR)
     {
         card->flags |=  CARD_FLAG_HIGHSPEED_DDR;
         card->hs_max_data_rate = 52000000;    
@@ -456,6 +461,45 @@ static rt_err_t mmc_set_card_addr(struct rt_mmcsd_host *host, rt_uint32_t rca)
   return 0;
 }
 
+static int mmc_select_hs200(struct rt_mmcsd_card *card)
+{
+  int ret;
+
+  ret = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+                     EXT_CSD_HS_TIMING, EXT_CSD_TIMING_HS200);
+  if (ret)
+    return ret;
+
+  mmcsd_set_timing(card->host, MMCSD_TIMING_MMC_HS200);
+  mmcsd_set_clock(card->host, 200000000);
+
+  ret = mmcsd_excute_tuning(card);
+
+  return ret;
+}
+
+static int mmc_select_timing(struct rt_mmcsd_card *card)
+{
+  int ret = 0;
+
+  if (card->flags & CARD_FLAG_HS200)
+  {
+    ret = mmc_select_hs200(card);
+  }
+  else if (card->flags & CARD_FLAG_HIGHSPEED_DDR)
+  {
+    mmcsd_set_timing(card->host, MMCSD_TIMING_MMC_DDR52);
+    mmcsd_set_clock(card->host, card->hs_max_data_rate);
+  }
+  else
+  {
+    mmcsd_set_timing(card->host, MMCSD_TIMING_UHS_SDR50);
+    mmcsd_set_clock(card->host, card->hs_max_data_rate);
+  }
+
+  return ret;
+}
+
 static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
                                      rt_uint32_t           ocr)
 {
@@ -554,22 +598,27 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
         max_data_rate = card->max_data_rate;
 
     /*switch bus width and bus mode*/
-    mmc_select_bus_width(card, ext_csd);
-    if (card->flags & CARD_FLAG_HIGHSPEED_DDR)
+    err = mmc_select_bus_width(card, ext_csd);
+    if (err)
     {
-        mmcsd_set_timing(host, MMCSD_TIMING_MMC_DDR52);       
+        LOG_E("mmc select buswidth fail");
+        goto err0;
     }
-    else
+
+    err = mmc_select_timing(card);
+    if (err)
     {
-        mmcsd_set_timing(host, MMCSD_TIMING_UHS_SDR50);          
+        LOG_E("mmc select timing fail");
+        goto err0;
     }
-    
-    mmcsd_set_clock(host, max_data_rate);
+
     host->card = card;
 
     rt_free(ext_csd);
     return 0;
 
+err0:
+    rt_free(ext_csd);
 err1:
     rt_free(card);
 err:

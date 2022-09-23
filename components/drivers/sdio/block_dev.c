@@ -41,6 +41,64 @@ struct mmcsd_blk_device
 #endif
 #define RT_GPT_PARTITION_MAX 128
 
+static int __send_status(struct rt_mmcsd_card *card, rt_uint32_t *status, unsigned retries)
+{
+    int err;
+    struct rt_mmcsd_cmd cmd;
+
+    cmd.cmd_code = SEND_STATUS;
+    cmd.arg = card->rca << 16;
+    cmd.flags = RESP_R1 | CMD_AC;
+    err = mmcsd_send_cmd(card->host, &cmd, retries);
+	if (err)
+		return err;
+
+	if (status)
+		*status = cmd.resp[0];
+
+    return 0;
+}
+
+static int card_busy_detect(struct rt_mmcsd_card *card, unsigned int timeout_ms,
+                            rt_uint32_t *resp_errs)
+{
+    int timeout = rt_tick_from_millisecond(timeout_ms);
+    int err = 0;
+    rt_uint32_t status;
+    rt_tick_t start;
+
+    start = rt_tick_get();
+    do
+    {
+        rt_bool_t out = (int)(rt_tick_get() - start) > timeout;
+
+        err = __send_status(card, &status, 5);
+        if (err)
+        {
+            LOG_E("error %d requesting status", err);
+            return err;
+        }
+
+        /* Accumulate any response error bits seen */
+        if (resp_errs)
+            *resp_errs |= status;
+
+        if (out)
+        {
+            LOG_E("wait card busy timeout");
+            return -RT_ETIMEOUT;
+        }
+        /*
+         * Some cards mishandle the status bits,
+         * so make sure to check both the busy
+         * indication and the card state.
+         */
+    } while (!(status & R1_READY_FOR_DATA) ||
+             (R1_CURRENT_STATE(status) == 7));
+
+    return err;
+}
+
 rt_int32_t mmcsd_num_wr_blocks(struct rt_mmcsd_card *card)
 {
     rt_int32_t err;
@@ -151,44 +209,29 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card,
         w_cmd = WRITE_BLOCK;
     }
 
+    if (!controller_is_spi(card->host) && (card->flags & 0x8000))
+    {
+        /* last request is WRITE,need check busy */
+        card_busy_detect(card, 10000, RT_NULL);
+    }
+
     if (!dir)
     {
         cmd.cmd_code = r_cmd;
         data.flags |= DATA_DIR_READ;
+        card->flags &= 0x7fff;
     }
     else
     {
         cmd.cmd_code = w_cmd;
         data.flags |= DATA_DIR_WRITE;
+        card->flags |= 0x8000;
     }
 
     mmcsd_set_data_timeout(&data, card);
     data.buf = buf;
+ 
     mmcsd_send_request(host, &req);
-
-    if (!controller_is_spi(card->host) && dir != 0)
-    {
-        do
-        {
-            rt_int32_t err;
-
-            cmd.cmd_code = SEND_STATUS;
-            cmd.arg = card->rca << 16;
-            cmd.flags = RESP_R1 | CMD_AC;
-            err = mmcsd_send_cmd(card->host, &cmd, 5);
-            if (err)
-            {
-                LOG_E("error %d requesting status", err);
-                break;
-            }
-            /*
-             * Some cards mishandle the status bits,
-             * so make sure to check both the busy
-             * indication and the card state.
-             */
-         } while (!(cmd.resp[0] & R1_READY_FOR_DATA) ||
-            (R1_CURRENT_STATE(cmd.resp[0]) == 7));
-    }
 
     mmcsd_host_unlock(host);
 
