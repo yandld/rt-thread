@@ -1,0 +1,13 @@
+menuconfig RT_USING_SUNXI_HAL
+    bool "HAL library from sunxi"
+    default n
+
+if RT_USING_SUNXI_HAL
+    source "$BSP_DIR/../libraries/sunxi-hal/hal/source/uart/Kconfig"
+    source "$BSP_DIR/../libraries/sunxi-hal/hal/source/ccmu/Kconfig"
+    source "$BSP_DIR/../libraries/sunxi-hal/hal/source/dma/Kconfig"
+    source "$BSP_DIR/../libraries/sunxi-hal/hal/source/gpio/Kconfig"
+    source "$BSP_DIR/../libraries/sunxi-hal/hal/source/disp2/Kconfig"
+    source "$BSP_DIR/../libraries/sunxi-hal/hal/source/sdmmc/Kconfig"
+    source "$BSP_DIR/../libraries/sunxi-hal/hal/source/twi/Kconfig"
+endif

@@ -1,0 +1,174 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Split('''
+source/ccmu/hal_clk.c
+source/ccmu/sunxi-ng/clk-fixed-rate.c
+source/ccmu/sunxi-ng/ccu_common.c
+source/ccmu/sunxi-ng/ccu_sdm.c
+source/ccmu/sunxi-ng/ccu_mp.c
+source/ccmu/sunxi-ng/ccu_mult.c
+source/ccmu/sunxi-ng/clk-fixed-factor.c
+source/ccmu/sunxi-ng/ccu_reset.c
+source/ccmu/sunxi-ng/ccu_gate.c
+source/ccmu/sunxi-ng/ccu-sun8iw20-rtc.c
+source/ccmu/sunxi-ng/ccu-sun8iw20-r.c
+source/ccmu/sunxi-ng/ccu_frac.c
+source/ccmu/sunxi-ng/ccu_mux.c
+source/ccmu/sunxi-ng/ccu_nm.c
+source/ccmu/sunxi-ng/ccu.c
+source/ccmu/sunxi-ng/ccu_nk.c
+source/ccmu/sunxi-ng/clk.c
+source/ccmu/sunxi-ng/ccu_nkm.c
+source/ccmu/sunxi-ng/clk-divider.c
+source/ccmu/sunxi-ng/ccu_div.c
+source/ccmu/sunxi-ng/ccu_nkmp.c
+source/ccmu/sunxi-ng/ccu-sun8iw20.c
+source/ccmu/hal_reset.c
+source/gpio/hal_gpio.c
+source/gpio/sun8iw20/gpio-sun8iw20.c
+source/uart/hal_uart.c
+source/pwm/hal_pwm.c
+source/watchdog/hal_watchdog.c
+source/timer/hal_timer.c
+source/timer/sunxi_timer.c
+source/timer/hal_avs.c
+''')
+
+disp2_src = Split('''
+./source/disp2/disp/de/disp_manager.c
+./source/disp2/disp/de/disp_lcd.c
+./source/disp2/disp/de/disp_display.c
+./source/disp2/disp/de/disp_device.c
+./source/disp2/disp/de/disp_features.c
+./source/disp2/disp/de/disp_capture.c
+./source/disp2/disp/de/lowlevel_v2x/de_wb.c
+./source/disp2/disp/de/lowlevel_v2x/de_dsi.c
+./source/disp2/disp/de/lowlevel_v2x/de_peak.c
+./source/disp2/disp/de/lowlevel_v2x/de_gsu.c
+./source/disp2/disp/de/lowlevel_v2x/de_vep_table.c
+./source/disp2/disp/de/lowlevel_v2x/de_hal.c
+./source/disp2/disp/de/lowlevel_v2x/de_vsu.c
+./source/disp2/disp/de/lowlevel_v2x/de_scaler_table.c
+./source/disp2/disp/de/lowlevel_v2x/de_ccsc.c
+./source/disp2/disp/de/lowlevel_v2x/de_bws.c
+./source/disp2/disp/de/lowlevel_v2x/de_lti.c
+./source/disp2/disp/de/lowlevel_v2x/de_lcd_sun50iw10.c
+./source/disp2/disp/de/lowlevel_v2x/disp_al.c
+./source/disp2/disp/de/lowlevel_v2x/de_clock.c
+./source/disp2/disp/de/lowlevel_v2x/de_smbl.c
+./source/disp2/disp/de/lowlevel_v2x/de_enhance.c
+./source/disp2/disp/de/lowlevel_v2x/de_rtmx.c
+./source/disp2/disp/de/lowlevel_v2x/de_ase.c
+./source/disp2/disp/de/lowlevel_v2x/de_feat.c
+./source/disp2/disp/de/lowlevel_v2x/de_fce.c
+./source/disp2/disp/de/lowlevel_v2x/de_dcsc.c
+./source/disp2/disp/de/lowlevel_v2x/de_fcc.c
+./source/disp2/disp/de/disp_private.c
+./source/disp2/disp/de/disp_enhance.c
+./source/disp2/disp/lcd/default_panel.c
+./source/disp2/disp/lcd/lcd_source.c
+./source/disp2/disp/lcd/panels.c
+./source/disp2/disp/disp_sys_intf.c
+./source/disp2/disp/dev_disp.c
+./source/disp2/disp/disp_debug.c
+./source/disp2/soc/disp_board_config.c
+./source/disp2/soc/platform_resource.c
+./source/disp2/soc/sun20iw1.c
+''')
+if GetDepend('LCD_SUPPORT_TFTRGB'):
+    disp2_src += ['./source/disp2/soc/rgb_config.c']
+if GetDepend('LCD_SUPPORT_TFT08006'):
+    disp2_src += ['./source/disp2/soc/tft08006_mipi_config.c']
+    disp2_src += ['./source/disp2/disp/lcd/tft08006.c']
+
+sdmmc_src = Split('''
+source/sdmmc/core.c
+source/sdmmc/hal_sdpin.c
+source/sdmmc/hal_sdhost.c
+source/sdmmc/mmc.c
+source/sdmmc/quirks.c
+source/sdmmc/sd.c
+source/sdmmc/sdio.c
+source/sdmmc/test.c
+source/sdmmc/sdio_irq.c
+source/sdmmc/cmd/cmd_sd.c
+source/sdmmc/osal/os/RT-Thread/os_debug.c
+source/sdmmc/osal/os/RT-Thread/os_mutex.c
+source/sdmmc/osal/os/RT-Thread/os_queue.c
+source/sdmmc/osal/os/RT-Thread/os_timer.c
+source/sdmmc/osal/os/RT-Thread/os_semaphore.c
+source/sdmmc/osal/os/RT-Thread/os_thread.c
+source/sdmmc/blkpart.c
+source/dma/hal_dma.c
+source/common/dma_alloc.c
+source/spi/hal_spi.c
+''')
+
+gmac = Split('''
+source/gmac/hal_geth_utils.c
+source/gmac/hal_geth.c
+''')
+
+phy = Split('''
+source/phy/hal_miiphyutil.c
+source/phy/hal_phy.c
+''')
+
+rtc = Split('''
+source/rtc/hal_rtc.c
+source/rtc/rtc-lib.c
+''')
+
+disp2_path = [
+    cwd + '/source/disp2/disp',
+    cwd + '/source/disp2/disp/lcd',
+    cwd + '/source/disp2/disp/de',
+    cwd + '/source/disp2/disp/de/lowlevel_v2x',
+    cwd + '/source/disp2/soc']
+
+rtc_path = [cwd + '/../include/hal/rtc']
+
+twi_src = []
+twi_path = []
+if GetDepend('DRIVERS_TWI'):
+    twi_src += [cwd + '/source/twi/hal_twi.c']
+    twi_path += [cwd + '/source/twi']
+
+CPPPATH = [
+    cwd,
+    cwd + '/../include/hal',
+    cwd + '/../include/hal/sdmmc',
+    cwd + '/../include/hal/phy',
+    cwd + '/../include/osal',
+    cwd + '/source',
+    cwd + '/source/uart',
+    cwd + '/source/ccmu',
+    cwd + '/source/gpio',
+    cwd + '/source/gpio/sun8iw20',
+    cwd + '/source/pwm',
+    cwd + '/../include/hal/sdmmc/osal',
+    cwd + '/../include/hal/sdmmc/hal',
+    cwd + '/source/timer',
+]
+
+if GetDepend('DISP2_SUNXI'):
+    CPPPATH += disp2_path
+    src += disp2_src
+
+CPPPATH += rtc_path
+
+src += sdmmc_src
+src += rtc
+
+if GetDepend('BOARD_allwinnerd1'):
+    src += gmac
+    src += phy
+
+if GetDepend('DRIVERS_TWI'):
+    CPPPATH += twi_path
+    src += twi_src
+
+group = DefineGroup('hal', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
