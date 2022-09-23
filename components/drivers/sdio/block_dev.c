@@ -46,6 +46,7 @@ static int __send_status(struct rt_mmcsd_card *card, rt_uint32_t *status, unsign
     int err;
     struct rt_mmcsd_cmd cmd;
 
+    cmd.busy_timeout = 0;
     cmd.cmd_code = SEND_STATUS;
     cmd.arg = card->rca << 16;
     cmd.flags = RESP_R1 | CMD_AC;
