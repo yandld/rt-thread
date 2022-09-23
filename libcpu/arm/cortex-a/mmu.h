@@ -97,6 +97,7 @@ typedef struct
 
 int rt_hw_mmu_map_init(rt_mmu_info *mmu_info, void* v_address, size_t size, size_t *vtable, size_t pv_off);
 int rt_hw_mmu_ioremap_init(rt_mmu_info *mmu_info, void* v_address, size_t size);
+void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_uint32_t size);
 
 #ifdef RT_USING_USERSPACE
 void *rt_hw_mmu_map(rt_mmu_info *mmu_info, void *v_addr, void* p_addr, size_t size, size_t attr);
