@@ -696,6 +696,19 @@ void mmcsd_detect(void *param)
     }
 }
 
+void mmcsd_host_init(struct rt_mmcsd_host *host)
+{
+    rt_memset(host, 0, sizeof(struct rt_mmcsd_host));
+    strncpy(host->name, "sd", sizeof(host->name)-1);
+    host->max_seg_size = 65535;
+    host->max_dma_segs = 1;
+    host->max_blk_size = 512;
+    host->max_blk_count = 4096;
+
+    rt_mutex_init(&host->bus_lock, "sd_bus_lock", RT_IPC_FLAG_FIFO);
+    rt_sem_init(&host->sem_ack, "sd_ack", 0, RT_IPC_FLAG_FIFO);
+}
+
 struct rt_mmcsd_host *mmcsd_alloc_host(void)
 {
     struct rt_mmcsd_host *host;
@@ -708,15 +721,7 @@ struct rt_mmcsd_host *mmcsd_alloc_host(void)
         return RT_NULL;
     }
 
-    rt_memset(host, 0, sizeof(struct rt_mmcsd_host));
-    strncpy(host->name, "sd", sizeof(host->name)-1);
-    host->max_seg_size = 65535;
-    host->max_dma_segs = 1;
-    host->max_blk_size = 512;
-    host->max_blk_count = 4096;
-
-    rt_mutex_init(&host->bus_lock, "sd_bus_lock", RT_IPC_FLAG_FIFO);
-    rt_sem_init(&host->sem_ack, "sd_ack", 0, RT_IPC_FLAG_FIFO);
+    mmcsd_host_init(host);
 
     return host;
 }
@@ -726,6 +731,22 @@ void mmcsd_free_host(struct rt_mmcsd_host *host)
     rt_mutex_detach(&host->bus_lock);
     rt_sem_detach(&host->sem_ack);
     rt_free(host);
+}
+
+rt_int32_t mmcsd_excute_tuning(struct rt_mmcsd_card *card)
+{
+    struct rt_mmcsd_host *host = card->host;
+    rt_int32_t opcode;
+
+    if (!host->ops->execute_tuning)
+        return RT_EOK;
+
+    if (card->card_type == CARD_TYPE_MMC)
+        opcode = SEND_TUNING_BLOCK_HS200;
+    else
+        opcode = SEND_TUNING_BLOCK;
+
+    return host->ops->execute_tuning(host, opcode);;
 }
 
 int rt_mmcsd_core_init(void)
