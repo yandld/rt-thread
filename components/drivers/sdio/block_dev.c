@@ -51,11 +51,11 @@ static int __send_status(struct rt_mmcsd_card *card, rt_uint32_t *status, unsign
     cmd.arg = card->rca << 16;
     cmd.flags = RESP_R1 | CMD_AC;
     err = mmcsd_send_cmd(card->host, &cmd, retries);
-	if (err)
-		return err;
+    if (err)
+        return err;
 
-	if (status)
-		*status = cmd.resp[0];
+    if (status)
+        *status = cmd.resp[0];
 
     return 0;
 }
@@ -94,8 +94,9 @@ static int card_busy_detect(struct rt_mmcsd_card *card, unsigned int timeout_ms,
          * so make sure to check both the busy
          * indication and the card state.
          */
-    } while (!(status & R1_READY_FOR_DATA) ||
-             (R1_CURRENT_STATE(status) == 7));
+    }
+    while (!(status & R1_READY_FOR_DATA) ||
+            (R1_CURRENT_STATE(status) == 7));
 
     return err;
 }
@@ -135,7 +136,7 @@ rt_int32_t mmcsd_num_wr_blocks(struct rt_mmcsd_card *card)
 
     timeout_us = data.timeout_ns / 1000;
     timeout_us += data.timeout_clks * 1000 /
-        (card->host->io_cfg.clock / 1000);
+                  (card->host->io_cfg.clock / 1000);
 
     if (timeout_us > 100000)
     {
@@ -231,7 +232,7 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card,
 
     mmcsd_set_data_timeout(&data, card);
     data.buf = buf;
- 
+
     mmcsd_send_request(host, &req);
 
     mmcsd_host_unlock(host);
@@ -240,7 +241,7 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card,
     {
         LOG_E("mmcsd request blocks error");
         LOG_E("%d,%d,%d, 0x%08x,0x%08x",
-                   cmd.err, data.err, stop.err, data.flags, sector);
+              cmd.err, data.err, stop.err, data.flags, sector);
 
         return -RT_ERROR;
     }
@@ -392,7 +393,7 @@ rt_int32_t read_lba(struct rt_mmcsd_card *card, size_t lba, uint8_t *buffer, siz
     rt_uint8_t status = 0;
 
     status = mmcsd_set_blksize(card);
-    if(status)
+    if (status)
     {
         return status;
     }
@@ -429,12 +430,12 @@ rt_int32_t gpt_device_probe(struct rt_mmcsd_card *card)
     }
 
     blk_dev->max_req_size = BLK_MIN((card->host->max_dma_segs *
-                                        card->host->max_seg_size) >> 9,
+                                     card->host->max_seg_size) >> 9,
                                     (card->host->max_blk_count *
-                                        card->host->max_blk_size) >> 9);
+                                     card->host->max_blk_size) >> 9);
     blk_dev->part.offset = 0;
     blk_dev->part.size   = 0;
-    rt_snprintf(sname, sizeof(sname)-1, "sem_%s%d", card->host->name,0);
+    rt_snprintf(sname, sizeof(sname) - 1, "sem_%s%d", card->host->name, 0);
     blk_dev->part.lock = rt_sem_create(sname, 1, RT_IPC_FLAG_FIFO);
     /* register mmcsd device */
     blk_dev->dev.type  = RT_Device_Class_Block;
@@ -450,7 +451,7 @@ rt_int32_t gpt_device_probe(struct rt_mmcsd_card *card)
 #endif
     blk_dev->card = card;
 
-    blk_dev->geometry.bytes_per_sector = 1<<9;
+    blk_dev->geometry.bytes_per_sector = 1 << 9;
     blk_dev->geometry.block_size = card->card_blksize;
     blk_dev->geometry.sector_count =
         card->card_capacity * (1024 / 512);
@@ -458,7 +459,7 @@ rt_int32_t gpt_device_probe(struct rt_mmcsd_card *card)
     blk_dev->dev.user_data = blk_dev;
 
     rt_device_register(&(blk_dev->dev), card->host->name,
-        RT_DEVICE_FLAG_RDWR);
+                       RT_DEVICE_FLAG_RDWR);
     rt_list_insert_after(&blk_devices, &blk_dev->list);
 
     for (i = 0; i < RT_GPT_PARTITION_MAX; i++)
@@ -470,16 +471,16 @@ rt_int32_t gpt_device_probe(struct rt_mmcsd_card *card)
             break;
         }
         blk_dev->max_req_size = BLK_MIN((card->host->max_dma_segs *
-                                        card->host->max_seg_size) >> 9,
+                                         card->host->max_seg_size) >> 9,
                                         (card->host->max_blk_count *
-                                        card->host->max_blk_size) >> 9);
+                                         card->host->max_blk_size) >> 9);
 
         /* get the first partition */
         status = gpt_get_partition_param(card, &blk_dev->part, i);
         if (status == RT_EOK)
         {
-            rt_snprintf(dname, sizeof(dname)-1, "%s%d", card->host->name,i);
-            rt_snprintf(sname, sizeof(sname)-1, "sem_%s%d", card->host->name,i+1);
+            rt_snprintf(dname, sizeof(dname) - 1, "%s%d", card->host->name, i);
+            rt_snprintf(sname, sizeof(sname) - 1, "sem_%s%d", card->host->name, i + 1);
             blk_dev->part.lock = rt_sem_create(sname, 1, RT_IPC_FLAG_FIFO);
 
             /* register mmcsd device */
@@ -496,14 +497,14 @@ rt_int32_t gpt_device_probe(struct rt_mmcsd_card *card)
 #endif
             blk_dev->card = card;
 
-            blk_dev->geometry.bytes_per_sector = 1<<9;
+            blk_dev->geometry.bytes_per_sector = 1 << 9;
             blk_dev->geometry.block_size = card->card_blksize;
             blk_dev->geometry.sector_count = blk_dev->part.size;
 
             blk_dev->dev.user_data = blk_dev;
 
             rt_device_register(&(blk_dev->dev), dname,
-                RT_DEVICE_FLAG_RDWR);
+                               RT_DEVICE_FLAG_RDWR);
             rt_list_insert_after(&blk_devices, &blk_dev->list);
         }
         else
@@ -537,7 +538,7 @@ rt_int32_t mbr_device_probe(struct rt_mmcsd_card *card)
     struct mmcsd_blk_device *blk_dev = RT_NULL;
 
     err = mmcsd_set_blksize(card);
-    if(err)
+    if (err)
     {
         return err;
     }
@@ -561,12 +562,12 @@ rt_int32_t mbr_device_probe(struct rt_mmcsd_card *card)
             return -1;
         }
         blk_dev->max_req_size = BLK_MIN((card->host->max_dma_segs *
-                                        card->host->max_seg_size) >> 9,
+                                         card->host->max_seg_size) >> 9,
                                         (card->host->max_blk_count *
-                                        card->host->max_blk_size) >> 9);
+                                         card->host->max_blk_size) >> 9);
         blk_dev->part.offset = 0;
         blk_dev->part.size   = 0;
-        rt_snprintf(sname, sizeof(sname)-1, "sem_%s%d", card->host->name,0);
+        rt_snprintf(sname, sizeof(sname) - 1, "sem_%s%d", card->host->name, 0);
         blk_dev->part.lock = rt_sem_create(sname, 1, RT_IPC_FLAG_FIFO);
         /* register mmcsd device */
         blk_dev->dev.type  = RT_Device_Class_Block;
@@ -582,7 +583,7 @@ rt_int32_t mbr_device_probe(struct rt_mmcsd_card *card)
 #endif
         blk_dev->card = card;
 
-        blk_dev->geometry.bytes_per_sector = 1<<9;
+        blk_dev->geometry.bytes_per_sector = 1 << 9;
         blk_dev->geometry.block_size = card->card_blksize;
         blk_dev->geometry.sector_count =
             card->card_capacity * (1024 / 512);
@@ -590,7 +591,7 @@ rt_int32_t mbr_device_probe(struct rt_mmcsd_card *card)
         blk_dev->dev.user_data = blk_dev;
 
         rt_device_register(&(blk_dev->dev), card->host->name,
-            RT_DEVICE_FLAG_RDWR);
+                           RT_DEVICE_FLAG_RDWR);
         rt_list_insert_after(&blk_devices, &blk_dev->list);
         for (i = 0; i < RT_MMCSD_MAX_PARTITION; i++)
         {
@@ -601,40 +602,40 @@ rt_int32_t mbr_device_probe(struct rt_mmcsd_card *card)
                 break;
             }
             blk_dev->max_req_size = BLK_MIN((card->host->max_dma_segs *
-                                            card->host->max_seg_size) >> 9,
+                                             card->host->max_seg_size) >> 9,
                                             (card->host->max_blk_count *
-                                            card->host->max_blk_size) >> 9);
+                                             card->host->max_blk_size) >> 9);
 
             /* get the first partition */
             status = dfs_filesystem_get_partition(&blk_dev->part, sector, i);
             if (status == RT_EOK)
             {
-                rt_snprintf(dname, sizeof(dname)-1, "%s%d", card->host->name,i);
-                rt_snprintf(sname, sizeof(sname)-1, "sem_%s%d", card->host->name,i+1);
+                rt_snprintf(dname, sizeof(dname) - 1, "%s%d", card->host->name, i);
+                rt_snprintf(sname, sizeof(sname) - 1, "sem_%s%d", card->host->name, i + 1);
                 blk_dev->part.lock = rt_sem_create(sname, 1, RT_IPC_FLAG_FIFO);
 
                 /* register mmcsd device */
                 blk_dev->dev.type = RT_Device_Class_Block;
-    #ifdef RT_USING_DEVICE_OPS
+#ifdef RT_USING_DEVICE_OPS
                 blk_dev->dev.ops  = &mmcsd_blk_ops;
-    #else
+#else
                 blk_dev->dev.init = rt_mmcsd_init;
                 blk_dev->dev.open = rt_mmcsd_open;
                 blk_dev->dev.close = rt_mmcsd_close;
                 blk_dev->dev.read = rt_mmcsd_read;
                 blk_dev->dev.write = rt_mmcsd_write;
                 blk_dev->dev.control = rt_mmcsd_control;
-    #endif
+#endif
                 blk_dev->card = card;
 
-                blk_dev->geometry.bytes_per_sector = 1<<9;
+                blk_dev->geometry.bytes_per_sector = 1 << 9;
                 blk_dev->geometry.block_size = card->card_blksize;
                 blk_dev->geometry.sector_count = blk_dev->part.size;
 
                 blk_dev->dev.user_data = blk_dev;
 
                 rt_device_register(&(blk_dev->dev), dname,
-                    RT_DEVICE_FLAG_RDWR);
+                                   RT_DEVICE_FLAG_RDWR);
                 rt_list_insert_after(&blk_devices, &blk_dev->list);
             }
             else
@@ -644,20 +645,20 @@ rt_int32_t mbr_device_probe(struct rt_mmcsd_card *card)
                 break;
             }
 
-    #ifdef RT_USING_DFS_MNTTABLE
+#ifdef RT_USING_DFS_MNTTABLE
             if (blk_dev)
             {
                 LOG_I("try to mount file system!");
                 /* try to mount file system on this block device */
                 dfs_mount_device(&(blk_dev->dev));
             }
-    #endif
+#endif
         }
     }
     else
     {
         LOG_E("read mmcsd first sector failed");
-        err = -RT_ERROR;        
+        err = -RT_ERROR;
     }
 
     /* release sector buffer */
@@ -694,11 +695,11 @@ void rt_mmcsd_blk_remove(struct rt_mmcsd_card *card)
         if (blk_dev->card == card)
         {
             /* unmount file system */
-            const char * mounted_path = dfs_filesystem_get_mounted_path(&(blk_dev->dev));
+            const char *mounted_path = dfs_filesystem_get_mounted_path(&(blk_dev->dev));
             if (mounted_path)
             {
-                  dfs_unmount(mounted_path);
-                  LOG_D("unmount file system %s for device %s.\r\n", mounted_path, blk_dev->dev.parent.name);
+                dfs_unmount(mounted_path);
+                LOG_D("unmount file system %s for device %s.\r\n", mounted_path, blk_dev->dev.parent.name);
             }
             rt_sem_delete(blk_dev->part.lock);
             rt_device_unregister(&blk_dev->dev);

@@ -17,11 +17,12 @@
 extern "C" {
 #endif
 
-struct rt_mmcsd_io_cfg {
+struct rt_mmcsd_io_cfg
+{
     rt_uint32_t clock;          /* clock rate */
     rt_uint16_t vdd;
 
-/* vdd stores the bit number of the selected voltage range from below. */
+    /* vdd stores the bit number of the selected voltage range from below. */
 
     rt_uint8_t  bus_mode;       /* command output mode */
 
@@ -46,38 +47,39 @@ struct rt_mmcsd_io_cfg {
 #define MMCSD_BUS_WIDTH_4       2
 #define MMCSD_BUS_WIDTH_8       3
 
-	unsigned char	timing;			/* timing specification used */
+    unsigned char   timing;         /* timing specification used */
 
-#define MMCSD_TIMING_LEGACY	0
-#define MMCSD_TIMING_MMC_HS	1
-#define MMCSD_TIMING_SD_HS	2
-#define MMCSD_TIMING_UHS_SDR12	3
-#define MMCSD_TIMING_UHS_SDR25	4
-#define MMCSD_TIMING_UHS_SDR50	5
-#define MMCSD_TIMING_UHS_SDR104	6
-#define MMCSD_TIMING_UHS_DDR50	7
-#define MMCSD_TIMING_MMC_DDR52	8
-#define MMCSD_TIMING_MMC_HS200	9
-#define MMCSD_TIMING_MMC_HS400	10
+#define MMCSD_TIMING_LEGACY 0
+#define MMCSD_TIMING_MMC_HS 1
+#define MMCSD_TIMING_SD_HS  2
+#define MMCSD_TIMING_UHS_SDR12  3
+#define MMCSD_TIMING_UHS_SDR25  4
+#define MMCSD_TIMING_UHS_SDR50  5
+#define MMCSD_TIMING_UHS_SDR104 6
+#define MMCSD_TIMING_UHS_DDR50  7
+#define MMCSD_TIMING_MMC_DDR52  8
+#define MMCSD_TIMING_MMC_HS200  9
+#define MMCSD_TIMING_MMC_HS400  10
 
-	unsigned char	drv_type;		/* driver type (A, B, C, D) */
+    unsigned char   drv_type;       /* driver type (A, B, C, D) */
 
-#define MMCSD_SET_DRIVER_TYPE_B	0
-#define MMCSD_SET_DRIVER_TYPE_A	1
-#define MMCSD_SET_DRIVER_TYPE_C	2
-#define MMCSD_SET_DRIVER_TYPE_D	3
+#define MMCSD_SET_DRIVER_TYPE_B 0
+#define MMCSD_SET_DRIVER_TYPE_A 1
+#define MMCSD_SET_DRIVER_TYPE_C 2
+#define MMCSD_SET_DRIVER_TYPE_D 3
 
-	unsigned char	signal_voltage;
+    unsigned char   signal_voltage;
 
-#define MMCSD_SIGNAL_VOLTAGE_330	0
-#define MMCSD_SIGNAL_VOLTAGE_180	1
-#define MMCSD_SIGNAL_VOLTAGE_120	2
+#define MMCSD_SIGNAL_VOLTAGE_330    0
+#define MMCSD_SIGNAL_VOLTAGE_180    1
+#define MMCSD_SIGNAL_VOLTAGE_120    2
 };
 
 struct rt_mmcsd_host;
 struct rt_mmcsd_req;
 
-struct rt_mmcsd_host_ops {
+struct rt_mmcsd_host_ops
+{
     void (*request)(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req);
     void (*set_iocfg)(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io_cfg);
     rt_int32_t (*get_card_status)(struct rt_mmcsd_host *host);
@@ -85,7 +87,8 @@ struct rt_mmcsd_host_ops {
     rt_int32_t (*execute_tuning)(struct rt_mmcsd_host *host, rt_int32_t opcode);
 };
 
-struct rt_mmcsd_host {
+struct rt_mmcsd_host
+{
     char name[RT_NAME_MAX];
     struct rt_mmcsd_card *card;
     const struct rt_mmcsd_host_ops *ops;
@@ -125,7 +128,7 @@ struct rt_mmcsd_host {
 #define MMCSD_SUP_HS200_1V8  (1 << 9)
 #define MMCSD_SUP_HS200_1V2  (1 << 10)
 #define MMCSD_SUP_HS200     (MMCSD_SUP_HS200_1V2 | MMCSD_SUP_HS200_1V8) /* hs200 sdr */
-#define MMCSD_SUP_NONREMOVABLE	(1 << 11)
+#define MMCSD_SUP_NONREMOVABLE  (1 << 11)
 
     rt_uint32_t max_seg_size;   /* maximum size of one dma segment */
     rt_uint32_t max_dma_segs;   /* maximum number of dma segments in one request */
@@ -151,7 +154,7 @@ rt_inline void mmcsd_delay_ms(rt_uint32_t ms)
     }
     else
     {
-        rt_thread_delay(ms/(1000 / RT_TICK_PER_SECOND));
+        rt_thread_delay(ms / (1000 / RT_TICK_PER_SECOND));
     }
 }
 
