@@ -8,17 +8,66 @@
  * 2012-01-10     bernard      porting to AM1808
  */
 
-#include <rtthread.h>
 #include <rthw.h>
+#include <rtthread.h>
+
 #include <board.h>
 
 #include "cp15.h"
 #include "mmu.h"
-#include <lwp_mm.h>
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_LWP
+#include <lwp_mm.h>
 #include "page.h"
 #endif
+
+/* level1 page table, each entry for 1MB memory. */
+volatile unsigned long MMUTable[4*1024] __attribute__((aligned(16*1024)));
+
+#ifndef RT_USING_LWP
+static rt_mutex_t mm_lock = RT_NULL;
+
+void rt_mm_lock(void)
+{
+    if (rt_thread_self())
+    {
+        if (!mm_lock)
+        {
+            mm_lock = rt_mutex_create("mm_lock", RT_IPC_FLAG_FIFO);
+        }
+        if (mm_lock)
+        {
+            rt_mutex_take(mm_lock, RT_WAITING_FOREVER);
+        }
+    }
+}
+
+void rt_mm_unlock(void)
+{
+    if (rt_thread_self())
+    {
+        if (mm_lock)
+        {
+            rt_mutex_release(mm_lock);
+        }
+    }
+}
+#endif
+
+void rt_hw_cpu_tlb_invalidate(void)
+{
+    asm volatile ("mcr p15, 0, r0, c8, c7, 0\ndsb\nisb" ::: "memory");
+}
+
+unsigned long rt_hw_set_domain_register(unsigned long domain_val)
+{
+    unsigned long old_domain;
+
+    asm volatile ("mrc p15, 0, %0, c3, c0\n" : "=r" (old_domain));
+    asm volatile ("mcr p15, 0, %0, c3, c0\n" : :"r" (domain_val) : "memory");
+
+    return old_domain;
+}
 
 /* dump 2nd level page table */
 void rt_hw_cpu_dump_page_table_2nd(rt_uint32_t *ptb)
@@ -120,19 +169,14 @@ void rt_hw_cpu_dump_page_table(rt_uint32_t *ptb)
                        (pte1 >> 19) & 0x1,
                        ((pte1 >> 13) | (pte1 >> 10))& 0xf,
                        (pte1 >> 4) & 0x1,
-                       (((pte1 & (0x7 << 12)) >> 10) |
-                        ((pte1 &        0x0c) >>  2)) & 0x1f,
+                       (((pte1 & (0x7 << 12)) >> 10) | ((pte1 &        0x0c) >>  2)) & 0x1f,
                        (pte1 >> 5) & 0xf);
         }
     }
 }
 
-/* level1 page table, each entry for 1MB memory. */
-volatile unsigned long MMUTable[4*1024] __attribute__((aligned(16*1024)));
-void rt_hw_mmu_setmtt(rt_uint32_t vaddrStart,
-                      rt_uint32_t vaddrEnd,
-                      rt_uint32_t paddrStart,
-                      rt_uint32_t attr)
+void rt_hw_mmu_setmtt(rt_uint32_t vaddrStart, rt_uint32_t vaddrEnd,
+                      rt_uint32_t paddrStart, rt_uint32_t attr)
 {
     volatile rt_uint32_t *pTT;
     volatile int i, nSec;
@@ -145,17 +189,6 @@ void rt_hw_mmu_setmtt(rt_uint32_t vaddrStart,
     }
 }
 
-unsigned long rt_hw_set_domain_register(unsigned long domain_val)
-{
-    unsigned long old_domain;
-
-    asm volatile ("mrc p15, 0, %0, c3, c0\n" : "=r" (old_domain));
-    asm volatile ("mcr p15, 0, %0, c3, c0\n" : :"r" (domain_val) : "memory");
-
-    return old_domain;
-}
-
-void rt_hw_cpu_dcache_clean(void *addr, int size);
 void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_uint32_t size)
 {
     /* set page table */
@@ -165,7 +198,8 @@ void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_uint32_t size)
                 mdesc->paddr_start, mdesc->attr);
         mdesc++;
     }
-    rt_hw_cpu_dcache_clean((void*)MMUTable, sizeof MMUTable);
+
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void*)MMUTable, sizeof MMUTable);
 }
 
 void rt_hw_mmu_init(void)
@@ -186,12 +220,6 @@ void rt_hw_mmu_init(void)
     rt_hw_cpu_icache_enable();
     rt_hw_cpu_dcache_enable();
 }
-
-/*
- mem map
-*/
-
-void rt_hw_cpu_dcache_clean(void *addr, int size);
 
 int rt_hw_mmu_map_init(rt_mmu_info *mmu_info, void* v_address, size_t size, size_t *vtable, size_t pv_off)
 {
@@ -243,9 +271,6 @@ int rt_hw_mmu_ioremap_init(rt_mmu_info *mmu_info, void* v_address, size_t size)
     size_t l1_off;
     size_t *mmu_l1, *mmu_l2;
     size_t sections;
-#ifndef RT_USING_USERSPACE
-    size_t *ref_cnt;
-#endif
 
     /* for kernel ioremap */
     if ((size_t)v_address < KERNEL_VADDR_START)
@@ -271,20 +296,16 @@ int rt_hw_mmu_ioremap_init(rt_mmu_info *mmu_info, void* v_address, size_t size)
         mmu_l1 =  (size_t*)mmu_info->vtable + l1_off;
 
         RT_ASSERT((*mmu_l1 & ARCH_MMU_USED_MASK) == 0);
-#ifdef RT_USING_USERSPACE
         mmu_l2 = (size_t*)rt_pages_alloc(0);
-#else
-        mmu_l2 = (size_t*)rt_malloc_align(ARCH_PAGE_TBL_SIZE * 2, ARCH_PAGE_TBL_SIZE);
-#endif
         if (mmu_l2)
         {
             rt_memset(mmu_l2, 0, ARCH_PAGE_TBL_SIZE * 2);
             /* cache maintain */
-            rt_hw_cpu_dcache_clean(mmu_l2, ARCH_PAGE_TBL_SIZE);
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_l2, ARCH_PAGE_TBL_SIZE);
 
             *mmu_l1 = (((size_t)mmu_l2 + mmu_info->pv_off) | 0x1);
             /* cache maintain */
-            rt_hw_cpu_dcache_clean(mmu_l1, 4);
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_l1, 4);
         }
         else
         {
@@ -292,17 +313,14 @@ int rt_hw_mmu_ioremap_init(rt_mmu_info *mmu_info, void* v_address, size_t size)
             return -1;
         }
 
-#ifndef RT_USING_USERSPACE
-        ref_cnt = mmu_l2 + (ARCH_SECTION_SIZE / ARCH_PAGE_SIZE);
-        *ref_cnt = 1;
-#endif
-
         loop_va += ARCH_SECTION_SIZE;
     }
 #endif
+
     return 0;
 }
 
+#ifdef RT_USING_LWP
 static size_t find_vaddr(rt_mmu_info *mmu_info, int pages)
 {
     size_t l1_off, l2_off;
@@ -366,7 +384,6 @@ static size_t find_vaddr(rt_mmu_info *mmu_info, int pages)
     return 0;
 }
 
-#ifdef RT_USING_USERSPACE
 static int check_vaddr(rt_mmu_info *mmu_info, void *va, int pages)
 {
     size_t loop_va = (size_t)va & ~ARCH_PAGE_MASK;
@@ -412,16 +429,12 @@ static int check_vaddr(rt_mmu_info *mmu_info, void *va, int pages)
     }
     return 0;
 }
-#endif
 
 static void __rt_hw_mmu_unmap(rt_mmu_info *mmu_info, void* v_addr, size_t npages)
 {
     size_t loop_va = (size_t)v_addr & ~ARCH_PAGE_MASK;
     size_t l1_off, l2_off;
     size_t *mmu_l1, *mmu_l2;
-#ifndef RT_USING_USERSPACE
-    size_t *ref_cnt;
-#endif
 
     if (!mmu_info)
     {
@@ -452,26 +465,13 @@ static void __rt_hw_mmu_unmap(rt_mmu_info *mmu_info, void* v_addr, size_t npages
         {
             *(mmu_l2 + l2_off) = 0;
             /* cache maintain */
-            rt_hw_cpu_dcache_clean(mmu_l2 + l2_off, 4);
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_l2 + l2_off, 4);
 
-#ifdef RT_USING_USERSPACE
             if (rt_pages_free(mmu_l2, 0))
             {
                 *mmu_l1 = 0;
-                rt_hw_cpu_dcache_clean(mmu_l1, 4);
+                rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_l1, 4);
             }
-#else
-            ref_cnt = mmu_l2 + (ARCH_SECTION_SIZE / ARCH_PAGE_SIZE);
-            (*ref_cnt)--;
-            if (!*ref_cnt)
-            {
-                rt_free_align(mmu_l2);
-                *mmu_l1 = 0;
-
-                /* cache maintain */
-                rt_hw_cpu_dcache_clean(mmu_l1, 4);
-            }
-#endif
         }
         loop_va += ARCH_PAGE_SIZE;
     }
@@ -483,9 +483,6 @@ static int __rt_hw_mmu_map(rt_mmu_info *mmu_info, void* v_addr, void* p_addr, si
     size_t loop_pa = (size_t)p_addr & ~ARCH_PAGE_MASK;
     size_t l1_off, l2_off;
     size_t *mmu_l1, *mmu_l2;
-#ifndef RT_USING_USERSPACE
-    size_t *ref_cnt;
-#endif
 
     if (!mmu_info)
     {
@@ -501,26 +498,20 @@ static int __rt_hw_mmu_map(rt_mmu_info *mmu_info, void* v_addr, void* p_addr, si
         if (*mmu_l1 & ARCH_MMU_USED_MASK)
         {
             mmu_l2 = (size_t *)((*mmu_l1 & ~ARCH_PAGE_TBL_MASK) - mmu_info->pv_off);
-#ifdef RT_USING_USERSPACE
             rt_page_ref_inc(mmu_l2, 0);
-#endif
         }
         else
         {
-#ifdef RT_USING_USERSPACE
             mmu_l2 = (size_t*)rt_pages_alloc(0);
-#else
-            mmu_l2 = (size_t*)rt_malloc_align(ARCH_PAGE_TBL_SIZE * 2, ARCH_PAGE_TBL_SIZE);
-#endif
             if (mmu_l2)
             {
                 rt_memset(mmu_l2, 0, ARCH_PAGE_TBL_SIZE * 2);
                 /* cache maintain */
-                rt_hw_cpu_dcache_clean(mmu_l2, ARCH_PAGE_TBL_SIZE);
+                rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_l2, ARCH_PAGE_TBL_SIZE);
 
                 *mmu_l1 = (((size_t)mmu_l2 + mmu_info->pv_off) | 0x1);
                 /* cache maintain */
-                rt_hw_cpu_dcache_clean(mmu_l1, 4);
+                rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_l1, 4);
             }
             else
             {
@@ -530,27 +521,17 @@ static int __rt_hw_mmu_map(rt_mmu_info *mmu_info, void* v_addr, void* p_addr, si
             }
         }
 
-#ifndef RT_USING_USERSPACE
-        ref_cnt = mmu_l2 + (ARCH_SECTION_SIZE / ARCH_PAGE_SIZE);
-        (*ref_cnt)++;
-#endif
-
         *(mmu_l2 + l2_off) = (loop_pa | attr);
         /* cache maintain */
-        rt_hw_cpu_dcache_clean(mmu_l2 + l2_off, 4);
+        rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_l2 + l2_off, 4);
 
         loop_va += ARCH_PAGE_SIZE;
         loop_pa += ARCH_PAGE_SIZE;
     }
+
     return 0;
 }
 
-static void rt_hw_cpu_tlb_invalidate(void)
-{
-    asm volatile ("mcr p15, 0, r0, c8, c7, 0\ndsb\nisb" ::: "memory");
-}
-
-#ifdef RT_USING_USERSPACE
 void *_rt_hw_mmu_map(rt_mmu_info *mmu_info, void *v_addr, void* p_addr, size_t size, size_t attr)
 {
     size_t pa_s, pa_e;
@@ -598,36 +579,7 @@ void *_rt_hw_mmu_map(rt_mmu_info *mmu_info, void *v_addr, void* p_addr, size_t s
     }
     return 0;
 }
-#else
-void *_rt_hw_mmu_map(rt_mmu_info *mmu_info, void* p_addr, size_t size, size_t attr)
-{
-    size_t pa_s, pa_e;
-    size_t vaddr;
-    int pages;
-    int ret;
 
-    pa_s = (size_t)p_addr;
-    pa_e = (size_t)p_addr + size - 1;
-    pa_s >>= ARCH_PAGE_SHIFT;
-    pa_e >>= ARCH_PAGE_SHIFT;
-    pages = pa_e - pa_s + 1;
-    vaddr = find_vaddr(mmu_info, pages);
-    if (vaddr) {
-        rt_enter_critical();
-        ret = __rt_hw_mmu_map(mmu_info, (void*)vaddr, p_addr, pages, attr);
-        if (ret == 0)
-        {
-            rt_hw_cpu_tlb_invalidate();
-            rt_exit_critical();
-            return (void*)(vaddr + ((size_t)p_addr & ARCH_PAGE_MASK));
-        }
-        rt_exit_critical();
-    }
-    return 0;
-}
-#endif
-
-#ifdef RT_USING_USERSPACE
 static int __rt_hw_mmu_map_auto(rt_mmu_info *mmu_info, void* v_addr, size_t npages, size_t attr)
 {
     size_t loop_va = (size_t)v_addr & ~ARCH_PAGE_MASK;
@@ -663,11 +615,11 @@ static int __rt_hw_mmu_map_auto(rt_mmu_info *mmu_info, void* v_addr, size_t npag
             {
                 rt_memset(mmu_l2, 0, ARCH_PAGE_TBL_SIZE * 2);
                 /* cache maintain */
-                rt_hw_cpu_dcache_clean(mmu_l2, ARCH_PAGE_TBL_SIZE);
+                rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_l2, ARCH_PAGE_TBL_SIZE);
 
                 *mmu_l1 = (((size_t)mmu_l2 + mmu_info->pv_off) | 0x1);
                 /* cache maintain */
-                rt_hw_cpu_dcache_clean(mmu_l1, 4);
+                rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_l1, 4);
             }
             else
                 goto err;
@@ -676,7 +628,7 @@ static int __rt_hw_mmu_map_auto(rt_mmu_info *mmu_info, void* v_addr, size_t npag
         loop_pa += mmu_info->pv_off;
         *(mmu_l2 + l2_off) = (loop_pa | attr);
         /* cache maintain */
-        rt_hw_cpu_dcache_clean(mmu_l2 + l2_off, 4);
+        rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_l2 + l2_off, 4);
 
         loop_va += ARCH_PAGE_SIZE;
     }
@@ -712,6 +664,7 @@ void *_rt_hw_mmu_map_auto(rt_mmu_info *mmu_info, void *v_addr, size_t size, size
     {
         return 0;
     }
+
     offset = (size_t)v_addr & ARCH_PAGE_MASK;
     size += (offset + ARCH_PAGE_SIZE - 1);
     pages = (size >> ARCH_PAGE_SHIFT);
@@ -728,7 +681,9 @@ void *_rt_hw_mmu_map_auto(rt_mmu_info *mmu_info, void *v_addr, size_t size, size
     {
         vaddr = find_vaddr(mmu_info, pages);
     }
-    if (vaddr) {
+
+    if (vaddr)
+    {
         rt_enter_critical();
         ret = __rt_hw_mmu_map_auto(mmu_info, (void*)vaddr, pages, attr);
         if (ret == 0)
@@ -741,7 +696,6 @@ void *_rt_hw_mmu_map_auto(rt_mmu_info *mmu_info, void *v_addr, size_t size, size
     }
     return 0;
 }
-#endif
 
 void _rt_hw_mmu_unmap(rt_mmu_info *mmu_info, void* v_addr, size_t size)
 {
@@ -759,7 +713,6 @@ void _rt_hw_mmu_unmap(rt_mmu_info *mmu_info, void* v_addr, size_t size)
     rt_exit_critical();
 }
 
-#ifdef RT_USING_USERSPACE
 void *rt_hw_mmu_map(rt_mmu_info *mmu_info, void *v_addr, void* p_addr, size_t size, size_t attr)
 {
     void *ret;
@@ -779,7 +732,6 @@ void *rt_hw_mmu_map_auto(rt_mmu_info *mmu_info, void *v_addr, size_t size, size_
     rt_mm_unlock();
     return ret;
 }
-#endif
 
 void rt_hw_mmu_unmap(rt_mmu_info *mmu_info, void* v_addr, size_t size)
 {
@@ -851,17 +803,24 @@ void *rt_hw_mmu_v2p(rt_mmu_info *mmu_info, void* v_addr)
     return ret;
 }
 
-#ifdef RT_USING_USERSPACE
-void init_mm_setup(unsigned int *mtbl, unsigned int size, unsigned int pv_off) {
+void init_mm_setup(unsigned int *mtbl, unsigned int size, unsigned int pv_off)
+{
     unsigned int va;
 
-    for (va = 0; va < 0x1000; va++) {
+    for (va = 0; va < 0x1000; va++)
+    {
         unsigned int vaddr = (va << 20);
-        if (vaddr >= KERNEL_VADDR_START && vaddr - KERNEL_VADDR_START < size) {
+
+        if (vaddr >= KERNEL_VADDR_START && vaddr - KERNEL_VADDR_START < size)
+        {
             mtbl[va] = ((va << 20) + pv_off) | NORMAL_MEM;
-        } else if (vaddr >= (KERNEL_VADDR_START + pv_off) && vaddr - (KERNEL_VADDR_START + pv_off) < size) {
+        }
+        else if (vaddr >= (KERNEL_VADDR_START + pv_off) && vaddr - (KERNEL_VADDR_START + pv_off) < size)
+        {
             mtbl[va] = (va << 20) | NORMAL_MEM;
-        } else {
+        }
+        else
+        {
             mtbl[va] = 0;
         }
     }
