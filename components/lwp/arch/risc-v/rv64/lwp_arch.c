@@ -190,6 +190,10 @@ void lwp_set_thread_context(void *exit_addr, void *new_thread_stack, void *user_
     syscall_frame->a0 = 0;
     syscall_frame->a1 = 0;
 
+    /* reset thread area */
+    rt_thread_t thread = rt_container_of((unsigned long)thread_sp, struct rt_thread, sp);
+    syscall_frame->tp = (rt_ubase_t)thread->thread_idr;
+
     /* build temp thread context */
     stk -= sizeof(struct rt_hw_stack_frame);
 
