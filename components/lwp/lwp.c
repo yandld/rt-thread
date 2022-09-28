@@ -1333,7 +1333,10 @@ void lwp_user_setting_restore(rt_thread_t thread)
     {
         return;
     }
+#if !defined(ARCH_RISCV64)
+    /* tidr will be set in RESTORE_ALL in risc-v */
     rt_cpu_set_thread_idr(thread->thread_idr);
+#endif
 
     if (rt_dbg_ops)
     {
