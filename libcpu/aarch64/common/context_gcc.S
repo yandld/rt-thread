@@ -172,7 +172,7 @@ rt_hw_get_gtimer_frq:
     LDP     X0, X1, [SP], #0x10
     RESTORE_FPU SP
 #ifdef RT_USING_LWP
-    BEQ     ret_to_user
+    BEQ     arch_ret_to_user
 #endif
     ERET
 .endm
@@ -215,7 +215,7 @@ rt_hw_get_gtimer_frq:
     LDP     X0, X1, [SP], #0x10
     RESTORE_FPU SP
 #ifdef RT_USING_LWP
-    BEQ     ret_to_user
+    BEQ     arch_ret_to_user
 #endif
     ERET
 .endm
@@ -251,7 +251,7 @@ rt_hw_get_gtimer_frq:
     LDP     X0, X1, [SP], #0x10
     RESTORE_FPU SP
 #ifdef RT_USING_LWP
-    BEQ     ret_to_user
+    BEQ     arch_ret_to_user
 #endif
     ERET
 .endm

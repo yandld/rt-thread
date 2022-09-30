@@ -80,7 +80,6 @@ void lwp_cleanup(struct rt_thread *tid);
 #ifdef ARCH_MM_MMU
 #define ALLOC_KERNEL_STACK_SIZE 5120
 
-extern void lwp_user_thread_entry(void *args, const void *text, void *ustack, void *user_stack);
 int sys_futex(int *uaddr, int op, int val, void *timeout, void *uaddr2, int val3);
 int sys_pmutex(void *umutex, int op, void *arg);
 int sys_cacheflush(void *addr, int len, int cache);
@@ -98,7 +97,6 @@ static void kmem_put(void *kptr)
 #define ALLOC_KERNEL_STACK_SIZE_MIN 1024
 #define ALLOC_KERNEL_STACK_SIZE_MAX 4096
 
-extern void lwp_user_entry(void *args, const void *text, void *data, void *user_stack);
 extern void set_user_context(void *stack);
 #endif /* ARCH_MM_MMU */
 
@@ -360,7 +358,7 @@ static void convert_sockopt(int *level, int *optname)
     }
 #endif
 
-static void lwp_user_thread(void *parameter)
+static void _crt_thread_entry(void *parameter)
 {
     rt_thread_t tid;
     rt_size_t user_stack;
@@ -371,10 +369,10 @@ static void lwp_user_thread(void *parameter)
     user_stack &= ~7; //align 8
 
 #ifdef ARCH_MM_MMU
-    lwp_user_thread_entry(parameter, tid->user_entry, (void *)user_stack, tid->stack_addr + tid->stack_size);
+    arch_crt_start_umode(parameter, tid->user_entry, (void *)user_stack, tid->stack_addr + tid->stack_size);
 #else
     set_user_context((void*)user_stack);
-    lwp_user_entry(parameter, tid->user_entry, ((struct rt_lwp *)tid->lwp)->data_entry, (void*)user_stack);
+    arch_start_umode(parameter, tid->user_entry, ((struct rt_lwp *)tid->lwp)->data_entry, (void*)user_stack);
 #endif /* ARCH_MM_MMU */
 }
 
@@ -1005,8 +1003,6 @@ int sys_settimeofday(const struct timeval *tv, const struct timezone *tzp)
     return 0;
 }
 
-int lwp_execve(char *filename, int debug, int argc, char **argv, char **envp);
-
 int sys_exec(char *filename, int argc, char **argv, char **envp)
 {
     return lwp_execve(filename, 0, argc, argv, envp);
@@ -1322,7 +1318,7 @@ rt_thread_t sys_thread_create(void *arg[])
         goto fail;
     }
     thread = rt_thread_create((const char *)arg[0],
-            lwp_user_thread,
+            _crt_thread_entry,
             (void *)arg[2],
             ALLOC_KERNEL_STACK_SIZE,
             (rt_uint8_t)(size_t)arg[4],
@@ -1362,7 +1358,7 @@ rt_thread_t sys_thread_create(void *arg[])
         goto fail;
     }
 
-    thread = rt_thread_create((const char *)arg[0], lwp_user_thread, (void *)arg[2], kstack_size, (rt_uint8_t)(size_t)arg[5], (rt_uint32_t)arg[6]);
+    thread = rt_thread_create((const char *)arg[0], _crt_thread_entry, (void *)arg[2], kstack_size, (rt_uint8_t)(size_t)arg[5], (rt_uint32_t)arg[6]);
     if (!thread)
     {
         goto fail;
@@ -1431,11 +1427,7 @@ fail:
  *          start_args
  *          */
 #define SYS_CLONE_ARGS_NR 7
-int lwp_set_thread_context(void (*exit)(void), void *new_thread_stack,
-        void *user_stack, void **thread_sp);
 
-long sys_clone(void *arg[]);
-void sys_clone_exit(void);
 long _sys_clone(void *arg[])
 {
     rt_base_t level = 0;
@@ -1539,7 +1531,7 @@ long _sys_clone(void *arg[])
     /* copy origin stack */
     rt_memcpy(thread->stack_addr, self->stack_addr, thread->stack_size);
     lwp_tid_set_thread(tid, thread);
-    lwp_set_thread_context(sys_clone_exit,
+    arch_set_thread_context(arch_clone_exit,
             (void *)((char *)thread->stack_addr + thread->stack_size),
             user_stack, &thread->sp);
     /* new thread never reach there */
@@ -1554,8 +1546,12 @@ fail:
     return GET_ERRNO();
 }
 
+RT_WEAK long sys_clone(void *arg[])
+{
+    return _sys_clone(arg);
+}
+
 int lwp_dup_user(struct lwp_avl_struct* ptree, void *arg);
-void *lwp_get_user_sp(void);
 
 static int _copy_process(struct rt_lwp *dest_lwp, struct rt_lwp *src_lwp)
 {
@@ -1618,9 +1614,6 @@ static int lwp_copy_files(struct rt_lwp *dst, struct rt_lwp *src)
     return -1;
 }
 
-int sys_fork(void);
-int sys_vfork(void);
-void sys_fork_exit(void);
 int _sys_fork(void)
 {
     rt_base_t level;
@@ -1715,10 +1708,10 @@ int _sys_fork(void)
     lwp_user_object_dup(lwp, self_lwp);
 
     level = rt_hw_interrupt_disable();
-    user_stack = lwp_get_user_sp();
+    user_stack = arch_get_user_sp();
     rt_hw_interrupt_enable(level);
 
-    lwp_set_thread_context(sys_fork_exit,
+    arch_set_thread_context(arch_fork_exit,
             (void *)((char *)thread->stack_addr + thread->stack_size),
             user_stack, &thread->sp);
     /* new thread never reach there */
@@ -1781,9 +1774,20 @@ size_t lwp_user_strlen(const char *s, int *err)
     }
 }
 
+/* arm needs to wrap fork/clone call to preserved lr & caller saved regs */
+
+RT_WEAK int sys_fork(void)
+{
+    return _sys_fork();
+}
+
+RT_WEAK int sys_vfork(void)
+{
+    return sys_fork();
+}
+
 struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **argv, char **envp);
 int lwp_load(const char *filename, struct rt_lwp *lwp, uint8_t *load_addr, size_t addr_size, struct process_aux *aux);
-void lwp_exec_user(void *args, void *kernel_stack, void *user_entry);
 void lwp_user_obj_free(struct rt_lwp *lwp);
 
 #define _swap_lwp_data(lwp_used, lwp_new, type, member) \
@@ -2339,9 +2343,10 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
         rt_hw_interrupt_enable(level);
 
         lwp_ref_dec(new_lwp);
-        lwp_exec_user(lwp->args,
-                thread->stack_addr + thread->stack_size,
-                lwp->text_entry);
+        arch_start_umode(lwp->args,
+                lwp->text_entry,
+                (void*)USER_STACK_VEND,
+                thread->stack_addr + thread->stack_size);
         /* never reach here */
     }
     return -EINVAL;
@@ -3665,7 +3670,7 @@ int sys_set_thread_area(void *p)
 
     thread = rt_thread_self();
     thread->thread_idr = p;
-    lwp_set_thread_area(p);
+    arch_set_thread_area(p);
 
     return 0;
 }

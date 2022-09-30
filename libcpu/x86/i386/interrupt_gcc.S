@@ -230,8 +230,8 @@ hw_syscall_entry:
     movl $rt_hw_intr_exit, %eax
     jmp *%eax
 
-.global syscall_exit
-syscall_exit:
+.global arch_syscall_exit
+arch_syscall_exit:
 #endif /* RT_USING_USERSPACE */
 .global rt_hw_intr_exit
 rt_hw_intr_exit:

@@ -20,11 +20,11 @@
 .section      .text.lwp
 
 /*
- * void lwp_user_entry(args, text, ustack, kstack);
+ * void arch_start_umode(args, text, ustack, kstack);
  */
-.global lwp_user_entry
-.type lwp_user_entry, % function
-lwp_user_entry:
+.global arch_start_umode
+.type arch_start_umode, % function
+arch_start_umode:
     li t0, SSTATUS_SPP | SSTATUS_SIE    // set as user mode, close interrupt
     csrc sstatus, t0 
     li t0, SSTATUS_SPIE // enable interrupt when return to user mode
@@ -35,11 +35,11 @@ lwp_user_entry:
     sret//enter user mode
 
 /*
- * void lwp_user_thread_entry(args, text, ustack, kstack);
+ * void arch_crt_start_umode(args, text, ustack, kstack);
  */
-.global lwp_user_thread_entry
-.type lwp_user_thread_entry, % function
-lwp_user_thread_entry:
+.global arch_crt_start_umode
+.type arch_crt_start_umode, % function
+arch_crt_start_umode:
     li t0, SSTATUS_SPP | SSTATUS_SIE    // set as user mode, close interrupt
     csrc sstatus, t0
     li t0, SSTATUS_SPIE // enable interrupt when return to user mode
@@ -59,8 +59,8 @@ lwp_user_thread_entry:
     mv a0, s0//args
     sret//enter user mode
 
-.global ret_to_user
-ret_to_user:
+.global arch_ret_to_user
+arch_ret_to_user:
     call lwp_signal_check
     beqz a0, ret_to_user_exit
     RESTORE_ALL
@@ -127,14 +127,13 @@ lwp_check_debug_quit:
 //#endif
 */
 
-.global lwp_signal_quit
-lwp_signal_quit:
+.global arch_signal_quit
+arch_signal_quit:
     call lwp_signal_restore
     //a0 is user_ctx
     mv sp, a0
     RESTORE_ALL
     sret
-    
 
 user_do_signal:
     //now sp is user sp
@@ -216,26 +215,95 @@ get_vfp:
     li a0, 0
     ret
 
-.globl rt_cpu_get_thread_idr
-rt_cpu_get_thread_idr:
+.globl arch_get_tidr
+arch_get_tidr:
     mv a0, tp 
     ret
 
-.global lwp_set_thread_area
-lwp_set_thread_area:
-.globl rt_cpu_set_thread_idr
-rt_cpu_set_thread_idr:
+.global arch_set_thread_area
+arch_set_thread_area:
+.globl arch_set_tidr
+arch_set_tidr:
     mv tp, a0
     ret
 
-.global sys_fork_exit
-sys_fork_exit:
-    j syscall_exit
-    
-.global sys_clone_exit
-sys_clone_exit:
-    j syscall_exit
+.global arch_clone_exit
+.global arch_fork_exit
+arch_fork_exit:
+arch_clone_exit:
+    j arch_syscall_exit
 
-.global lwp_exec_user
-lwp_exec_user:
-    ret//don't support
+.global syscall_entry
+syscall_entry:
+    //swap to thread kernel stack
+    csrr t0, sstatus
+    andi t0, t0, 0x100
+    beqz t0, __restore_sp_from_tcb
+
+__restore_sp_from_sscratch:
+    csrr t0, sscratch
+    j __move_stack_context
+
+__restore_sp_from_tcb:
+    la a0, rt_current_thread
+    LOAD a0, 0(a0)
+    jal get_thread_kernel_stack_top
+    mv t0, a0
+
+__move_stack_context:
+    mv t1, sp//src
+    mv sp, t0//switch stack
+    addi sp, sp, -CTX_REG_NR * REGBYTES
+    //copy context
+    li s0, CTX_REG_NR//cnt
+    mv t2, sp//dst
+
+copy_context_loop:
+    LOAD t0, 0(t1)
+    STORE t0, 0(t2)
+    addi s0, s0, -1
+    addi t1, t1, 8
+    addi t2, t2, 8
+    bnez s0, copy_context_loop
+
+    LOAD s0, 7 * REGBYTES(sp)
+    addi s0, s0, -0xfe
+    beqz s0, arch_signal_quit
+
+#ifdef RT_USING_USERSPACE
+    /* save setting when syscall enter */
+    call  rt_thread_self
+    call  lwp_user_setting_save
+#endif
+
+    mv a0, sp
+    OPEN_INTERRUPT
+    call syscall_handler
+    j arch_syscall_exit
+    
+.global arch_syscall_exit
+arch_syscall_exit:
+    CLOSE_INTERRUPT
+
+    #if defined(RT_USING_USERSPACE)
+        LOAD s0, 2 * REGBYTES(sp)
+        andi s0, s0, 0x100
+        bnez s0, dont_ret_to_user
+        li s0, 0
+        j arch_ret_to_user
+        dont_ret_to_user:
+    #endif
+
+#ifdef RT_USING_USERSPACE
+    /* restore setting when syscall exit */
+    call  rt_thread_self
+    call  lwp_user_setting_restore
+
+    /* after restore the reg `tp`, need modify context */
+    STORE tp, 4 * REGBYTES(sp)
+#endif
+
+    //restore context
+    RESTORE_ALL
+    sret
+

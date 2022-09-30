@@ -18,7 +18,7 @@ typedef struct
 } Elf32_sym;
 
 #ifdef RT_USING_USERSPACE
-void lwp_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf32_sym *dynsym)
+void arch_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf32_sym *dynsym)
 {
     size_t rel_off;
     void* addr;
@@ -77,7 +77,7 @@ void lwp_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, s
 }
 #else
 
-void lwp_elf_reloc(void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf32_sym *dynsym)
+void arch_elf_reloc(void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf32_sym *dynsym)
 {
     size_t rel_off;
 

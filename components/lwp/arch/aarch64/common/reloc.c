@@ -23,6 +23,6 @@ typedef struct
     Elf_Half st_shndx;
 } Elf_sym;
 
-void lwp_elf_reloc(void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf_sym *dynsym)
+void arch_elf_reloc(void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf_sym *dynsym)
 {
 }

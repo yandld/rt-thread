@@ -27,22 +27,22 @@ lwp_switch_to_user:
     addl $4, %esp   // skip error_code
     iret    // enter to user mode
 
-.extern syscall_exit
+.extern arch_syscall_exit
 .global sys_fork
 .global sys_vfork
-.global sys_fork_exit
+.global arch_fork_exit
 sys_fork:
 sys_vfork:
     jmp _sys_fork
-sys_fork_exit:
-    jmp syscall_exit
+arch_fork_exit:
+    jmp arch_syscall_exit
 
 .global sys_clone
-.global sys_clone_exit
+.global arch_clone_exit
 sys_clone:
     jmp _sys_clone
-sys_clone_exit:
-    jmp syscall_exit
+arch_clone_exit:
+    jmp arch_syscall_exit
 
 /**
  * rt thread return code
