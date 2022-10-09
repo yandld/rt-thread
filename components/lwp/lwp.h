@@ -138,16 +138,13 @@ int  lwp_check_exit_request(void);
 void lwp_terminate(struct rt_lwp *lwp);
 void lwp_wait_subthread_exit(void);
 
-void lwp_set_thread_area(void *p);
-void* rt_cpu_get_thread_idr(void);
-void rt_cpu_set_thread_idr(void *p);
-
 int lwp_tid_get(void);
 void lwp_tid_put(int tid);
 rt_thread_t lwp_tid_get_thread(int tid);
 void lwp_tid_set_thread(int tid, rt_thread_t thread);
 
 size_t lwp_user_strlen(const char *s, int *err);
+int lwp_execve(char *filename, int debug, int argc, char **argv, char **envp);
 
 /*create by lwp_setsid.c*/
 int setsid(void);

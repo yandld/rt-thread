@@ -252,7 +252,7 @@ rt_hw_context_switch_exit:
     bne 1f
     ldmfd   sp!, {r0-r12,lr}
     ldmfd   sp!, {lr}
-    b ret_to_user
+    b arch_ret_to_user
 1:
 #endif
     ldmfd   sp!, {r0-r12,lr,pc}^ /* irq return */

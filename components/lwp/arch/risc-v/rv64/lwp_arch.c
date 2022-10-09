@@ -68,7 +68,7 @@ void *lwp_copy_return_code_to_user_stack()
     return RT_NULL;
 }
 
-rt_mmu_info* arch_kernel_get_mmu_info(void)
+rt_mmu_info *arch_kernel_get_mmu_info(void)
 {
     extern rt_mmu_info *mmu_info;
 
@@ -98,7 +98,7 @@ void *get_thread_kernel_stack_top(rt_thread_t thread)
     return (void *)(((rt_size_t)thread->stack_addr) + ((rt_size_t)thread->stack_size));
 }
 
-void *lwp_get_user_sp(void)
+void *arch_get_user_sp(void)
 {
     /* user sp saved in interrupt context */
     rt_thread_t self = rt_thread_self();
@@ -161,9 +161,10 @@ long sys_vfork(void)
 /**
  * set exec context for fork/clone.
  */
-void lwp_set_thread_context(void *exit_addr, void *new_thread_stack, void *user_stack, void **thread_sp)
+int arch_set_thread_context(void (*exit)(void), void *new_thread_stack,
+                            void *user_stack, void **thread_sp)
 {
-    RT_ASSERT(exit_addr != RT_NULL);
+    RT_ASSERT(exit != RT_NULL);
     RT_ASSERT(user_stack != RT_NULL);
     RT_ASSERT(new_thread_stack != RT_NULL);
     RT_ASSERT(thread_sp != RT_NULL);
@@ -206,7 +207,7 @@ void lwp_set_thread_context(void *exit_addr, void *new_thread_stack, void *user_
     }
 
     /* set pc for thread */
-    thread_frame->epc     = (rt_ubase_t)exit_addr;
+    thread_frame->epc     = (rt_ubase_t)exit;
 
     /* set old exception mode as supervisor, because in kernel */
     thread_frame->sstatus = read_csr(sstatus) | SSTATUS_SPP;
@@ -232,10 +233,18 @@ void lwp_set_thread_context(void *exit_addr, void *new_thread_stack, void *user_
      * | temp thread stack      |           ^
      * |                        |           |
      * | @sp                    | ---------/
-     * | @epc                   | --> `exit_addr` (sys_clone_exit/sys_fork_exit)
+     * | @epc                   | --> `exit` (arch_clone_exit/arch_fork_exit)
      * |                        |
      * +------------------------+ --> thread sp
      */
+}
+
+/**
+ * void lwp_exec_user(void *args, void *kernel_stack, void *user_entry)
+ */
+void lwp_exec_user(void *args, void *kernel_stack, void *user_entry)
+{
+    arch_start_umode(args, user_entry, (void*)USER_STACK_VEND, kernel_stack);
 }
 
 #endif

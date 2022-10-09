@@ -73,7 +73,7 @@ void *get_thread_kernel_stack_top(rt_thread_t thread)
 /**
  * don't support this in i386, it's ok!
  */
-void *lwp_get_user_sp()
+void *arch_get_user_sp()
 {
     return RT_NULL;
 }
@@ -115,14 +115,14 @@ void arch_user_space_vtable_free(struct rt_lwp *lwp)
     }
 }
 
-void lwp_set_thread_area(void *p)
+void arch_set_thread_area(void *p)
 {
     rt_hw_seg_tls_set((rt_ubase_t) p);
     rt_thread_t cur = rt_thread_self();
     cur->thread_idr = p; /* update thread idr after first set */
 }
 
-void *rt_cpu_get_thread_idr(void)
+void *arch_get_tidr(void)
 {
     rt_thread_t cur = rt_thread_self();
     if (!cur->lwp)  /* no lwp, don't get thread idr from tls seg */
@@ -130,7 +130,7 @@ void *rt_cpu_get_thread_idr(void)
     return (void *)rt_hw_seg_tls_get();   /* get thread idr from tls seg */
 }
 
-void rt_cpu_set_thread_idr(void *p)
+void arch_set_tidr(void *p)
 {
     rt_thread_t cur = rt_thread_self();
     if (!cur->lwp) /* no lwp, don't set thread idr to tls seg */
@@ -164,7 +164,7 @@ extern void lwp_switch_to_user(void *frame);
  * in x86, we can set stack, arg, text entry in a stack frame,
  * then pop then into register, final use iret to switch kernel mode to user mode.
  */
-void lwp_user_entry(void *args, const void *text, void *ustack, void *k_stack)
+void arch_start_umode(void *args, const void *text, void *ustack, void *k_stack)
 {
     rt_uint8_t *stk = k_stack;
     stk -= sizeof(struct rt_hw_stack_frame);
@@ -180,7 +180,7 @@ void lwp_user_entry(void *args, const void *text, void *ustack, void *k_stack)
 
 void lwp_exec_user(void *args, void *kernel_stack, void *user_entry)
 {
-    lwp_user_entry(args, (const void *)user_entry, (void *)USER_STACK_VEND, kernel_stack);
+    arch_start_umode(args, (const void *)user_entry, (void *)USER_STACK_VEND, kernel_stack);
 }
 
 extern void lwp_thread_return();
@@ -196,7 +196,7 @@ static void *lwp_copy_return_code_to_user_stack(void *ustack)
 
 /**
  * when called sys_thread_create, need create a thread, after thread stared, will come here,
- * like lwp_user_entry, will enter user mode, but we must set thread exit function. it looks like:
+ * like arch_start_umode, will enter user mode, but we must set thread exit function. it looks like:
  * void func(void *arg)
  * {
  *      ...
@@ -204,7 +204,7 @@ static void *lwp_copy_return_code_to_user_stack(void *ustack)
  * when thread func return, we must call exit code to exit thread, or not the program runs away.
  * so we need copy exit code to user and call exit code when func return.
  */
-void lwp_user_thread_entry(void *args, const void *text, void *ustack, void *k_stack)
+void arch_crt_start_umode(void *args, const void *text, void *ustack, void *k_stack)
 {
     RT_ASSERT(ustack != NULL);
 
@@ -252,7 +252,7 @@ rt_thread_t rt_thread_sp_to_thread(void *spmember_addr)
  * set exec context for fork/clone.
  * user_stack(unused)
  */
-void lwp_set_thread_context(void *exit_addr, void *new_thread_stack, void *user_stack, void **thread_sp)
+void arch_set_thread_context(void *exit_addr, void *new_thread_stack, void *user_stack, void **thread_sp)
 {
     /**
      * thread kernel stack was set to tss.esp0, when intrrupt/syscall occur,

@@ -11,8 +11,8 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#define DBG_LEVEL DBG_WARNING
-//#define DBG_LEVEL DBG_INFO
+#define DBG_TAG "syscall"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #include <stdint.h>
@@ -33,13 +33,13 @@ void syscall_handler(struct rt_hw_stack_frame *regs)
 {
     if(regs -> a7 == 0)
     {
-        rt_kprintf("syscall id = 0!\n");
+        LOG_E("syscall id = 0!\n");
         while(1);
     }
 
     if(regs -> a7 == 0xdeadbeef)
     {
-        rt_kprintf("syscall id = 0xdeadbeef\n");
+        LOG_E("syscall id = 0xdeadbeef\n");
         while(1);
     }
 
@@ -47,13 +47,14 @@ void syscall_handler(struct rt_hw_stack_frame *regs)
 
     if(syscallfunc == RT_NULL)
     {
-        rt_kprintf("unsupported syscall!\n");
+        LOG_E("unsupported syscall!\n");
         while(1);
     }
 
-    LOG_I("\033[36msyscall id = %d,arg0 = 0x%p,arg1 = 0x%p,arg2 = 0x%p,arg3 = 0x%p,arg4 = 0x%p,arg5 = 0x%p,arg6 = 0x%p\n\033[37m",regs -> a7,regs -> a0,regs -> a1,regs -> a2,regs -> a3,regs -> a4,regs -> a5,regs -> a6);
+    LOG_D("syscall id = %d,arg0 = 0x%p,arg1 = 0x%p,arg2 = 0x%p,arg3 = 0x%p,arg4 = 0x%p,arg5 = 0x%p,arg6 = 0x%p",regs -> a7,regs -> a0,regs -> a1,regs -> a2,regs -> a3,regs -> a4,regs -> a5,regs -> a6);
+    LOG_D("%p", syscallfunc);
     regs -> a0 = syscallfunc(regs -> a0,regs -> a1,regs -> a2,regs -> a3,regs -> a4,regs -> a5,regs -> a6);
     regs -> a7 = 0;
     regs -> epc += 4;//skip ecall instruction
-    LOG_I("\033[36msyscall deal ok,ret = 0x%p\n\033[37m",regs -> a0);
+    LOG_D("syscall deal ok,ret = 0x%p",regs -> a0);
 }

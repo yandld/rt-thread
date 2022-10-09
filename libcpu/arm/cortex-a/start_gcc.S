@@ -395,7 +395,7 @@ vector_irq:
     msr     spsr_csxf, r4
     mov     lr, r5
     pop     {r0-r12}
-    b       ret_to_user
+    b       arch_ret_to_user
 1:
     mov     lr, r7
     cps     #Mode_IRQ
@@ -492,7 +492,7 @@ rt_hw_context_switch_interrupt_do:
     bne     1f
     ldmfd   sp!, {r0-r12,lr}
     ldmfd   sp!, {lr}
-    b       ret_to_user
+    b       arch_ret_to_user
 1:
 #endif
     /* pop new task's r0-r12,lr & pc, copy spsr to cpsr */
@@ -562,7 +562,7 @@ vector_pabt:
     ldr     lr, [sp, #15*4]     /* orign pc */
     ldmia   sp, {r0 - r12}
     add     sp, #17 * 4
-    b       ret_to_user
+    b       arch_ret_to_user
 #else
     bl      rt_hw_trap_pabt
     b       .
@@ -590,7 +590,7 @@ vector_dabt:
     ldr     lr, [sp, #15*4]    /* orign pc */
     ldmia   sp, {r0 - r12}
     add     sp, #17 * 4
-    b       ret_to_user
+    b       arch_ret_to_user
 #else
     bl      rt_hw_trap_dabt
     b       .

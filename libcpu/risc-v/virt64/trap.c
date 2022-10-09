@@ -127,7 +127,6 @@ enum
     EP_STORE_PAGE_FAULT, /* write data */
 };
 
-
 extern struct rt_irq_desc irq_desc[];
 
 #include "rtdbg.h"
@@ -217,9 +216,8 @@ void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
             if (!(sp->sstatus & 0x100))
             {
                 handle_user(scause, stval, sepc, sp);
-                // after handle_user(), return to user space.
-                // otherwise it never returns
-                return ;
+                // if handle_user() return here, jump to u mode then
+                return;
             }
 
             // handle kernel exception:
@@ -228,9 +226,12 @@ void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
 
         rt_kprintf("scause:0x%p,stval:0x%p,sepc:0x%p\n", scause, stval, sepc);
         dump_regs(sp);
+        rt_kprintf("--------------Thread list--------------\n");
+        rt_kprintf("current thread: %s\n", rt_thread_self()->name);
+        list_process();
 
         extern struct rt_thread *rt_current_thread;
-
+        rt_kprintf("--------------Backtrace--------------\n");
         rt_hw_backtrace((uint32_t *)sp->s0_fp, sepc);
 
         while (1)

@@ -102,80 +102,8 @@ copy_context_loop_interrupt:
 spurious_interrupt:
     LOAD t0, 2 * REGBYTES(sp)
     andi t0, t0, 0x100
-    beqz t0, ret_to_user
+    beqz t0, arch_ret_to_user
 
-    RESTORE_ALL
-    sret
-
-syscall_entry:
-    //swap to thread kernel stack
-    csrr t0, sstatus
-    andi t0, t0, 0x100
-    beqz t0, __restore_sp_from_tcb
-
-__restore_sp_from_sscratch:
-    csrr t0, sscratch
-    j __move_stack_context
-
-__restore_sp_from_tcb:
-    la a0, rt_current_thread
-    LOAD a0, 0(a0)
-    jal get_thread_kernel_stack_top
-    mv t0, a0
-
-__move_stack_context:
-    mv t1, sp//src
-    mv sp, t0//switch stack
-    addi sp, sp, -CTX_REG_NR * REGBYTES
-    //copy context
-    li s0, CTX_REG_NR//cnt
-    mv t2, sp//dst
-
-copy_context_loop:
-    LOAD t0, 0(t1)
-    STORE t0, 0(t2)
-    addi s0, s0, -1
-    addi t1, t1, 8
-    addi t2, t2, 8
-    bnez s0, copy_context_loop
-
-    LOAD s0, 7 * REGBYTES(sp)
-    addi s0, s0, -0xfe
-    beqz s0, lwp_signal_quit
-
-#ifdef RT_USING_USERSPACE
-    /* save setting when syscall enter */
-    call  rt_thread_self
-    call  lwp_user_setting_save
-#endif
-
-    mv a0, sp
-    OPEN_INTERRUPT
-    call syscall_handler
-    CLOSE_INTERRUPT
-
-.global syscall_exit
-syscall_exit:
-
-    #if defined(RT_USING_USERSPACE)
-        LOAD s0, 2 * REGBYTES(sp)
-        andi s0, s0, 0x100
-        bnez s0, dont_ret_to_user
-        li s0, 0
-        j ret_to_user
-        dont_ret_to_user:
-    #endif
-
-#ifdef RT_USING_USERSPACE
-    /* restore setting when syscall exit */
-    call  rt_thread_self
-    call  lwp_user_setting_restore
-
-    /* after restore the reg `tp`, need modify context */
-    STORE tp, 4 * REGBYTES(sp)
-#endif
-
-    //restore context
     RESTORE_ALL
     sret
 

@@ -29,11 +29,11 @@
 .text
 
 /*
- * void lwp_user_entry(args, text, ustack, kstack);
+ * void arch_start_umode(args, text, ustack, kstack);
  */
-.global lwp_user_entry
-.type lwp_user_entry, % function
-lwp_user_entry:
+.global arch_start_umode
+.type arch_start_umode, % function
+arch_start_umode:
     mrs     r9, cpsr
     bic     r9, #0x1f
     orr     r9, #Mode_USR
@@ -46,11 +46,11 @@ lwp_user_entry:
     movs    pc, r1
 
 /*
- * void lwp_user_thread_entry(args, text, ustack, kstack);
+ * void arch_crt_start_umode(args, text, ustack, kstack);
  */
-.global lwp_user_thread_entry
-.type lwp_user_thread_entry, % function
-lwp_user_thread_entry:
+.global arch_crt_start_umode
+.type arch_crt_start_umode, % function
+arch_crt_start_umode:
     cps #Mode_SYS
     sub sp, r2, #16
     ldr r2, =lwp_thread_return
@@ -87,10 +87,10 @@ lwp_user_thread_entry:
     movs    pc, r1
 
 /*
-void lwp_set_thread_context(void *exit_addr, void *new_thread_stack, void *user_stack, void **thread_sp);
+void arch_set_thread_context(void *exit_addr, void *new_thread_stack, void *user_stack, void **thread_sp);
 */
-.global lwp_set_thread_context
-lwp_set_thread_context:
+.global arch_set_thread_context
+arch_set_thread_context:
     sub r1, #(10 * 4 + 4 * 4) /* {r4 - r12, lr} , {r4, r5, spsr, u_pc} */
     stmfd r1!, {r0}
     mov r12, #0
@@ -109,8 +109,8 @@ lwp_set_thread_context:
     str r1, [r3]
     mov pc, lr
 
-.global lwp_get_user_sp
-lwp_get_user_sp:
+.global arch_get_user_sp
+arch_get_user_sp:
     cps #Mode_SYS
     mov r0, sp
     cps #Mode_SVC
@@ -118,23 +118,23 @@ lwp_get_user_sp:
 
 .global sys_fork
 .global sys_vfork
-.global sys_fork_exit
+.global arch_fork_exit
 sys_fork:
 sys_vfork:
     push {r4 - r12, lr}
     bl _sys_fork
-sys_fork_exit:
+arch_fork_exit:
     pop {r4 - r12, lr}
-    b svc_exit
+    b arch_syscall_exit
 
 .global sys_clone
-.global sys_clone_exit
+.global arch_clone_exit
 sys_clone:
     push {r4 - r12, lr}
     bl _sys_clone
-sys_clone_exit:
+arch_clone_exit:
     pop {r4 - r12, lr}
-    b svc_exit
+    b arch_syscall_exit
 /*
 void lwp_exec_user(void *args, void *kernel_stack, void *user_entry)
 */
@@ -146,7 +146,7 @@ lwp_exec_user:
     mov r2, #Mode_USR
     msr spsr_cxsf, r2
     ldr r3, =0x80000000
-    b ret_to_user
+    b arch_ret_to_user
 
 /*
  * void SVC_Handler(void);
@@ -167,7 +167,7 @@ vector_swi:
 
     and r0, r7, #0xf000
     cmp r0, #0xe000
-    beq lwp_signal_quit
+    beq arch_signal_quit
 
     cmp r0, #0xf000
     beq ret_from_user
@@ -177,17 +177,18 @@ vector_swi:
     mov lr, r0
 
     pop {r0 - r3, r12}
-    beq svc_exit
+    beq arch_syscall_exit
     blx lr
 
-svc_exit:
+.global arch_syscall_exit
+arch_syscall_exit:
     cpsid i
     pop {r4, r5, lr}
     msr spsr_cxsf, lr
     pop {lr}
 
-.global ret_to_user
-ret_to_user:
+.global arch_ret_to_user
+arch_ret_to_user:
     push {r0-r3, r12, lr}
     bl lwp_check_debug
     bl lwp_check_exit_request
@@ -268,7 +269,7 @@ ret_from_user:
 lwp_check_debug_quit:
     pop {pc}
 
-lwp_signal_quit:
+arch_signal_quit:
     cpsid i
     pop {r0 - r3, r12}
     pop {r4, r5, lr}
@@ -284,7 +285,7 @@ lwp_signal_quit:
     mov sp, r1
     pop {r0-r12, lr}
     cps #Mode_SVC
-    b ret_to_user
+    b arch_ret_to_user
 
 user_do_signal:
     mov r0, r0
@@ -359,15 +360,15 @@ get_vfp:
 #endif
     mov pc, lr
 
-.globl rt_cpu_get_thread_idr
-rt_cpu_get_thread_idr:
+.globl arch_get_tidr
+arch_get_tidr:
     mrc p15, 0, r0, c13, c0, 3
     bx lr
 
-.global lwp_set_thread_area
-lwp_set_thread_area:
-.globl rt_cpu_set_thread_idr
-rt_cpu_set_thread_idr:
+.global arch_set_thread_area
+arch_set_thread_area:
+.globl arch_set_tidr
+arch_set_tidr:
     mcr p15, 0, r0, c13, c0, 3
     bx lr
 

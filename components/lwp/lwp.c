@@ -23,6 +23,7 @@
 
 #include "lwp.h"
 #include "lwp_arch.h"
+#include "lwp_arch_comm.h"
 #include "console.h"
 
 #define DBG_TAG "LWP"
@@ -40,7 +41,6 @@ extern char working_directory[];
 #endif
 static struct termios stdin_termios, old_stdin_termios;
 
-extern void lwp_user_entry(void *args, const void *text, void *ustack, void *k_stack);
 int load_ldso(struct rt_lwp *lwp, char *exec_name, char *const argv[], char *const envp[]);
 
 struct termios *get_old_termios(void)
@@ -372,12 +372,6 @@ typedef struct
     unsigned char st_other;
     Elf_Half st_shndx;
 } Elf_sym;
-
-#ifdef RT_USING_USERSPACE
-void lwp_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf_sym *dynsym);
-#else
-void lwp_elf_reloc(void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf_sym *dynsym);
-#endif
 
 #ifdef RT_USING_USERSPACE
 struct map_range
@@ -932,9 +926,9 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
             check_read(read_len, dynsym_size);
         }
 #ifdef RT_USING_USERSPACE
-        lwp_elf_reloc(m_info, (void *)load_off, rel_dyn_start, rel_dyn_size, got_start, got_size, dynsym);
+        arch_elf_reloc(m_info, (void *)load_off, rel_dyn_start, rel_dyn_size, got_start, got_size, dynsym);
 #else
-        lwp_elf_reloc((void *)load_off, rel_dyn_start, rel_dyn_size, got_start, got_size, dynsym);
+        arch_elf_reloc((void *)load_off, rel_dyn_start, rel_dyn_size, got_start, got_size, dynsym);
 
         rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, lwp->text_entry, lwp->text_size);
         rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, lwp->text_entry, lwp->text_size);
@@ -1071,7 +1065,7 @@ static void lwp_copy_stdio_fdt(struct rt_lwp *lwp)
     return;
 }
 
-static void lwp_thread_entry(void *parameter)
+static void _lwp_thread_entry(void *parameter)
 {
     rt_thread_t tid;
     struct rt_lwp *lwp;
@@ -1090,9 +1084,9 @@ static void lwp_thread_entry(void *parameter)
     }
 
 #ifdef ARCH_MM_MMU
-    lwp_user_entry(lwp->args, lwp->text_entry, (void *)USER_STACK_VEND, tid->stack_addr + tid->stack_size);
+    arch_start_umode(lwp->args, lwp->text_entry, (void *)USER_STACK_VEND, tid->stack_addr + tid->stack_size);
 #else
-    lwp_user_entry(lwp->args, lwp->text_entry, lwp->data_entry, (void *)((uint32_t)lwp->data_entry + lwp->data_size));
+    arch_start_umode(lwp->args, lwp->text_entry, lwp->data_entry, (void *)((uint32_t)lwp->data_entry + lwp->data_size));
 #endif /* ARCH_MM_MMU */
 }
 
@@ -1192,7 +1186,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
             tick = app_head->tick;
         }
 #endif /* not defined ARCH_MM_MMU */
-        thread = rt_thread_create(thread_name, lwp_thread_entry, RT_NULL,
+        thread = rt_thread_create(thread_name, _lwp_thread_entry, RT_NULL,
                 LWP_TASK_STACK_SIZE, priority, tick);
         if (thread != RT_NULL)
         {
@@ -1323,7 +1317,7 @@ void lwp_user_setting_save(rt_thread_t thread)
 {
     if (thread)
     {
-        thread->thread_idr = rt_cpu_get_thread_idr();
+        thread->thread_idr = arch_get_tidr();
     }
 }
 
@@ -1335,7 +1329,7 @@ void lwp_user_setting_restore(rt_thread_t thread)
     }
 #if !defined(ARCH_RISCV64)
     /* tidr will be set in RESTORE_ALL in risc-v */
-    rt_cpu_set_thread_idr(thread->thread_idr);
+    arch_set_tidr(thread->thread_idr);
 #endif
 
     if (rt_dbg_ops)
