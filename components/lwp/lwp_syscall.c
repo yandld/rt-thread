@@ -4080,11 +4080,21 @@ int sys_sched_getparam(pid_t pid, void *param)
 
 int sys_sched_get_priority_max(int policy)
 {
+    if(policy < 0)
+    {
+        rt_set_errno(EINVAL);
+        return -rt_get_errno();
+    }    
     return RT_THREAD_PRIORITY_MAX;
 }
 
 int sys_sched_get_priority_min(int policy)
 {
+    if(policy < 0)
+    {
+        rt_set_errno(EINVAL);
+        return -rt_get_errno();
+    }
     return 0;
 }
 
