@@ -4116,7 +4116,10 @@ int sys_sched_getscheduler(int tid, int *policy, void *param)
 
 int sys_fsync(int fd)
 {
-    return fsync(fd);
+    int res = fsync(fd);
+    if (res < 0)
+        res = rt_get_errno();
+    return res;
 }
 
 const static void* func_table[] =
