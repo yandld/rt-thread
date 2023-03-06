@@ -16,17 +16,7 @@
 
 #ifdef RT_USING_SERIAL
 
-#if defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL
-#error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
-#endif
 
-#if !defined(BSP_USING_UART0) && \
-    !defined(BSP_USING_UART1) && \
-    !defined(BSP_USING_UART2) && \
-    !defined(BSP_USING_UART3) && \
-    !defined(BSP_USING_UART4)
-#error "Please define at least one UARTx"
-#endif
 
 #include <rtdevice.h>
 
@@ -38,6 +28,8 @@ struct mcx_uart
     IRQn_Type                   irqn;
     clock_name_t                clock_src;
     clock_attach_id_t           clock_attach_id;
+    clock_ip_name_t             clock_ip_name;
+    clock_div_name_t            clock_div_name;
     char *device_name;
 };
 
@@ -53,6 +45,15 @@ void LP_FLEXCOMM4_IRQHandler(void)
 }
 #endif /* BSP_USING_UART4 */
 
+#if defined(BSP_USING_UART6)
+struct rt_serial_device serial6;
+
+void LP_FLEXCOMM6_IRQHandler(void)
+{
+    uart_isr(&serial6);
+}
+#endif /* BSP_USING_UART6 */
+
 static const struct mcx_uart uarts[] =
 {
 #ifdef BSP_USING_UART4
@@ -63,6 +64,18 @@ static const struct mcx_uart uarts[] =
         kCLOCK_Fro12M,
         kFRO12M_to_FLEXCOMM4,
         "uart4",
+    },
+#endif
+#ifdef BSP_USING_UART6
+    {
+        &serial6,
+        LPUART6,
+        LP_FLEXCOMM6_IRQn,
+        kCLOCK_Fro12M,
+        kFRO12M_to_FLEXCOMM6,
+        kCLOCK_LPFlexComm6,
+        kCLOCK_DivFlexcom6Clk,
+        "uart6",
     },
 #endif
 };
@@ -78,8 +91,10 @@ static rt_err_t mcx_configure(struct rt_serial_device *serial, struct serial_con
 
     uart = (struct mcx_uart *)serial->parent.user_data;
 
+    CLOCK_SetClkDiv(uart->clock_div_name, 1u);
     CLOCK_AttachClk(uart->clock_attach_id);
-
+    CLOCK_EnableClock(uart->clock_ip_name);
+    
     LPUART_GetDefaultConfig(&config);
     config.baudRate_Bps = cfg->baud_rate;
 

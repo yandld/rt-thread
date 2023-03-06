@@ -38,13 +38,14 @@
 
 typedef struct
 {
-    LPSPI_Type      *LPSPIX;
-    DMA_Type        *DMAX;
-    uint32_t        rx_dma_ch;
-    edma_handle_t   dma_rx_handle;
-    uint8_t         buf[2][DEMO_LPSPI_BUFFER_SIZE] __attribute__ ((aligned (4)));
-    uint8_t         swtich_flag;
-    uint8_t         vsync_flag;
+    LPSPI_Type              *LPSPIX;
+    DMA_Type                *DMAX;
+    uint32_t                rx_dma_ch;
+    edma_handle_t           dma_rx_handle;
+    uint8_t                 buf[2][DEMO_LPSPI_BUFFER_SIZE] __attribute__ ((aligned (4)));
+    dma_request_source_t    dma_req_src;
+    uint8_t                 swtich_flag;
+    uint8_t                 vsync_flag;
 }lpspi_quad_camera_t;
 
 
@@ -58,6 +59,7 @@ lpspi_quad_camera_t cam =
     .LPSPIX = LPSPI3,
     .DMAX = DMA0,
     .rx_dma_ch = 2,
+    .dma_req_src = kDmaRequestMuxLpFlexcomm3Rx,
     .swtich_flag = 0,
     .vsync_flag  = 0,
 };
@@ -82,6 +84,7 @@ static void gray2rgb565(uint8_t *gray_buf, uint16_t* rgb565_buf, uint32_t len)
 
 static void lpfc_edma_major_callback(edma_handle_t *handle, void *userData, bool transferDone, uint32_t tcds)
 {
+    rt_kprintf("dma_done\r\n");
     DMA0->CH[cam.rx_dma_ch].TCD_CSR |= DMA_TCD_CSR_DREQ_MASK;
 }
 
@@ -123,7 +126,7 @@ static status_t lpfc_quad_init(lpspi_quad_camera_t *camera)
 
     /* CHn_MUX can not be set again if the specified request is in use. */
     /* Also, the existing requests should be cleared before setting to another channel */
-    EDMA_SetChannelMux(DMA0, camera->rx_dma_ch, kDmaRequestMuxLpFlexcomm3Rx);
+    EDMA_SetChannelMux(DMA0, camera->rx_dma_ch, camera->dma_req_src);
     EDMA_CreateHandle(&camera->dma_rx_handle, DMA0, camera->rx_dma_ch);
     EDMA_SetCallback(&camera->dma_rx_handle, lpfc_edma_major_callback, NULL);
 
@@ -192,6 +195,11 @@ int camera(void)
     CLOCK_SetClkDiv(kCLOCK_DivPllClk, 3U); /* 150MHz / 3 = 50MHz */
     CLOCK_AttachClk(kPLL_DIV_to_FLEXCOMM3);
     CLOCK_SetClkDiv(kCLOCK_DivFlexcom3Clk, 1U);
+    
+    CLOCK_SetClkDiv(kCLOCK_DivPllClk, 3U); /* 150MHz / 3 = 50MHz */
+    CLOCK_AttachClk(kPLL_DIV_to_FLEXCOMM4);
+    CLOCK_SetClkDiv(kCLOCK_DivFlexcom4Clk, 1U);
+    
 
     /* init I2C0 */
     CLOCK_SetClkDiv(kCLOCK_DivFlexcom0Clk, 1u);
@@ -224,8 +232,6 @@ int camera(void)
     
     /* VSYNC */
     rt_pin_mode(VSYNC_PIN, PIN_MODE_INPUT); 
-    
-    void sync_in_cb(void *args);
     rt_pin_attach_irq(VSYNC_PIN, PIN_IRQ_MODE_FALLING, vsync_irq, RT_NULL);
     rt_pin_irq_enable(VSYNC_PIN, 1);
     

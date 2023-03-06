@@ -4,7 +4,14 @@
 #include "fsl_port.h"
 #include "pin_mux.h"
 
-
+/*
+FCX_0: SDO/D[0]
+FCX_1: SCK
+FCX_2: SDI/D[1]
+FCX_3: CS0
+FCX_4: D[3]
+FCX_5: D[2]
+*/
 
 void BOARD_InitBootPins(void)
 {
@@ -24,6 +31,10 @@ void BOARD_InitBootPins(void)
     PORT1->PCR[8]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_IBE(1);     /* FC4_P0 */
     PORT1->PCR[9]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_IBE(1);     /* FC4_P1 */
     
+    
+
+    
+    
     PORT0->PCR[16]   = PORT_PCR_MUX(2) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC0 I2C_SDA */
     PORT0->PCR[17]   = PORT_PCR_MUX(2) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC0 I2C_SCL */
                                                      
@@ -40,8 +51,23 @@ void BOARD_InitBootPins(void)
     PORT1->PCR[3]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC3_3 */
     PORT1->PCR[4]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC3_4 */
     PORT1->PCR[5]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC3_5 */
+//FCX_0: SDO/D[0]
+//FCX_1: SCK
+//FCX_2: SDI/D[1]
+//FCX_3: CS0
+//FCX_4: D[3]
+//FCX_5: D[2]
     
     
+    PORT3->PCR[20]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_IBE(1);     /* FC6_P0 */
+    PORT3->PCR[21]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_IBE(1);     /* FC6_P1 */
+    
+//    PORT1->PCR[20]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC4_0 */
+//    PORT1->PCR[21]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC4_1 */
+//    PORT1->PCR[22]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC4_2 */
+//    PORT1->PCR[23]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC4_3 */
+//    PORT1->PCR[0]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);      /* FC4_4 */
+//    PORT1->PCR[1]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);      /* FC4_5 */
 }
 
 

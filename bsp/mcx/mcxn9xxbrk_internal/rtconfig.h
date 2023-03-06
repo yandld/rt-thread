@@ -49,7 +49,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart4"
+#define RT_CONSOLE_DEVICE_NAME "uart6"
 #define RT_VER_NUM 0x50000
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
@@ -235,7 +235,7 @@
 
 #define BSP_USING_PIN
 #define BSP_USING_UART
-#define BSP_USING_UART4
+#define BSP_USING_UART6
 #define HW_UART0_BAUDRATE_115200
 
 /* Onboard Peripheral Drivers */
