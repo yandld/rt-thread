@@ -115,9 +115,10 @@ rt_inline void pin_irq_handler(uint8_t gpio_idx)
     uint32_t INTFLAG = GPIO_GpioGetInterruptFlags(GPIO_TYPE_TBL[gpio_idx]);
     GPIO_GpioClearInterruptFlags(GPIO_TYPE_TBL[gpio_idx], INTFLAG);
     
+
     for(i=0; i<ARRAY_SIZE(pin_irq_hdr_tab); i++)
     {
-        if(INTFLAG && (1<<GET_GPIO_PIN(pin_irq_hdr_tab[i].pin)) && pin_irq_hdr_tab[i].hdr && (GET_GPIO_PORT(pin_irq_hdr_tab[i].pin)) == gpio_idx)
+        if((INTFLAG & (1<<GET_GPIO_PIN(pin_irq_hdr_tab[i].pin))) && pin_irq_hdr_tab[i].hdr && (GET_GPIO_PORT(pin_irq_hdr_tab[i].pin)) == gpio_idx)
         {
             pin_irq_hdr_tab[i].hdr(pin_irq_hdr_tab[i].args);
         }

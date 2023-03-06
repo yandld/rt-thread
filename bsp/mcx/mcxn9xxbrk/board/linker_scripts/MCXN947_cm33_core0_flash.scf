@@ -71,7 +71,7 @@
   #define  m_rpmsg_sh_mem_size         0x00002000
 #else
   #define  m_data_start                0x20000000
-  #define  m_data_size                 0x0004E000
+  #define  m_data_size                 0x0005E000
 #endif
 #define  m_usb_sram_start              0x400BA000
 #define  m_usb_sram_size               0x00001000

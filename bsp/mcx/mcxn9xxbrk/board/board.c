@@ -42,7 +42,7 @@ void SysTick_Handler(void)
 void rt_hw_board_init()
 {
     /* Hardware Initialization */
-    BOARD_InitPins();
+    BOARD_InitBootPins();
 
     CLOCK_EnableClock(kCLOCK_InputMux);
 
