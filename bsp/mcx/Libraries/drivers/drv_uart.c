@@ -1,0 +1,227 @@
+///*
+// * Copyright (c) 2006-2023, RT-Thread Development Team
+// *
+// * SPDX-License-Identifier: Apache-2.0
+// *
+// * Change Logs:
+// * Date           Author       Notes
+// * 2019-07-15     Magicoe      The first version for LPC55S6x
+// */
+
+#include <rtthread.h>
+#include "drv_uart.h"
+
+#include "fsl_lpuart.h"
+#include "fsl_common.h"
+
+#ifdef RT_USING_SERIAL
+
+#if defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL
+#error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
+#endif
+
+#if !defined(BSP_USING_UART0) && \
+    !defined(BSP_USING_UART1) && \
+    !defined(BSP_USING_UART2) && \
+    !defined(BSP_USING_UART3) && \
+    !defined(BSP_USING_UART4)
+#error "Please define at least one UARTx"
+#endif
+
+#include <rtdevice.h>
+
+/* lpc uart driver */
+struct mcx_uart
+{
+    struct rt_serial_device     *serial;
+    LPUART_Type                 *uart_base;
+    IRQn_Type                   irqn;
+    clock_name_t                clock_src;
+    clock_attach_id_t           clock_attach_id;
+    char *device_name;
+};
+
+static void uart_isr(struct rt_serial_device *serial);
+
+
+#if defined(BSP_USING_UART4)
+struct rt_serial_device serial4;
+
+void LP_FLEXCOMM4_IRQHandler(void)
+{
+    uart_isr(&serial4);
+}
+#endif /* BSP_USING_UART4 */
+
+static const struct mcx_uart uarts[] =
+{
+#ifdef BSP_USING_UART4
+    {
+        &serial4,
+        LPUART4,
+        LP_FLEXCOMM4_IRQn,
+        kCLOCK_Fro12M,
+        kFRO12M_to_FLEXCOMM4,
+        "uart4",
+    },
+#endif
+};
+
+
+static rt_err_t mcx_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
+{
+    struct mcx_uart *uart;
+    lpuart_config_t config;
+
+    RT_ASSERT(serial != RT_NULL);
+    RT_ASSERT(cfg != RT_NULL);
+
+    uart = (struct mcx_uart *)serial->parent.user_data;
+
+    CLOCK_AttachClk(uart->clock_attach_id);
+
+    LPUART_GetDefaultConfig(&config);
+    config.baudRate_Bps = cfg->baud_rate;
+
+    switch (cfg->data_bits)
+    {
+        case DATA_BITS_7:
+            config.dataBitsCount = kLPUART_SevenDataBits;
+            break;
+
+        default:
+            config.dataBitsCount = kLPUART_EightDataBits;
+            break;
+    }
+
+//    switch (cfg->stop_bits)
+//    {
+//        case STOP_BITS_2:
+//            config.stopBitCount = kUSART_TwoStopBit;
+//            break;
+//        default:
+//            config.stopBitCount = kUSART_OneStopBit;
+//            break;
+//    }
+
+//    switch (cfg->parity)
+//    {
+//        case PARITY_ODD:
+//            config.parityMode = kUSART_ParityOdd;
+//            break;
+//        case PARITY_EVEN:
+//            config.parityMode = kUSART_ParityEven;
+//            break;
+//        default:
+//            config.parityMode = kUSART_ParityDisabled;
+//            break;
+//    }
+
+    config.enableTx     = true;
+    config.enableRx     = true;
+    
+    LPUART_Init(uart->uart_base, &config, CLOCK_GetFreq(uart->clock_src));
+
+    return RT_EOK;
+}
+
+static rt_err_t mcx_control(struct rt_serial_device *serial, int cmd, void *arg)
+{
+    struct mcx_uart *uart = (struct mcx_uart *)serial->parent.user_data;
+
+    RT_ASSERT(uart != RT_NULL);
+    
+    switch (cmd)
+    {
+    case RT_DEVICE_CTRL_CLR_INT:
+        /* disable rx irq */
+        LPUART_DisableInterrupts(uart->uart_base, kLPUART_RxDataRegFullInterruptEnable);
+        DisableIRQ(uart->irqn);
+        break;
+    case RT_DEVICE_CTRL_SET_INT:
+        /* enable rx irq */
+        LPUART_EnableInterrupts(uart->uart_base, kLPUART_RxDataRegFullInterruptEnable);
+        EnableIRQ(uart->irqn);
+        break;
+    }
+
+    
+    return RT_EOK;
+}
+
+static int mcx_putc(struct rt_serial_device *serial, char ch)
+{
+    struct mcx_uart *uart = (struct mcx_uart *)serial->parent.user_data;
+
+    while(!(kLPUART_TxDataRegEmptyFlag & LPUART_GetStatusFlags(uart->uart_base)));
+    LPUART_WriteByte(uart->uart_base, ch);
+
+    return 1;
+}
+
+static int mcx_getc(struct rt_serial_device *serial)
+{
+    struct mcx_uart *uart = (struct mcx_uart *)serial->parent.user_data;
+
+    if (kLPUART_RxDataRegFullInterruptEnable & LPUART_GetStatusFlags(uart->uart_base))
+    {
+        return LPUART_ReadByte(uart->uart_base);
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+/**
+ * Uart common interrupt process. This need add to uart ISR.
+ *
+ * @param serial serial device
+ */
+static void uart_isr(struct rt_serial_device *serial)
+{
+    struct mcx_uart *uart;
+
+    RT_ASSERT(serial != RT_NULL);
+
+    uart = (struct mcx_uart *) serial->parent.user_data;
+    RT_ASSERT(uart != RT_NULL);
+
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    /* UART in mode Receiver -------------------------------------------------*/
+    rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+
+static const struct rt_uart_ops mcx_uart_ops =
+{
+    mcx_configure,
+    mcx_control,
+    mcx_putc,
+    mcx_getc,
+};
+
+int rt_hw_uart_init(void)
+{
+    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
+    int i;
+
+    for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++)
+    {
+        uarts[i].serial->ops    = &mcx_uart_ops;
+        uarts[i].serial->config = config;
+
+        /* register UART device */
+        rt_hw_serial_register(uarts[i].serial, uarts[i].device_name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, (void *)&uarts[i]);                  
+    }
+
+    return 0;
+}
+
+INIT_BOARD_EXPORT(rt_hw_uart_init);
+
+#endif /*BSP_USING_SERIAL */
