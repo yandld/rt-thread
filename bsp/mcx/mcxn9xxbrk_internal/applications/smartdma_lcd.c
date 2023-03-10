@@ -28,12 +28,9 @@ cp_env_t cp_env;                        //environemnt vaiable for co-processor
 
 //ezh_code[256]@ 0x20060000
 uint32_t ezh_code_gray_rgb_code[64] =
-
 {
 0x00000012, 0x00000012, 0x33040404, 0x02180410, 0x02100410, 0x0FF40000, 0x0FF62C00, 0x0002EC0C, 0x008775A8, 0x00000012, 0x00000012, 0x08044001, 0x09044801, 0x0A045001, 0x01481010, 0x00151008,
-
 0x03074C06, 0x0040C01A, 0x00000012, 0x01181401, 0x03581410, 0x46515410, 0x4B515410, 0x01180C01, 0x03380C10, 0x4630CC10, 0x4B30CC10, 0x10B0CC0D, 0x03B15416, 0x015C8402, 0x0C0E1000, 0x0DEC0C00,
-
 0x0031100C, 0x33024C04, 0x0031100C, 0x21011018, 0x33402405, 0x20060023, 0x00004770
 };
 
@@ -102,7 +99,6 @@ void smart_dma_g2rgb_run(void *input, void *output, uint32_t size)
 
 void smart_dma_g2rgb_init(void)
 {
-    rt_kprintf("0x%08X\r\n", ezh_code_gray_rgb_exe_buf);
     memcpy(ezh_code_gray_rgb_exe_buf, ezh_code_gray_rgb_code, sizeof(ezh_code_gray_rgb_code));
     
     SmartDMA_Init();

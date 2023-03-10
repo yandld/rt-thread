@@ -21,7 +21,7 @@
 #include "clock_config.h"
 #include "drv_uart.h"
 
-static uint8_t rtt_heap[1024*9];
+static uint8_t rtt_heap[1024*16];
 
 /**
  * This is the timer interrupt service routine.

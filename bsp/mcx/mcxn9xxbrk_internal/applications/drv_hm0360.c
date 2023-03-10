@@ -345,8 +345,8 @@ static  uint8_t hm0360_init_regtbl[][3]={
 		{0x31,0x7D,0x02},
 		{0x31,0x8C,0x00},
         
-		{0x35,0x00,((1<<0) | (1<<2))},   //CLK_TB divider 10.24 Contet swtich A registers
-        //{0x35,0x00,0x0A}, 
+		//{0x35,0x00,((1<<0) | (1<<2))},   //CLK_TB divider 10.24 Contet swtich A registers
+        {0x35,0x00,0x0A}, 
   
 		{0x35,0x01,0x0A},
 		{0x35,0x02,0x77},
@@ -617,6 +617,22 @@ static void pin_irq_vsync(void *args)
     }
 }
 
+static void lpfc_edma_major_callback(edma_handle_t *handle, void *userData, bool transferDone, uint32_t tcds)
+{
+    cam_device_t *cam = (cam_device_t *)userData;
+    
+    if(userData == &cam_obj[0])
+    {
+      //  rt_kprintf("cam0_dma_done\r\n");
+    }
+
+    if(userData == &cam_obj[1])
+    {
+    //    rt_kprintf("cam1_dma_done\r\n");
+    }
+  //  DMA0->CH[cam_obj[0].rx_dma_ch].TCD_CSR |= DMA_TCD_CSR_DREQ_MASK;
+}
+
 
 
 uint32_t cam_start_xfer(rt_device_t dev, uint8_t *buf)
@@ -631,7 +647,11 @@ uint32_t cam_start_xfer(rt_device_t dev, uint8_t *buf)
      * DMA maximum supports 131072 (32768 * 4) bytes in a single major loop,
      * this code has no byte count limit by modifying the macro.
      */
-
+    
+    LPSPI_DisableDMA(cam->LPSPIX, kLPSPI_RxDmaEnable);
+    EDMA_AbortTransfer(&cam->dma_rx_handle);
+    
+    
     edma_transfer_config_t dma_cfg;
 
     memset(&dma_cfg, 0x00, sizeof(dma_cfg));
@@ -689,20 +709,6 @@ uint32_t cam_start_xfer(rt_device_t dev, uint8_t *buf)
     return RT_EOK;
 }
 
-static void lpfc_edma_major_callback(edma_handle_t *handle, void *userData, bool transferDone, uint32_t tcds)
-{
-    
-    if(userData == &cam_obj[0])
-    {
-      //  rt_kprintf("cam0_dma_done\r\n");
-    }
-
-    if(userData == &cam_obj[1])
-    {
-    //    rt_kprintf("cam1_dma_done\r\n");
-    }
-  //  DMA0->CH[cam_obj[0].rx_dma_ch].TCD_CSR |= DMA_TCD_CSR_DREQ_MASK;
-}
 
 
 static rt_err_t rt_hm_open(rt_device_t dev, rt_uint16_t oflag)
@@ -755,8 +761,7 @@ static rt_err_t rt_hm_open(rt_device_t dev, rt_uint16_t oflag)
     return ret;
 }
 
-//    LPSPI_DisableDMA(cam->LPSPIX, kLPSPI_RxDmaEnable);
-//    EDMA_AbortTransfer(&cam->dma_rx_handle);
+
 
 
 static rt_ssize_t rt_hm_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
