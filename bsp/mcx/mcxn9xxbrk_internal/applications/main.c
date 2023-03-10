@@ -62,6 +62,8 @@ int main(void)
     }
 #endif
 
+    int rt_hw_hm0360_init(void);
+    rt_hw_hm0360_init();
     
     while (1)
     {

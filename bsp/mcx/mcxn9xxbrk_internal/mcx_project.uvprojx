@@ -164,14 +164,14 @@
             <AdsANop>0</AdsANop>
             <AdsANot>0</AdsANot>
             <AdsLLst>1</AdsLLst>
-            <AdsLmap>1</AdsLmap>
-            <AdsLcgr>1</AdsLcgr>
-            <AdsLsym>1</AdsLsym>
+            <AdsLmap>0</AdsLmap>
+            <AdsLcgr>0</AdsLcgr>
+            <AdsLsym>0</AdsLsym>
             <AdsLszi>1</AdsLszi>
             <AdsLtoi>1</AdsLtoi>
             <AdsLsun>1</AdsLsun>
             <AdsLven>1</AdsLven>
-            <AdsLsxf>1</AdsLsxf>
+            <AdsLsxf>0</AdsLsxf>
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M33"</AdsCpuType>
@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>0</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -374,7 +374,7 @@
             <ScatterFile>..\mcxn9xxbrk\board\linker_scripts\MCXN947_cm33_core0_flash.scf</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc></Misc>
+            <Misc>--datacompressor=off</Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -403,16 +403,6 @@
               <FileName>ov7670.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\applications\ov7670.c</FilePath>
-            </File>
-            <File>
-              <FileName>zoo_rotate.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\applications\zoo_rotate.c</FilePath>
-            </File>
-            <File>
-              <FileName>cmd_lpspi_camera.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\applications\cmd_lpspi_camera.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -420,7 +410,7 @@
                   <RVCTZI>0</RVCTZI>
                   <RVCTOtherData>0</RVCTOtherData>
                   <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>2</IncludeInBuild>
+                  <IncludeInBuild>0</IncludeInBuild>
                   <AlwaysBuild>2</AlwaysBuild>
                   <GenerateAssemblyFile>2</GenerateAssemblyFile>
                   <AssembleAssemblyFile>2</AssembleAssemblyFile>
@@ -433,7 +423,7 @@
                 <FileArmAds>
                   <Cads>
                     <interw>2</interw>
-                    <Optim>5</Optim>
+                    <Optim>0</Optim>
                     <oTime>2</oTime>
                     <SplitLS>2</SplitLS>
                     <OneElfS>2</OneElfS>
@@ -464,6 +454,26 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+            <File>
+              <FileName>zoo_rotate.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\zoo_rotate.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmd_lpspi_camera.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\cmd_lpspi_camera.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_hm0360.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\drv_hm0360.c</FilePath>
+            </File>
+            <File>
+              <FileName>smartdma_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\smartdma_lcd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -600,6 +610,21 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
             </File>
+            <File>
+              <FileName>i2c_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\i2c\i2c_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\i2c\i2c_dev.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c-bit-ops.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -629,6 +654,16 @@
               <FileName>pin_mux.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\mcxn9xxbrk\board\MCUX_Config\board\pin_mux.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_i2c0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\drivers\drv_i2c0.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_i2c1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\drivers\drv_i2c1.c</FilePath>
             </File>
           </Files>
         </Group>

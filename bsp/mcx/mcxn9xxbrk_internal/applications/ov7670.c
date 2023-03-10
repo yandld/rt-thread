@@ -17,7 +17,7 @@
 #define CAMERA_I2C                       LPI2C0
 #define CAMERA_FLEXCOMM                  LPFLEXCOMM0
 #define CAMERA_I2C_CLOCK_FREQ            CLOCK_GetBusClkFreq()
-#define CAMERA_I2C_BAUDRATE              100000U
+#define CAMERA_I2C_BAUDRATE              (100*1000)
 
 //#define OV7670_QVGA_RGB_0     /*camera resolution define*/
 //#define OV7670_VGA_RGB     /*camera resolution define*/

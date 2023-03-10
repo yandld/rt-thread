@@ -63,6 +63,8 @@ static const struct mcx_uart uarts[] =
         LP_FLEXCOMM4_IRQn,
         kCLOCK_Fro12M,
         kFRO12M_to_FLEXCOMM4,
+        kCLOCK_LPFlexComm4,
+        kCLOCK_DivFlexcom4Clk,
         "uart4",
     },
 #endif

@@ -31,13 +31,13 @@
 #if (defined(__stack_size__))
   #define Stack_Size                   __stack_size__
 #else
-  #define Stack_Size                   0x2000
+  #define Stack_Size                   0x400
 #endif
 
 #if (defined(__heap_size__))
   #define Heap_Size                    __heap_size__
 #else
-  #define Heap_Size                    0x2000
+  #define Heap_Size                    0
 #endif
 
 #if (defined(__qspi_xip__))
@@ -64,15 +64,9 @@
 #define  m_core1_image_start           0x000C0000
 #define  m_core1_image_size            0x00040000
 
-#if (defined(__use_shmem__))
-  #define  m_data_start                0x20000000
-  #define  m_data_size                 0x0004C000
-  #define  m_rpmsg_sh_mem_start        0x2004C000
-  #define  m_rpmsg_sh_mem_size         0x00002000
-#else
-  #define  m_data_start                0x20000000
-  #define  m_data_size                 0x0005E000
-#endif
+#define  m_data_start                0x20000000
+#define  m_data_size                 0x0005FE00
+
 #define  m_usb_sram_start              0x400BA000
 #define  m_usb_sram_size               0x00001000
 
@@ -95,11 +89,6 @@ LR_m_text m_interrupts_start m_interrupts_size+m_text_size {   ; load region siz
     .ANY (+RO)
   }
 
-#if (defined(__use_shmem__))
-  RPMSG_SH_MEM m_rpmsg_sh_mem_start UNINIT m_rpmsg_sh_mem_size { ; Shared memory used by RPMSG
-    * (rpmsg_sh_mem_section)
-  }
-#endif
 
   RW_m_data m_data_start m_data_size-Stack_Size-Heap_Size { ; RW data
     .ANY (+RW +ZI)
@@ -109,6 +98,11 @@ LR_m_text m_interrupts_start m_interrupts_size+m_text_size {   ; load region siz
     * (CodeQuickAccess)
     * (DataQuickAccess)
   }
+  
+  RW_m_data2 m_sramx_start m_sramx_size { ; RW data
+    .ANY (+RW +ZI)
+  }
+  
   ARM_LIB_HEAP +0 EMPTY Heap_Size {    ; Heap region growing up
   }
   ARM_LIB_STACK m_data_start+m_data_size EMPTY -Stack_Size { ; Stack region growing down
@@ -118,13 +112,8 @@ LR_m_text m_interrupts_start m_interrupts_size+m_text_size {   ; load region siz
     * (*m_usb_bdt)
   }
 
+  
   RW_m_usb_ram (m_usb_sram_start + usb_bdt_size) UNINIT (m_usb_sram_size - usb_bdt_size) {
     * (*m_usb_global)
   }
   }
-
-LR_CORE1_IMAGE m_core1_image_start {
-  CORE1_REGION m_core1_image_start m_core1_image_size {
-    * (.core1_code)
-  }
-}

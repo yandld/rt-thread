@@ -52,6 +52,7 @@ static void mcx_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
         {
             gpio_pin_config.pinDirection = kGPIO_DigitalOutput;
             port_pin_config.pullSelect = kPORT_PullDisable;
+            port_pin_config.inputBuffer = kPORT_InputBufferEnable;
         }
         break;
 
@@ -85,6 +86,7 @@ static void mcx_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
         {
             port_pin_config.openDrainEnable = kPORT_OpenDrainEnable;
             gpio_pin_config.pinDirection = kGPIO_DigitalOutput;
+            port_pin_config.inputBuffer = kPORT_InputBufferEnable;
         }
         break;
     }
