@@ -43,6 +43,12 @@ int main(void)
     rt_kprintf("using gcc, version: %d.%d\n", __GNUC__, __GNUC_MINOR__);
 #endif
     
+    rt_kprintf("CoreClock:%d\r\n", CLOCK_GetCoreSysClkFreq());
+    rt_kprintf("FROHF:%d\r\n", CLOCK_GetFreq(kCLOCK_FroHf));
+    rt_kprintf("FLCOMM0:%d\r\n", CLOCK_GetLPFlexCommClkFreq(0));
+    rt_kprintf("FLCOMM3:%d\r\n", CLOCK_GetLPFlexCommClkFreq(3));
+    rt_kprintf("FLCOMM4:%d\r\n", CLOCK_GetLPFlexCommClkFreq(4));
+    
     rt_pin_mode(LEDB_PIN, PIN_MODE_OUTPUT);  /* Set GPIO as Output */
     rt_pin_mode(BUTTON_PIN, PIN_MODE_INPUT_PULLUP); 
     
@@ -67,11 +73,18 @@ int main(void)
     
     while (1)
     {
-//        rt_pin_write(LEDB_PIN, PIN_HIGH);    /* Set GPIO output 1 */
-//        rt_thread_mdelay(500);               /* Delay 500mS */
-//        rt_pin_write(LEDB_PIN, PIN_LOW);     /* Set GPIO output 0 */
-        rt_thread_mdelay(500);               /* Delay 500mS */
+        rt_pin_write(LEDB_PIN, PIN_HIGH);    /* Set GPIO output 1 */
+        rt_thread_mdelay(200);               /* Delay 500mS */
+        rt_pin_write(LEDB_PIN, PIN_LOW);     /* Set GPIO output 0 */
+        rt_thread_mdelay(200);               /* Delay 500mS */
     }
 }
 
 // end file
+
+
+void NMI_Handler(void)
+{
+    rt_kprintf("NMI_Handler\r\n");
+}
+

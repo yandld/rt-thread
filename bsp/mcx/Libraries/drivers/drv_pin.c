@@ -5,10 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-03-13     Liuguang     the first version.
- * 2018-03-19     Liuguang     add GPIO interrupt mode support.
- * 2018-11-30     yangjie      The first version for LPC54114
- * 2019-07-20     Magicoe      The first version for LPC55S6x
+ * 2023-03-24     YangXi       the first version.
  */
 #include "drv_pin.h"
 
@@ -19,8 +16,6 @@
 #include "fsl_inputmux.h"
 
 #ifdef RT_USING_PIN
-
-
 
 
 #define GET_GPIO_PORT(x)      ((x) / 32)

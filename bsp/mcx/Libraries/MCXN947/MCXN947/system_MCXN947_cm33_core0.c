@@ -61,7 +61,7 @@ uint32_t SystemCoreClock = DEFAULT_SYSTEM_CLOCK;
 __attribute__((weak)) void SystemInit(void)
 {
     SYSCON->ECC_ENABLE_CTRL = 0x00;
-    SYSCON->AHBCLKCTRL0 = 0xFFFFFFFF;
+    //SYSCON->AHBCLKCTRL0 = 0xFFFFFFFF;
     
 #if ((__FPU_PRESENT == 1) && (__FPU_USED == 1))
     SCB->CPACR |= ((3UL << 10 * 2) | (3UL << 11 * 2)); /* set CP10, CP11 Full Access in Secure mode */

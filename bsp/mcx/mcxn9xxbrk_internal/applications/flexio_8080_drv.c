@@ -123,7 +123,7 @@ static void FLEXIO_8080_SglBeatWR_GetRegConfig(flexio_8080_SglBeat_reg_config_t 
       | FLEXIO_SHIFTCTL_SMOD(2U);                                               /* Shifter mode as transmit */
 
     reg_config->TimCmp =
-        (1U * 2U -1 << 8)                                                       /* TIMCMP[15:8] = number of beats x 2 – 1 */
+        ((1U * 2U -1) << 8)                                                       /* TIMCMP[15:8] = number of beats x 2 – 1 */
       | (FlexIO_8080_Inst.TmrDiv/2U - 1U);                                      /* TIMCMP[7:0] = baud rate divider / 2 – 1 */
 
     reg_config->TimCfg =

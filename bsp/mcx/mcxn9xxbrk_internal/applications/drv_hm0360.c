@@ -7,7 +7,7 @@
 
 #define HM_CHIP_ADDR       (0x24)
 
-#define HM_DEBUG		0
+#define HM_DEBUG		1
 #if ( HM_DEBUG == 1 )
 #include <stdio.h>
 #define HM_TRACE	rt_kprintf
@@ -17,6 +17,59 @@
 
 #define BSP_USING_CAM0
 #define BSP_USING_CAM1
+
+
+#define DEMO_LPSPI_EDMA_WATERMARK   4U
+#define DEMO_LPSPI_EDMA_MAJOR_LINES 240U /* Must be integer counts! */
+
+#define DEMO_LPSPI_RES_HORIZONTAL   320UL
+#define DEMO_LPSPI_RES_VERTICAL     240UL
+#define DEMO_LPSPI_PIX_SIZE         1U
+#define DEMO_LPSPI_LINE_SIZE        (DEMO_LPSPI_RES_HORIZONTAL * DEMO_LPSPI_PIX_SIZE)
+#define DEMO_LPSPI_BUFFER_SIZE      (DEMO_LPSPI_LINE_SIZE * DEMO_LPSPI_RES_VERTICAL)
+
+typedef struct 
+{
+    struct rt_device            parent;
+    struct rt_i2c_bus_device    *bus;
+    uint8_t                     vsync_pin;
+    uint8_t                     chip_addr;
+    
+    LPSPI_Type                  *LPSPIX;
+    DMA_Type                    *DMAX;
+    uint32_t                    rx_dma_ch;
+    edma_handle_t               dma_rx_handle;
+    dma_request_source_t        dma_req_src;
+    const char                  *name;
+    const char                  *i2c_bus_name;
+}cam_device_t;
+
+
+static  cam_device_t cam_obj[] =
+{
+#ifdef BSP_USING_CAM0
+    {
+        .vsync_pin = ((0*32)+23),
+        .name = "cam0",
+        .i2c_bus_name = "i2c0",
+        .LPSPIX = LPSPI5,
+        .DMAX = DMA0,
+        .rx_dma_ch = 1,
+        .dma_req_src = kDmaRequestMuxLpFlexcomm5Rx,
+    },
+#endif
+#ifdef BSP_USING_CAM1
+    { 
+        .vsync_pin = ((0*32)+22),
+        .name = "cam1",
+        .i2c_bus_name = "i2c1",
+        .LPSPIX = LPSPI3,
+        .DMAX = DMA1,
+        .rx_dma_ch = 2,
+        .dma_req_src = kDmaRequestMuxLpFlexcomm3Rx,
+    },
+#endif
+};
 
 
 static  uint8_t hm0360_init_regtbl[][3]={
@@ -345,8 +398,8 @@ static  uint8_t hm0360_init_regtbl[][3]={
 		{0x31,0x7D,0x02},
 		{0x31,0x8C,0x00},
         
-		//{0x35,0x00,((1<<0) | (1<<2))},   //CLK_TB divider 10.24 Contet swtich A registers
-        {0x35,0x00,0x0A}, 
+		{0x35,0x00,((1<<0) | (1<<2))},   /* CLK_TB divider 10.24 Contet swtich A registers 24M */
+        //{0x35,0x00,0x0A},     /* 12M */
   
 		{0x35,0x01,0x0A},
 		{0x35,0x02,0x77},
@@ -547,64 +600,13 @@ static  uint8_t hm0360_init_regtbl[][3]={
 
 
 
-#define DEMO_LPSPI_EDMA_WATERMARK   4U
-#define DEMO_LPSPI_EDMA_MAJOR_LINES 240U /* Must be integer counts! */
-
-#define DEMO_LPSPI_RES_HORIZONTAL   320UL
-#define DEMO_LPSPI_RES_VERTICAL     240UL
-#define DEMO_LPSPI_PIX_SIZE         1U
-#define DEMO_LPSPI_LINE_SIZE        (DEMO_LPSPI_RES_HORIZONTAL * DEMO_LPSPI_PIX_SIZE)
-#define DEMO_LPSPI_BUFFER_SIZE      (DEMO_LPSPI_LINE_SIZE * DEMO_LPSPI_RES_VERTICAL)
-
-typedef struct 
-{
-    struct rt_device            parent;
-    struct rt_i2c_bus_device    *bus;
-    uint8_t                     vsync_pin;
-    uint8_t                     chip_addr;
-    
-    LPSPI_Type                  *LPSPIX;
-    DMA_Type                    *DMAX;
-    uint32_t                    rx_dma_ch;
-    edma_handle_t               dma_rx_handle;
-    dma_request_source_t        dma_req_src;
-    const char                  *name;
-    const char                  *i2c_bus_name;
-}cam_device_t;
-
-
-static  cam_device_t cam_obj[] =
-{
-#ifdef BSP_USING_CAM0
-    {
-        .vsync_pin = ((1*32)+11),
-        .name = "cam0",
-        .i2c_bus_name = "i2c0",
-        .LPSPIX = LPSPI5,
-        .DMAX = DMA1,
-        .rx_dma_ch = 1,
-        .dma_req_src = kDmaRequestMuxLpFlexcomm5Rx,
-    },
-#endif
-#ifdef BSP_USING_CAM1
-    {
-        .vsync_pin = ((1*32)+22),
-        .name = "cam1",
-        .i2c_bus_name = "i2c1",
-        .LPSPIX = LPSPI3,
-        .DMAX = DMA1,
-        .rx_dma_ch = 2,
-        .dma_req_src = kDmaRequestMuxLpFlexcomm3Rx,
-    },
-#endif
-};
 
 
 
-static rt_err_t rt_hm_init(rt_device_t dev)
-{    
-    return RT_EOK;
-}
+//static rt_err_t rt_hm_init(rt_device_t dev)
+//{    
+//    return RT_EOK;
+//}
 
 
 static void pin_irq_vsync(void *args)
@@ -623,12 +625,12 @@ static void lpfc_edma_major_callback(edma_handle_t *handle, void *userData, bool
     
     if(userData == &cam_obj[0])
     {
-      //  rt_kprintf("cam0_dma_done\r\n");
+      //  HM_TRACE("cam0_dma_done\r\n");
     }
 
     if(userData == &cam_obj[1])
     {
-    //    rt_kprintf("cam1_dma_done\r\n");
+    //    HM_TRACE("cam1_dma_done\r\n");
     }
   //  DMA0->CH[cam_obj[0].rx_dma_ch].TCD_CSR |= DMA_TCD_CSR_DREQ_MASK;
 }
@@ -676,7 +678,6 @@ uint32_t cam_start_xfer(rt_device_t dev, uint8_t *buf)
         cam->DMAX->CH[cam->rx_dma_ch].TCD_CSR &= ~(DMA_TCD_CSR_DREQ_MASK);
     }
 
-    
     lpspi_slave_config_t slave_cfg;
     LPSPI_SlaveGetDefaultConfig(&slave_cfg);
 
@@ -730,7 +731,7 @@ static rt_err_t rt_hm_open(rt_device_t dev, rt_uint16_t oflag)
     
     if(buf[0] == 0x03)
     {
-        rt_kprintf("hm0360 found!\r\n", buf[0]);
+        HM_TRACE("hm0360 found!\r\n", buf[0]);
         
         for(int i=0; i<ARRAY_SIZE(hm0360_init_regtbl); i++)
         {
@@ -739,7 +740,7 @@ static rt_err_t rt_hm_open(rt_device_t dev, rt_uint16_t oflag)
     }
     else
     {
-        rt_kprintf("hm0360 not found! val:0x%X\r\n", buf[0]);
+        HM_TRACE("hm0360 not found! val:0x%X\r\n", buf[0]);
     }
     
 
@@ -749,26 +750,22 @@ static rt_err_t rt_hm_open(rt_device_t dev, rt_uint16_t oflag)
     EDMA_CreateHandle(&cam->dma_rx_handle, cam->DMAX, cam->rx_dma_ch);
     EDMA_SetCallback(&cam->dma_rx_handle, lpfc_edma_major_callback, cam);
     
-
-    
     /* VSYNC */
     rt_pin_mode(cam->vsync_pin, PIN_MODE_INPUT); 
     rt_pin_attach_irq(cam->vsync_pin, PIN_IRQ_MODE_FALLING, pin_irq_vsync, dev);
     rt_pin_irq_enable(cam->vsync_pin, 1);
-    
-
-    
+ 
     return ret;
 }
 
 
 
 
-static rt_ssize_t rt_hm_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
-{
-    cam_device_t *cam = (cam_device_t *)dev;
-    return size;
-}
+//static rt_ssize_t rt_hm_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+//{
+//    cam_device_t *cam = (cam_device_t *)dev;
+//    return size;
+//}
 
 
 static rt_ssize_t rt_hm_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
@@ -786,10 +783,10 @@ int rt_hw_hm0360_init(void)
         cam_obj[i].parent.type               = RT_Device_Class_Miscellaneous;
         cam_obj[i].parent.rx_indicate        = RT_NULL;
         cam_obj[i].parent.tx_complete        = RT_NULL;
-        cam_obj[i].parent.init               = rt_hm_init;
+        cam_obj[i].parent.init               = RT_NULL;
         cam_obj[i].parent.open               = rt_hm_open;
         cam_obj[i].parent.close              = RT_NULL;
-        cam_obj[i].parent.read               = rt_hm_read;
+        cam_obj[i].parent.read               = RT_NULL;
         cam_obj[i].parent.write              = rt_hm_write;
         cam_obj[i].parent.user_data          = RT_NULL;
         
@@ -801,6 +798,8 @@ int rt_hw_hm0360_init(void)
         cam_obj[i].chip_addr = HM_CHIP_ADDR;
         rt_device_register(&cam_obj[i].parent, cam_obj[i].name, RT_DEVICE_FLAG_RDWR);   
     }
+    
+
 
     return RT_EOK;
 }
