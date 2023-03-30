@@ -27,6 +27,7 @@ size_t rt_ioremap_size;
 enum ioremap_type
 {
     MM_AREA_TYPE_PHY,
+    MM_AREA_TYPE_PHY_WT,
     MM_AREA_TYPE_PHY_CACHED
 };
 
@@ -52,6 +53,9 @@ static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
     case MM_AREA_TYPE_PHY:
         attr = MMU_MAP_K_DEVICE;
         break;
+    case MM_AREA_TYPE_PHY_WT:
+        attr = MMU_MAP_K_RW;
+        break;
     case MM_AREA_TYPE_PHY_CACHED:
         attr = MMU_MAP_K_RWCB;
         break;
@@ -62,7 +66,7 @@ static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
 
     if (err)
     {
-        LOG_W("IOREMAP 0x%lx failed", paddr);
+        LOG_W("IOREMAP 0x%lx failed %d\n", paddr, err);
         v_addr = NULL;
     }
     else
@@ -82,6 +86,11 @@ void *rt_ioremap_nocache(void *paddr, size_t size)
     return _ioremap_type(paddr, size, MM_AREA_TYPE_PHY);
 }
 
+void *rt_ioremap_wt(void *paddr, size_t size)
+{
+    return _ioremap_type(paddr, size, MM_AREA_TYPE_PHY_WT);
+}
+
 void *rt_ioremap_cached(void *paddr, size_t size)
 {
     return _ioremap_type(paddr, size, MM_AREA_TYPE_PHY_CACHED);
@@ -89,7 +98,7 @@ void *rt_ioremap_cached(void *paddr, size_t size)
 
 void rt_iounmap(volatile void *vaddr)
 {
-    rt_aspace_unmap(&rt_kernel_space, (void *)vaddr, 1);
+    rt_aspace_unmap(&rt_kernel_space, (void *)vaddr);
 }
 
 #else

@@ -26,13 +26,28 @@ struct ifx_sw_spi_cs
     rt_uint32_t pin;
 };
 
+#ifdef BSP_USING_SPI0
+    static struct rt_spi_bus spi_bus0;
+#endif
 #ifdef BSP_USING_SPI3
     static struct rt_spi_bus spi_bus3;
 #endif
 
+#ifdef BSP_USING_SPI6
+    static struct rt_spi_bus spi_bus6;
+#endif
 static struct ifx_spi spi_bus_obj[] =
 {
-    #ifdef BSP_USING_SPI3
+    #if defined(BSP_USING_SPI0)
+    {
+        .bus_name = "spi0",
+        .spi_bus = &spi_bus0,
+        .sck_pin = GET_PIN(0, 4),
+        .miso_pin = GET_PIN(0, 3),
+        .mosi_pin = GET_PIN(0, 2),
+    },
+    #endif
+    #if defined(BSP_USING_SPI3)
     {
         .bus_name = "spi3",
         .spi_bus = &spi_bus3,
@@ -41,11 +56,20 @@ static struct ifx_spi spi_bus_obj[] =
         .mosi_pin = GET_PIN(6, 0),
     },
     #endif
+    #if defined(BSP_USING_SPI6)
+    {
+        .bus_name = "spi6",
+        .spi_bus = &spi_bus6,
+        .sck_pin = GET_PIN(12, 2),
+        .miso_pin = GET_PIN(12, 1),
+        .mosi_pin = GET_PIN(12, 0),
+    },
+    #endif
 };
 
 /* private rt-thread spi ops function */
 static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_configuration *configuration);
-static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message);
+static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message);
 
 static struct rt_spi_ops ifx_spi_ops =
 {
@@ -60,7 +84,7 @@ static void ifx_spi_init(struct ifx_spi *ifx_spi)
     result = cyhal_spi_init(ifx_spi->spi_obj, ifx_spi->mosi_pin, ifx_spi->miso_pin, ifx_spi->sck_pin,
                             NC, NULL, ifx_spi->spi_obj->data_bits, ifx_spi->spi_obj->mode, false);
 
-    RT_ASSERT(result != RT_ERROR);
+    RT_ASSERT(result == RT_EOK);
 
     rt_kprintf("[%s] Freq:[%d]HZ\n", ifx_spi->bus_name, ifx_spi->freq);
 
@@ -89,7 +113,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     }
     else
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     uint32_t max_hz;
@@ -122,7 +146,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     return RT_EOK;
 }
 
-static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     RT_ASSERT(device != NULL);
     RT_ASSERT(message != NULL);
@@ -134,9 +158,9 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     struct ifx_sw_spi_cs *cs = device->parent.user_data;
 
     /* take CS */
-    if (message->cs_take)
+    if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
-        cyhal_gpio_write(cs->pin, PIN_LOW);
+        cyhal_gpio_write(device->cs_pin, PIN_LOW);
         LOG_D("spi take cs\n");
     }
 
@@ -161,12 +185,12 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         }
     }
 
-    if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
+    if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
-            cyhal_gpio_write(cs->pin, PIN_LOW);
+            cyhal_gpio_write(device->cs_pin, PIN_LOW);
         else
-            cyhal_gpio_write(cs->pin, PIN_HIGH);
+            cyhal_gpio_write(device->cs_pin, PIN_HIGH);
     }
 
     return message->length;

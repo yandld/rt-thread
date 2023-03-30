@@ -153,7 +153,7 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
         return drv_pwm_get(htim, configuration);
 
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 }
 
@@ -243,7 +243,7 @@ static int pwm_sample(int argc, char *argv[])
     if (pwm_dev == RT_NULL)
     {
         rt_kprintf("pwm sample run failed! can't find %s device!\n", PWM_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, period, pulse);

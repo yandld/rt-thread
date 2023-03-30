@@ -26,20 +26,11 @@
 #define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
 
+RT_CTASSERT(order_huge_pg, RT_PAGE_MAX_ORDER > ARCH_PAGE_SHIFT - 2);
+RT_CTASSERT(size_width, sizeof(rt_size_t) == sizeof(void *));
+
 #ifdef RT_USING_SMART
 #include "lwp_arch_comm.h"
-
-#define CT_ASSERT(name, x)                                                     \
-    struct assert_##name                                                       \
-    {                                                                          \
-        char ary[2 * (x)-1];                                                   \
-    }
-#ifdef ARCH_CPU_64BIT
-CT_ASSERT(order_huge_pg, RT_PAGE_MAX_ORDER > ARCH_PAGE_SHIFT - 2);
-#else
-CT_ASSERT(size_width, sizeof(rt_size_t) == sizeof(rt_size_t));
-#endif /* ARCH_CPU_64BIT */
-
 #endif /* RT_USING_SMART */
 
 static rt_size_t init_mpr_align_start;
@@ -68,13 +59,13 @@ static void hint_free(rt_mm_va_hint_t hint)
     hint->prefer = rt_mpr_start;
 }
 
-static void on_page_fault(struct rt_varea *varea, struct rt_mm_fault_msg *msg)
+static void on_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg *msg)
 {
     void *init_start = (void *)init_mpr_align_start;
     void *init_end = (void *)init_mpr_align_end;
-    if (msg->vaddr < init_end && msg->vaddr >= init_start)
+    if (msg->fault_vaddr < init_end && msg->fault_vaddr >= init_start)
     {
-        rt_size_t offset = msg->vaddr - init_start;
+        rt_size_t offset = msg->fault_vaddr - init_start;
         msg->response.status = MM_FAULT_STATUS_OK;
         msg->response.vaddr = init_mpr_cont_start + offset;
         msg->response.size = ARCH_PAGE_SIZE;
