@@ -700,11 +700,6 @@
               <FilePath>..\..\..\src\object.c</FilePath>
             </File>
             <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
-            </File>
-            <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\thread.c</FilePath>
@@ -713,6 +708,11 @@
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>scheduler_up.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
         </Group>

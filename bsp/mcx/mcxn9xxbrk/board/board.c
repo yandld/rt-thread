@@ -21,7 +21,6 @@
 #include "clock_config.h"
 #include "drv_uart.h"
 
-static uint8_t rtt_heap[1024*16];
 
 /**
  * This is the timer interrupt service routine.
@@ -61,7 +60,6 @@ void rt_hw_board_init()
     CLOCK_EnableClock(kCLOCK_Gpio4);  
 
     CLOCK_EnableClock(kCLOCK_Pint);  
-
 
 
     edma_config_t userConfig = {0};
@@ -109,8 +107,8 @@ void rt_hw_board_init()
 #endif
 
 #ifdef RT_USING_HEAP
-    //rt_kprintf("sram heap, begin: 0x%p, end: 0x%p\n", HEAP_BEGIN, HEAP_END);
-    rt_system_heap_init((void *)rtt_heap, (void *)(rtt_heap+sizeof(rtt_heap)));
+    rt_kprintf("sram heap, begin: 0x%p, end: 0x%p\n", HEAP_BEGIN, HEAP_END);
+    rt_system_heap_init((void *)HEAP_BEGIN, (void *)(HEAP_END));
 #endif
 }
 

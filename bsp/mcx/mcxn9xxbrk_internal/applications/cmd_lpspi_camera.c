@@ -27,6 +27,7 @@ uint8_t cam1_buf[320*240] __attribute__ ((aligned (4)));
 
 uint8_t display_swtich = 0;
 uint16_t  lcd_buf[320*240*2] __attribute__ ((aligned (32)));
+uint32_t last_time = 0;
 
 uint32_t cam_start_xfer(rt_device_t dev, uint8_t *buf);
     
@@ -73,19 +74,17 @@ static void camera_thread_entry(void *parameter)
     CLOCK_AttachClk(kPLL_DIV_to_FLEXCOMM5);
     CLOCK_SetClkDiv(kCLOCK_DivFlexcom5Clk, 1U);
     
-    /* init I2C0 */
-    CLOCK_SetClkDiv(kCLOCK_DivFlexcom0Clk, 1u);
-    CLOCK_AttachClk(kFRO12M_to_FLEXCOMM0);
-    CLOCK_EnableClock(kCLOCK_LPFlexComm0);
-    CLOCK_EnableClock(kCLOCK_LPI2c0);
-    
+//    /* init I2C0 */
+//    CLOCK_SetClkDiv(kCLOCK_DivFlexcom0Clk, 1u);
+//    CLOCK_AttachClk(kFRO12M_to_FLEXCOMM0);
+//    CLOCK_EnableClock(kCLOCK_LPFlexComm0);
+//    CLOCK_EnableClock(kCLOCK_LPI2c0);
     
     /* reset */
     rt_pin_mode(CAM_RST_PIN, PIN_MODE_OUTPUT); 
     rt_pin_write(CAM_RST_PIN, 0); 
     rt_thread_mdelay(1);
     rt_pin_write(CAM_RST_PIN, 1); 
-
     
     /* Init FlexIO for this demo. */
     Demo_FLEXIO_8080_Init();
@@ -119,11 +118,10 @@ static void camera_thread_entry(void *parameter)
         rt_device_open(cam1, RT_DEVICE_OFLAG_RDWR);
     }
 
- //   SYSCON->AHBMATPRIO = 1<<10;
+    SYSCON->AHBMATPRIO |= SYSCON_AHBMATPRIO_DMA1_MASK;
     
     while(1)
     {
-        
         if(rt_sem_take(cam0_sem, RT_WAITING_FOREVER) == RT_EOK)
         {
             smart_dma_g2rgb_run(cam0_buf, lcd_buf, 320*240);
@@ -134,12 +132,15 @@ static void camera_thread_entry(void *parameter)
             area.y1 = 0;
             area.y2 = 240;
             
-            if(WR_DMATransferDone == true && display_swtich == 1)
+            if(WR_DMATransferDone == true && display_swtich == 1 || (rt_tick_get_millisecond() - last_time > 1000))
             {
                 LCD_SetWindow(&area);
                 FLEXIO_8080_MulBeatWR_nPrm(0x2C, lcd_buf, 320*(240*1));
                 display_swtich = 0;
+                last_time = rt_tick_get_millisecond();
+                rt_kprintf("cam0\r\n");
             }
+            
         }
 
         if(rt_sem_take(cam1_sem, RT_WAITING_FOREVER) == RT_EOK)
@@ -152,13 +153,15 @@ static void camera_thread_entry(void *parameter)
             area.y1 = 240;
             area.y2 = 240+240;
                         
-            if(WR_DMATransferDone == true && display_swtich == 0)
+            if(WR_DMATransferDone == true && display_swtich == 0 || (rt_tick_get_millisecond() - last_time > 1000))
             {
                 LCD_SetWindow(&area);
                 FLEXIO_8080_MulBeatWR_nPrm(0x2C, lcd_buf+(320*240*1), 320*(240*1));
                 display_swtich = 1;
+                last_time = rt_tick_get_millisecond();
+                rt_kprintf("cam1\r\n");
             }
-
+            
         }
     }
 }
