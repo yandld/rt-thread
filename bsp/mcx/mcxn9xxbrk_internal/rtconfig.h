@@ -239,8 +239,11 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_PIN
+#define RT_USING_ADC
+#define RT_USING_DAC
 #define BSP_USING_UART
 #define BSP_USING_UART6
+#define BSP_USING_ADC0
 #define HW_UART0_BAUDRATE_115200
 
 /* Onboard Peripheral Drivers */

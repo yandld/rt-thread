@@ -75,7 +75,7 @@ void bs_calc_result(bs_t *bs)
     
     bs->var = bs->sum / (bs->cnt - 1);
     bs->std = sqrt(bs->var);
-    bs->ENOB = 16 - log(bs->max - bs->min);
+    bs->ENOB = 16 - log2(bs->max - bs->min);
 }
 
 void bs_free(bs_t *bs)

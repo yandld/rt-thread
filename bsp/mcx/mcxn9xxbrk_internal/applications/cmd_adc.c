@@ -10,19 +10,22 @@
 
 #include "clock_config.h"
 #include "fsl_lpadc.h"
+#include "fsl_spc.h"
 #include "fsl_common.h"
 #include "fsl_ctimer.h"
 #include "basic_statistics.h"
 
 
 
+/* 
+ADC CHANNEL: 
+27:  PMC BG+
+28:  VREF BG+
+29:  VBAT/4
+*/
 
 #define TEST_SIZE               (400)
 #define ADC_CHL                 (0)
-#define DEMO_LPADC_BASE         ADC0
-#define DEMO_LPADC_USER_CMDID   1U
-
-
 #define CTIMER          CTIMER4         /* Timer 4 */
 
 
@@ -34,7 +37,7 @@ static void irq_tmr(void *parameter)
     last_tick = CTIMER->TC;
 }
 
-int adc(void)
+int adc_performance_test(void)
 {
     int i;
     uint32_t tick;
@@ -54,87 +57,35 @@ int adc(void)
     CTIMER_Init(CTIMER, &config);
     CTIMER_StartTimer(CTIMER);
     
-    lpadc_config_t adc_config;
-    lpadc_conv_trigger_config_t trig_config;
-    lpadc_conv_command_config_t cmd_cfg;
-    lpadc_conv_result_t mLpadcResultConfigStruct;
 
-    CLOCK_SetClkDiv(kCLOCK_DivAdc0Clk, 2);
-    CLOCK_AttachClk(kCLK_IN_to_ADC0);
-
-    /* enable VREF */
-    SPC0->ACTIVE_CFG1 |= 0x1;
-
-
+    rt_adc_device_t adc_dev = (rt_adc_device_t)rt_device_find("adc0");
+    
+    RT_ASSERT(adc_dev != RT_NULL);
+    
+    rt_adc_enable(adc_dev, ADC_CHL);
+    
     rt_kprintf("ADC0 CLOCK:%d Hz\r\n", CLOCK_GetAdcClkFreq(0));
     rt_kprintf("ADC1 CLOCK:%d Hz\r\n", CLOCK_GetAdcClkFreq(1));
     
-    LPADC_GetDefaultConfig(&adc_config);
-    adc_config.enableAnalogPreliminary = true;
-/*
-CFG[REFSEL]=00, VREFH reference pin
-CFG[REFSEL]=01, ANA_7(VREFI/VREFO) pin
-CFG[REFSEL]=10, VDDA supply pin
-*/
-    adc_config.referenceVoltageSource = 0;
-    adc_config.conversionAverageMode = kLPADC_ConversionAverage128;
-    adc_config.powerLevelMode = kLPADC_PowerLevelAlt4;
-    adc_config.enableConvPause       = false;
-    adc_config.convPauseDelay        = 0;
-    
-    LPADC_Init(DEMO_LPADC_BASE, &adc_config);
-    LPADC_DoOffsetCalibration(DEMO_LPADC_BASE);
-    LPADC_DoAutoCalibration(DEMO_LPADC_BASE);
-        
-    /* Set conversion CMD configuration. */
-    LPADC_GetDefaultConvCommandConfig(&cmd_cfg);
-    cmd_cfg.channelNumber = ADC_CHL;
-    cmd_cfg.channelBNumber = ADC_CHL;
-    cmd_cfg.conversionResolutionMode = kLPADC_ConversionResolutionHigh;
-    cmd_cfg.hardwareAverageMode = kLPADC_HardwareAverageCount4;
-    cmd_cfg.loopCount = 0;
-    cmd_cfg.sampleTimeMode = kLPADC_SampleTimeADCK7;
-    cmd_cfg.enableChannelB = true;
-/*
-    kLPADC_SampleChannelSingleEndSideA = 0U,
-    kLPADC_SampleChannelSingleEndSideB = 1U, 
-    kLPADC_SampleChannelDiffBothSide = 2U, 
-    kLPADC_SampleChannelDualSingleEndBothSide =
-*/
-    cmd_cfg.sampleChannelMode = kLPADC_SampleChannelSingleEndSideA;
-    LPADC_SetConvCommandConfig(DEMO_LPADC_BASE, DEMO_LPADC_USER_CMDID, &cmd_cfg);
-
-    /* Set trigger configuration. */
-    LPADC_GetDefaultConvTriggerConfig(&trig_config);
-    trig_config.targetCommandId       = DEMO_LPADC_USER_CMDID;
-    trig_config.enableHardwareTrigger = false;
-    LPADC_SetConvTriggerConfig(DEMO_LPADC_BASE, 0U, &trig_config); /* Configurate the trigger0. */
-
     rt_kprintf("ADC_CFG:0x%08X\r\n", ADC0->CFG);
     rt_kprintf("ADC_CTL:0x%08X\r\n", ADC0->CTRL);
     
-    int32_t tmp32;
-    uint16_t data;
+
+    uint32_t result = 0;
     
     bs_t bs;
     bs_init(&bs, TEST_SIZE);
     
     for(i=0; i<TEST_SIZE; i++)
     {
-        LPADC_DoSoftwareTrigger(DEMO_LPADC_BASE, 1U); /* 1U is trigger0 mask. */
-        while (!LPADC_GetConvResult(DEMO_LPADC_BASE, &mLpadcResultConfigStruct, 0))
-        {
-        }
+        result = rt_adc_read(adc_dev, ADC_CHL);
     }
     
     tick = CTIMER->TC;
     for(i=0; i<TEST_SIZE; i++)
     {
-        LPADC_DoSoftwareTrigger(DEMO_LPADC_BASE, 1U); /* 1U is trigger0 mask. */
-        while (!LPADC_GetConvResult(DEMO_LPADC_BASE, &mLpadcResultConfigStruct, 0))
-        {
-        }
-        bs_add_sample(&bs, mLpadcResultConfigStruct.convValue);
+        result = rt_adc_read(adc_dev, ADC_CHL);
+        bs_add_sample(&bs, result);
     }
     tick = CTIMER->TC - tick;
     
@@ -146,6 +97,8 @@ CFG[REFSEL]=10, VDDA supply pin
 
     bs_dump(&bs, 0);
     bs_free(&bs);
+    
+    
     return RT_EOK;
 }
 
@@ -155,5 +108,5 @@ CFG[REFSEL]=10, VDDA supply pin
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-MSH_CMD_EXPORT(adc, the adc adc adc);
+MSH_CMD_EXPORT(adc_performance_test, the adc adc adc);
 #endif
