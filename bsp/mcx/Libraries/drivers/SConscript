@@ -17,7 +17,7 @@ if  GetDepend('BSP_USING_SPI'):
     src += ['drv_spi.c']
 
 if  GetDepend('BSP_USING_SDIO'):
-    src += ['drv_sdif.c']
+    src += ['drv_sdio.c']
 
 if  GetDepend('BSP_USING_I2C'):
     src += ['drv_i2c.c']

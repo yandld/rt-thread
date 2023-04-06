@@ -90,9 +90,11 @@
 #define RT_USING_PIN
 
 #define RT_USING_I2C
+#define BSP_USING_I2C0
+#define BSP_USING_I2C1
 //#define RT_I2C_BIT_DEBUG
 //#define RT_I2C_DEBUG
-#define RT_USING_I2C_BITOPS
+//#define RT_USING_I2C_BITOPS
 
 /* Using USB */
 

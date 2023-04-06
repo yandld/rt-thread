@@ -13,7 +13,7 @@
  */
 
 #include <rtdevice.h>
-//#include "dfs_fs.h"
+#include "dfs_fs.h"
 #include "drv_pin.h"
 
 
@@ -26,10 +26,6 @@
 #include "fsl_lpuart.h"
 
 
-void sync_in_cb(void *args)
-{
-    rt_kprintf("!!sync_in_cb\r\n");
-}
 
 int main(void)
 {
@@ -46,9 +42,8 @@ int main(void)
     rt_pin_mode(LEDB_PIN, PIN_MODE_OUTPUT);  /* Set GPIO as Output */
     rt_pin_mode(BUTTON_PIN, PIN_MODE_INPUT_PULLUP); 
     
-    void sync_in_cb(void *args);
-    rt_pin_attach_irq(BUTTON_PIN, PIN_IRQ_MODE_FALLING, sync_in_cb, RT_NULL);
-    rt_pin_irq_enable(BUTTON_PIN, 1);
+    
+   rt_kprintf("MCXN947 HelloWorld\r\n");
     
 #ifdef RT_USING_SDIO
     rt_thread_mdelay(2000);

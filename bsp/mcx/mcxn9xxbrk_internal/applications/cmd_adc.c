@@ -45,8 +45,6 @@ int adc_performance_test(void)
     //SPC0->CNTRL &= ~(1<<2);
     rt_kprintf("SPC0->CNTRL:0x%08X\r\n", SPC0->CNTRL);
     
-    PORT4->PCR[0]   = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* ANA_0, ADC0_A0 */
-    PORT4->PCR[1]   = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* ANA_1, ADC0_B0 */
     
     ctimer_config_t config;
     ctimer_match_config_t matchConfig;

@@ -57,6 +57,7 @@ src += ['MCXN947/drivers/fsl_lpuart.c']
 src += ['MCXN947/drivers/fsl_mrt.c']
 src += ['MCXN947/drivers/fsl_reset.c']
 src += ['MCXN947/drivers/fsl_vref.c']
+src += ['MCXN947/drivers/fsl_usdhc.c']
 
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)

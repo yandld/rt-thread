@@ -49,9 +49,9 @@ static  cam_device_t cam_obj[] =
 {
 #ifdef BSP_USING_CAM0
     {
-        .vsync_pin = ((0*32)+23),
+        .vsync_pin = (23),
         .name = "cam0",
-        .i2c_bus_name = "i2c0",
+        .i2c_bus_name = "i2c1",
         .LPSPIX = LPSPI5,
         .DMAX = DMA1,
         .rx_dma_ch = 1,
@@ -60,9 +60,9 @@ static  cam_device_t cam_obj[] =
 #endif
 #ifdef BSP_USING_CAM1
     { 
-        .vsync_pin = ((0*32)+22),
+        .vsync_pin = (22),
         .name = "cam1",
-        .i2c_bus_name = "i2c1",
+        .i2c_bus_name = "i2c0",
         .LPSPIX = LPSPI3,
         .DMAX = DMA1,
         .rx_dma_ch = 2,
