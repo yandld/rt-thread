@@ -106,5 +106,5 @@ int adc_performance_test(void)
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-MSH_CMD_EXPORT(adc_performance_test, the adc adc adc);
+MSH_CMD_EXPORT(adc_performance_test, the adc performance test);
 #endif

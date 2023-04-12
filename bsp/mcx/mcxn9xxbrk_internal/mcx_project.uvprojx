@@ -340,7 +340,7 @@
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\drivers;.;..\Libraries\MCXN947\middleware\sdmmc\inc;..\Libraries\MCXN947\MCXN947\drivers;board\MCUX_Config\board;..\Libraries\MCXN947\MCXN947;board;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\poll;..\..\..\libcpu\arm\cortex-m33;..\..\..\include;..\..\..\components\libc\posix\io\stdio;..\Libraries\CMSIS\Core\Include;..\Libraries\MCXN947\components\codec;..\..\..\components\libc\compilers\common\extension;applications;..\Libraries\drivers\config;..\Libraries\MCXN947\middleware\sdmmc\port;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\mcxn9xxbrk\board\MCUX_Config\board</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\drivers;.;..\Libraries\MCXN947\middleware\sdmmc\inc;..\Libraries\MCXN947\MCXN947\drivers;board\MCUX_Config\board;..\Libraries\MCXN947\MCXN947;board;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\poll;..\..\..\libcpu\arm\cortex-m33;..\..\..\include;..\..\..\components\libc\posix\io\stdio;..\Libraries\CMSIS\Core\Include;..\Libraries\MCXN947\components\codec;..\..\..\components\libc\compilers\common\extension;applications;..\Libraries\drivers\config;..\Libraries\MCXN947\middleware\sdmmc\port;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\mcxn9xxbrk\board\MCUX_Config\board;.\applications\st7796</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -428,6 +428,16 @@
               <FileName>basic_statistics.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\applications\basic_statistics.c</FilePath>
+            </File>
+            <File>
+              <FileName>st7796.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\st7796\st7796.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmd_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\cmd_test.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -691,6 +701,16 @@
                 </FileArmAds>
               </FileOption>
             </File>
+            <File>
+              <FileName>spi_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\spi\spi_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\spi\spi_dev.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -730,6 +750,11 @@
               <FileName>drv_i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\drivers\drv_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\drivers\drv_spi.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1080,6 +1105,11 @@
               <FileName>fsl_syspm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_syspm.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpspi_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpspi_edma.c</FilePath>
             </File>
           </Files>
         </Group>

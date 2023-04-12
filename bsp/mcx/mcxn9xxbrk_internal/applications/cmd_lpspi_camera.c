@@ -65,6 +65,9 @@ static void camera_thread_entry(void *parameter)
 {
     int i;
     
+    int rt_hw_hm0360_init(void);
+    rt_hw_hm0360_init();
+    
     CLOCK_SetClkDiv(kCLOCK_DivPllClk, 3U); /* 150MHz / 3 = 50MHz */
     
     /* SPI */
