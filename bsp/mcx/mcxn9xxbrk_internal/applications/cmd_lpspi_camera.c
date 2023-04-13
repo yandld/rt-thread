@@ -26,11 +26,11 @@ uint8_t cam0_buf[320*240] __attribute__ ((aligned (4)));
 uint8_t cam1_buf[320*240] __attribute__ ((aligned (4)));
 
 uint8_t display_swtich = 0;
-uint16_t  lcd_buf[320*240*2] __attribute__ ((aligned (32)));
+uint16_t  lcd_buf[320*240] __attribute__ ((aligned (32)));
 uint32_t last_time = 0;
 
 uint32_t cam_start_xfer(rt_device_t dev, uint8_t *buf);
-    
+int rt_hw_hm0360_init(void);
     
 //static void gray2rgb565(uint8_t *gray_buf, uint16_t* rgb565_buf, uint32_t len)
 //{
@@ -65,23 +65,18 @@ static void camera_thread_entry(void *parameter)
 {
     int i;
     
-    int rt_hw_hm0360_init(void);
+
     rt_hw_hm0360_init();
     
-    CLOCK_SetClkDiv(kCLOCK_DivPllClk, 3U); /* 150MHz / 3 = 50MHz */
+    //CLOCK_SetClkDiv(kCLOCK_DivPllClk, 2U); /* 150MHz / 3 = 50MHz */
     
     /* SPI */
-    CLOCK_AttachClk(kPLL_DIV_to_FLEXCOMM3);
+    CLOCK_AttachClk(kFRO_HF_DIV_to_FLEXCOMM3);
     CLOCK_SetClkDiv(kCLOCK_DivFlexcom3Clk, 1U);
     
-    CLOCK_AttachClk(kPLL_DIV_to_FLEXCOMM5);
+    CLOCK_AttachClk(kFRO_HF_DIV_to_FLEXCOMM5);
     CLOCK_SetClkDiv(kCLOCK_DivFlexcom5Clk, 1U);
     
-//    /* init I2C0 */
-//    CLOCK_SetClkDiv(kCLOCK_DivFlexcom0Clk, 1u);
-//    CLOCK_AttachClk(kFRO12M_to_FLEXCOMM0);
-//    CLOCK_EnableClock(kCLOCK_LPFlexComm0);
-//    CLOCK_EnableClock(kCLOCK_LPI2c0);
     
     /* reset */
     rt_pin_mode(CAM_RST_PIN, PIN_MODE_OUTPUT); 
@@ -100,8 +95,6 @@ static void camera_thread_entry(void *parameter)
         SDK_DelayAtLeastUs(1000*20, CLOCK_GetCoreSysClkFreq());
     }
 
-    cam0_sem = rt_sem_create("cam0_sem", 0, RT_IPC_FLAG_FIFO);
-    cam1_sem = rt_sem_create("cam1_sem", 0, RT_IPC_FLAG_FIFO);
     
     AreaPoints_t area;
     smart_dma_g2rgb_init();
@@ -109,19 +102,23 @@ static void camera_thread_entry(void *parameter)
     cam0 = rt_device_find("cam0");
     if(cam0)
     {
+        cam0_sem = rt_sem_create("cam0_sem", 0, RT_IPC_FLAG_FIFO);
         cam0->rx_indicate = cam0_rx_indicate;
         rt_device_open(cam0, RT_DEVICE_OFLAG_RDWR);
     }
 
-    
     cam1 = rt_device_find("cam1");
     if(cam1)
     {
+        cam1_sem = rt_sem_create("cam1_sem", 0, RT_IPC_FLAG_FIFO);
         cam1->rx_indicate = cam1_rx_indicate;
         rt_device_open(cam1, RT_DEVICE_OFLAG_RDWR);
     }
 
-    SYSCON->AHBMATPRIO |= SYSCON_AHBMATPRIO_DMA1_MASK;
+    SYSCON->AHBMATPRIO |= SYSCON_AHBMATPRIO_DMA0_MASK;
+    
+    rt_sem_control(cam0_sem, RT_IPC_CMD_RESET, 0);
+    rt_sem_control(cam1_sem, RT_IPC_CMD_RESET, 0);
     
     while(1)
     {
@@ -135,7 +132,7 @@ static void camera_thread_entry(void *parameter)
             area.y1 = 0;
             area.y2 = 240;
             
-            if(WR_DMATransferDone == true && display_swtich == 1 || (rt_tick_get_millisecond() - last_time > 1000))
+            if(WR_DMATransferDone == true && display_swtich == 1 || (rt_tick_get_millisecond() - last_time > 400))
             {
                 LCD_SetWindow(&area);
                 FLEXIO_8080_MulBeatWR_nPrm(0x2C, lcd_buf, 320*(240*1));
@@ -143,28 +140,26 @@ static void camera_thread_entry(void *parameter)
                 last_time = rt_tick_get_millisecond();
                 rt_kprintf("cam0\r\n");
             }
-            
         }
 
         if(rt_sem_take(cam1_sem, RT_WAITING_FOREVER) == RT_EOK)
         {
-            smart_dma_g2rgb_run(cam1_buf, lcd_buf+(320*240*1), 320*240);
             cam_start_xfer(cam1, cam1_buf);
-
+            
             area.x1 = 0;
             area.x2 = 320;
             area.y1 = 240;
             area.y2 = 240+240;
                         
-            if(WR_DMATransferDone == true && display_swtich == 0 || (rt_tick_get_millisecond() - last_time > 1000))
+            if(WR_DMATransferDone == true && display_swtich == 0 || (rt_tick_get_millisecond() - last_time > 400))
             {
                 LCD_SetWindow(&area);
-                FLEXIO_8080_MulBeatWR_nPrm(0x2C, lcd_buf+(320*240*1), 320*(240*1));
+                smart_dma_g2rgb_run(cam1_buf, lcd_buf, 320*240);
+                FLEXIO_8080_MulBeatWR_nPrm(0x2C, lcd_buf, 320*(240*1));
                 display_swtich = 1;
                 last_time = rt_tick_get_millisecond();
                 rt_kprintf("cam1\r\n");
             }
-            
         }
     }
 }
@@ -177,12 +172,12 @@ int camera(void)
     
     if(tid == RT_NULL)
     {
-        tid = rt_thread_create("tcam", camera_thread_entry, RT_NULL, 2048, 5, 20);
+        tid = rt_thread_create("tcam", camera_thread_entry, RT_NULL, 1024, 5, 20);
         rt_thread_startup(tid);
     }
     else
     {
-        rt_kprintf("thread alread exist\r\n");
+        rt_kprintf("%s alread exist\r\n", tid->name);
     }
 
     return RT_EOK;

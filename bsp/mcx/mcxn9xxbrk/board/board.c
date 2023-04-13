@@ -68,27 +68,8 @@ void rt_hw_board_init()
     EDMA_Init(DMA1, &userConfig);
     
 
-    /* NVIC Configuration */
-#define NVIC_VTOR_MASK              0x3FFFFF80
-#ifdef  VECT_TAB_RAM
-    /* Set the Vector Table base location at 0x10000000 */
-    SCB->VTOR  = (0x10000000 & NVIC_VTOR_MASK);
-#else  /* VECT_TAB_FLASH  */
-
-#ifdef PKG_USING_TFM
-    /* Set the Vector Table base location at 0x00020000 when RTT with TF-M*/
-    SCB->VTOR  = (0x00020000 & NVIC_VTOR_MASK);
-#else
-    /* Set the Vector Table base location at 0x00000000 */
-    SCB->VTOR  = (0x00000000 & NVIC_VTOR_MASK);
-#endif
-#endif
-
-#ifndef PKG_USING_TFM
     /* This init has finished in secure side of TF-M  */
     BOARD_BootClockPLL150M();
-#endif
-    //BOARD_BootClockFROHF96M();
 
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
     /* set pend exception priority */
