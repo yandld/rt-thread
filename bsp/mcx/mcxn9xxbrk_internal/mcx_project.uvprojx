@@ -340,7 +340,7 @@
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\drivers;.;..\Libraries\MCXN947\middleware\sdmmc\inc;..\Libraries\MCXN947\MCXN947\drivers;board\MCUX_Config\board;..\Libraries\MCXN947\MCXN947;board;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\poll;..\..\..\libcpu\arm\cortex-m33;..\..\..\include;..\..\..\components\libc\posix\io\stdio;..\Libraries\CMSIS\Core\Include;..\Libraries\MCXN947\components\codec;..\..\..\components\libc\compilers\common\extension;applications;..\Libraries\drivers\config;..\Libraries\MCXN947\middleware\sdmmc\port;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\mcxn9xxbrk\board\MCUX_Config\board;.\applications\st7796</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\drivers;.;..\Libraries\MCXN947\middleware\sdmmc\inc;..\Libraries\MCXN947\MCXN947\drivers;board\MCUX_Config\board;..\Libraries\MCXN947\MCXN947;board;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\poll;..\..\..\libcpu\arm\cortex-m33;..\..\..\include;..\..\..\components\libc\posix\io\stdio;..\Libraries\CMSIS\Core\Include;..\Libraries\MCXN947\components\codec;..\..\..\components\libc\compilers\common\extension;applications;..\Libraries\drivers\config;..\Libraries\MCXN947\middleware\sdmmc\port;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\mcxn9xxbrk\board\MCUX_Config\board;.\applications\dual_cam;.\applications\nxp_mculcd;.\applications\adc_test</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -388,56 +388,6 @@
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\main.c</FilePath>
-            </File>
-            <File>
-              <FileName>flexio_8080_drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\applications\flexio_8080_drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>lcd_ssd1963_drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\applications\lcd_ssd1963_drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>zoo_rotate.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\applications\zoo_rotate.c</FilePath>
-            </File>
-            <File>
-              <FileName>cmd_lpspi_camera.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\applications\cmd_lpspi_camera.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_hm0360.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\applications\drv_hm0360.c</FilePath>
-            </File>
-            <File>
-              <FileName>smartdma_lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\applications\smartdma_lcd.c</FilePath>
-            </File>
-            <File>
-              <FileName>cmd_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\applications\cmd_adc.c</FilePath>
-            </File>
-            <File>
-              <FileName>basic_statistics.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\applications\basic_statistics.c</FilePath>
-            </File>
-            <File>
-              <FileName>st7796.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\applications\st7796\st7796.c</FilePath>
-            </File>
-            <File>
-              <FileName>cmd_test.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\applications\cmd_test.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1110,6 +1060,46 @@
               <FileName>fsl_lpspi_edma.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpspi_edma.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>app/nxplcd</GroupName>
+          <Files>
+            <File>
+              <FileName>cmd_flexio_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\nxp_mculcd\cmd_flexio_lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmd_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\nxp_mculcd\cmd_test.c</FilePath>
+            </File>
+            <File>
+              <FileName>st7796.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\nxp_mculcd\st7796.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>app/dualcam</GroupName>
+          <Files>
+            <File>
+              <FileName>cmd_lpspi_camera.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\dual_cam\cmd_lpspi_camera.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_hm0360.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\dual_cam\drv_hm0360.c</FilePath>
+            </File>
+            <File>
+              <FileName>smartdma_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\dual_cam\smartdma_lcd.c</FilePath>
             </File>
           </Files>
         </Group>
