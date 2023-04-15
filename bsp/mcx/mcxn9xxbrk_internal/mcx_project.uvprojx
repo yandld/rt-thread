@@ -1081,6 +1081,16 @@
               <FileType>1</FileType>
               <FilePath>.\applications\nxp_mculcd\st7796.c</FilePath>
             </File>
+            <File>
+              <FileName>drv_lcd_flexio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\nxp_mculcd\drv_lcd_flexio.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_lcd_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\nxp_mculcd\drv_lcd_spi.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

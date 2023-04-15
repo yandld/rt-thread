@@ -54,7 +54,6 @@ rt_err_t cam1_rx_indicate(rt_device_t dev, rt_size_t size)
 }
 
 extern  st7796_lcd_t s_lcd;
-void    flexio_lcd_init(void);
 
 static void cam1_thread_entry(void *parameter)
 {
@@ -98,13 +97,13 @@ static void cam1_thread_entry(void *parameter)
         if(rt_sem_take(cam0_sem, RT_WAITING_FOREVER) == RT_EOK)
         {
             cam_start_xfer(cam0, cam0_buf);
-            rt_kprintf("cam0\r\n");
+         //   rt_kprintf("cam0\r\n");
         }
         
         if(rt_sem_take(cam1_sem, 0) == RT_EOK)
         {
             cam_start_xfer(cam1, cam1_buf);
-            rt_kprintf("cam1\r\n");
+         //   rt_kprintf("cam1\r\n");
         }
     }
 }
@@ -115,7 +114,6 @@ static void cam_lcd_thread_entry(void *parameter)
     uint8_t display_swtich = 0;
     
     smart_dma_g2rgb_init();
-    flexio_lcd_init();
     
     for(i=0; i<320*240; i++)
     {
@@ -156,8 +154,8 @@ int camera(void)
     
     if(tid == RT_NULL)
     {
-        rt_thread_startup(rt_thread_create("tcam", cam1_thread_entry, RT_NULL, 512, 5, 1));
-        rt_thread_startup(rt_thread_create("tlcd", cam_lcd_thread_entry, RT_NULL, 512, 6, 1));
+        rt_thread_startup(rt_thread_create("tcam",    cam1_thread_entry, RT_NULL, 512, 21, 1));
+        rt_thread_startup(rt_thread_create("tlcd", cam_lcd_thread_entry, RT_NULL, 512, 22, 1));
     }
     else
     {
