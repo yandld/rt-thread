@@ -61,7 +61,9 @@ void rt_hw_board_init()
 
     CLOCK_EnableClock(kCLOCK_Pint);  
 
-
+    CLOCK_EnableClock(kCLOCK_Dma0);  
+    CLOCK_EnableClock(kCLOCK_Dma1);  
+    
     edma_config_t userConfig = {0};
     EDMA_GetDefaultConfig(&userConfig);
     EDMA_Init(DMA0, &userConfig);

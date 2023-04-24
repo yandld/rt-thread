@@ -18,10 +18,9 @@
 void smart_dma_g2rgb_init(void);
 void smart_dma_g2rgb_run(void *input, void *output, uint32_t size);
     
-rt_device_t cam0, cam1;
+rt_device_t cam0;
 
-uint8_t cam0_buf[320*240] __attribute__ ((section(".ARM.__at_0x04000000")));
-uint8_t cam1_buf[320*240] __attribute__ ((aligned (4)));
+uint8_t cam0_buf[320*240] __attribute__ ((aligned (32)));
 uint16_t  lcd_buf[320*240] __attribute__ ((aligned (32)));
 
 uint32_t cam_start_xfer(rt_device_t dev, uint8_t *buf);
@@ -38,7 +37,7 @@ int rt_hw_hm0360_init(void);
 //    
 //}
 
-static rt_sem_t cam0_sem, cam1_sem;
+static rt_sem_t cam0_sem;
 
 rt_err_t cam0_rx_indicate(rt_device_t dev, rt_size_t size)
 {    
@@ -46,11 +45,6 @@ rt_err_t cam0_rx_indicate(rt_device_t dev, rt_size_t size)
     return RT_EOK;
 }
 
-rt_err_t cam1_rx_indicate(rt_device_t dev, rt_size_t size)
-{
-    rt_sem_release(cam1_sem);
-    return RT_EOK;
-}
 
 
 
@@ -70,9 +64,9 @@ static void cam1_thread_entry(void *parameter)
     /* reset */
     rt_pin_mode(CAM_RST_PIN, PIN_MODE_OUTPUT); 
     rt_pin_write(CAM_RST_PIN, 0); 
-    rt_thread_mdelay(1);
+    rt_thread_mdelay(10);
     rt_pin_write(CAM_RST_PIN, 1); 
-    rt_thread_mdelay(1);
+    rt_thread_mdelay(10);
 
     cam0 = rt_device_find("cam0");
     if(cam0)
@@ -81,28 +75,13 @@ static void cam1_thread_entry(void *parameter)
         cam0->rx_indicate = cam0_rx_indicate;
         rt_device_open(cam0, RT_DEVICE_OFLAG_RDWR);
     }
-
-    cam1 = rt_device_find("cam1");
-    if(cam1)
-    {
-        cam1_sem = rt_sem_create("cam1_sem", 0, RT_IPC_FLAG_FIFO);
-        cam1->rx_indicate = cam1_rx_indicate;
-        rt_device_open(cam1, RT_DEVICE_OFLAG_RDWR);
-    }
-
         
     while(1)
     {
         if(rt_sem_take(cam0_sem, RT_WAITING_FOREVER) == RT_EOK)
         {
             cam_start_xfer(cam0, cam0_buf);
-         //   rt_kprintf("cam0\r\n");
-        }
-        
-        if(rt_sem_take(cam1_sem, 0) == RT_EOK)
-        {
-            cam_start_xfer(cam1, cam1_buf);
-         //   rt_kprintf("cam1\r\n");
+            rt_kprintf("%s\r\n", "cam");
         }
     }
 }
@@ -131,23 +110,13 @@ static void cam_lcd_thread_entry(void *parameter)
     
     while(1)
     {
-        display_swtich ^= 0x01;
-        
-        if(display_swtich)
-        {
-            smart_dma_g2rgb_run(cam0_buf, lcd_buf, 320*240);
-            st7796_lcd_load(&lcd_flexio->st7796, (uint8_t*)lcd_buf, 0, 319, 0, 238);
-        }
-        else
-        {
-            smart_dma_g2rgb_run(cam1_buf, lcd_buf, 320*240);
-            st7796_lcd_load(&lcd_flexio->st7796, (uint8_t*)lcd_buf, 0, 319, 240, 240+238);
-        }
-
+        smart_dma_g2rgb_run(cam0_buf, lcd_buf, 320*240);
+        st7796_lcd_load(&lcd_flexio->st7796, (uint8_t*)lcd_buf, 0, 319, 0, 238);
+        rt_thread_mdelay(1);
     }
 }
 
-int camera(void)
+int eb_cam(void)
 {
     int i, j;
     
@@ -171,5 +140,5 @@ int camera(void)
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-MSH_CMD_EXPORT(camera, the dual camera demo);
+MSH_CMD_EXPORT(eb_cam, the dual camera demo);
 #endif
