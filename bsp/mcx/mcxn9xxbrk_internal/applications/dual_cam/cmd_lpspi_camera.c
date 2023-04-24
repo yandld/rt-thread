@@ -112,7 +112,7 @@ static void cam_lcd_thread_entry(void *parameter)
     int i;
     uint8_t display_swtich = 0;
     
-    rt_device_t lcd = rt_device_find("flexio_lcd");
+    rt_device_t lcd = rt_device_find("lcd");
     lcd_flexio_t *lcd_flexio = (lcd_flexio_t*)lcd->user_data;
     
     smart_dma_g2rgb_init();

@@ -24,6 +24,9 @@ enum
 #ifdef BSP_USING_I2C1
     I2C1_INDEX,
 #endif
+#ifdef BSP_USING_I2C2
+    I2C2_INDEX,
+#endif
 };
 
 
@@ -63,6 +66,16 @@ struct lpc_i2c_bus lpc_obj[] =
             .name = "i2c1",
         },
 #endif
+#ifdef BSP_USING_I2C2
+        {
+            .I2C = LPI2C2,
+            .baud = 100000U,
+            .clock_attach_id = kFRO12M_to_FLEXCOMM2,
+            .clock_div_name = kCLOCK_DivFlexcom2Clk,
+            .clock_src = kCLOCK_Fro12M,
+            .name = "i2c2",
+        },
+#endif
 };
 
 static rt_ssize_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)              
@@ -70,7 +83,7 @@ static rt_ssize_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg 
     struct rt_i2c_msg *msg;
     lpi2c_master_transfer_t xfer = {0};
     rt_uint32_t i;
-    rt_err_t ret = -RT_ERROR;
+    rt_ssize_t ret = 0;
 
     struct lpc_i2c_bus *lpc_i2c = (struct lpc_i2c_bus *)bus;
 

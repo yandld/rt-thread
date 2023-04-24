@@ -68,9 +68,9 @@ int main(void)
     }
 #endif
 
-    
     while (1)
     {
+        
         rt_pin_write(LEDB_PIN, PIN_HIGH);    /* Set GPIO output 1 */
         rt_thread_mdelay(200);               /* Delay 500mS */
         rt_pin_write(LEDB_PIN, PIN_LOW);     /* Set GPIO output 0 */

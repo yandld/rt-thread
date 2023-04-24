@@ -3,6 +3,7 @@
 #define GPIO_LCD_RS     (7)
 #define GPIO_LCD_RST    (4*32+7)
 #define GPIO_LCD_CS     (12)
+#define GPIO_CAPT_INT   (4*32+6)
 
 
 #define LCD_FLEXIO          FLEXIO0
@@ -73,7 +74,10 @@ static st7796_ret_t spi_write_data_cb(void *handle, uint8_t *data, uint32_t len)
 
 int drv_lcd_flexio_hw_init(void)
 {
-
+    /* INT PIN is used for I2C ADDR at power up of GP911 */
+    rt_pin_mode(GPIO_CAPT_INT, PIN_MODE_OUTPUT);
+    rt_pin_write(GPIO_CAPT_INT, 0);
+    
     rt_pin_mode(GPIO_LCD_RST, PIN_MODE_OUTPUT);
     rt_pin_mode(GPIO_LCD_RS, PIN_MODE_OUTPUT);
     rt_pin_mode(GPIO_LCD_CS, PIN_MODE_OUTPUT);
@@ -81,6 +85,7 @@ int drv_lcd_flexio_hw_init(void)
     rt_pin_write(GPIO_LCD_CS, 1);
     rt_pin_write(GPIO_LCD_RS, 1);
     rt_pin_write(GPIO_LCD_RST, 1);
+    
     
     CLOCK_AttachClk(kPLL0_to_FLEXIO);
     CLOCK_SetClkDiv(kCLOCK_DivFlexioClk, CLOCK_GetPll0OutFreq() / LCD_FLEXIO_FREQ);
@@ -112,7 +117,7 @@ int drv_lcd_flexio_hw_init(void)
     
     FLEXIO_MCULCD_Init(&lcd_flexio_obj.mculcd, &flexio_cfg, CLOCK_GetFlexioClkFreq());
     
-    lcd_flexio_obj.st7796.config.direction = 0;
+    lcd_flexio_obj.st7796.config.direction = ST7796_DIR_90;
     lcd_flexio_obj.st7796.config.pix_fmt = ST7796_RGB565;
     lcd_flexio_obj.st7796.config.bgr_mode = 1;
     lcd_flexio_obj.st7796.config.inversion = 0;
@@ -125,7 +130,7 @@ int drv_lcd_flexio_hw_init(void)
     
     st7796_lcd_init(&lcd_flexio_obj.st7796);
     
-    rt_device_register(&lcd_flexio_obj.parent, "flexio_lcd", RT_DEVICE_FLAG_RDWR);
+    rt_device_register(&lcd_flexio_obj.parent, "lcd", RT_DEVICE_FLAG_RDWR);
         
     return RT_EOK;
 }
@@ -134,8 +139,8 @@ INIT_DEVICE_EXPORT(drv_lcd_flexio_hw_init);
 
 
 
-#define TEST_LCD_X  (120)
-#define TEST_LCD_Y  (120)
+#define TEST_LCD_X  (60)
+#define TEST_LCD_Y  (60)
 #define RGB565_RED     0xF800
 #define RGB565_GREEN   0x07E0
 #define RGB565_BLUE    0x001F
@@ -144,9 +149,11 @@ static int lcd_flexio_test(void)
 {
     int i;
     
-    uint16_t *buf = rt_malloc(TEST_LCD_X*TEST_LCD_Y);
+    uint16_t *buf = rt_malloc(TEST_LCD_X*TEST_LCD_Y*sizeof(uint16_t));
+    
+    RT_ASSERT(buf != RT_NULL);
 
-    rt_device_t lcd = rt_device_find("flexio_lcd");
+    rt_device_t lcd = rt_device_find("lcd");
     lcd_flexio_t *lcd_flexio = (lcd_flexio_t*)lcd->user_data;
     
     while(1)

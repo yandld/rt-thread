@@ -13,6 +13,9 @@
 #include "st7796.h"
 #include "stdlib.h"
 
+#define LCD_W 480
+#define LCD_H 320
+
 typedef struct
 {
     struct rt_device    parent;
