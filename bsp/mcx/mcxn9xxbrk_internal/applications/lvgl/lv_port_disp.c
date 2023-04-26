@@ -8,13 +8,13 @@
  * 2021-10-18     Meco Man     The first version
  */
 #include <lvgl.h>
-#include "drv_lcd_flexio.h"
+#include "drv_nxplcd.h"
 
 #define MY_DISP_HOR_RES     LCD_W
-#define DISP_BUFFER_LINES   (LCD_H/2)
+#define DISP_BUFFER_LINES   (LCD_H/4)
 
 
-static lcd_flexio_t *lcd_flexio = RT_NULL;
+static nxplcd_t *lcd_flexio = RT_NULL;
 
 /*A static or global variable to store the buffers*/
 static lv_disp_draw_buf_t disp_buf;
@@ -38,7 +38,7 @@ static void disp_flush(lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_colo
 void lv_port_disp_init(void)
 {
     rt_device_t lcd = rt_device_find("lcd");
-    lcd_flexio = (lcd_flexio_t*)lcd->user_data;
+    lcd_flexio = (nxplcd_t*)lcd->user_data;
     
     /*Initialize `disp_buf` with the buffer(s). With only one buffer use NULL instead buf_2 */
     lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, MY_DISP_HOR_RES * DISP_BUFFER_LINES);

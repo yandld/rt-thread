@@ -22,8 +22,8 @@
 #define DEMO_LPSPI_EDMA_WATERMARK   4U
 #define DEMO_LPSPI_EDMA_MAJOR_LINES 240U /* Must be integer counts! */
 
-#define DEMO_LPSPI_RES_HORIZONTAL   320UL
-#define DEMO_LPSPI_RES_VERTICAL     240UL
+#define DEMO_LPSPI_RES_HORIZONTAL   160
+#define DEMO_LPSPI_RES_VERTICAL     120
 #define DEMO_LPSPI_PIX_SIZE         1U
 #define DEMO_LPSPI_LINE_SIZE        (DEMO_LPSPI_RES_HORIZONTAL * DEMO_LPSPI_PIX_SIZE)
 #define DEMO_LPSPI_BUFFER_SIZE      (DEMO_LPSPI_LINE_SIZE * DEMO_LPSPI_RES_VERTICAL)
@@ -407,8 +407,8 @@ static  uint8_t hm0360_init_regtbl[][3]={
 		{0x35,0x04,0x14},
 		{0x35,0x05,0x03},
 		{0x35,0x06,0x00},
-		{0x35,0x07,0x01},       //horizontal 0:full, 1:sub2, 2:sub4  0:640x480, 1:320x240, 2:160x120
-		{0x35,0x08,0x01},       //vertical   0:full, 1:sub2, 2:sub4
+		{0x35,0x07,0x02},       //horizontal 0:full, 1:sub2, 2:sub4  0:640x480, 1:320x240, 2:160x120
+		{0x35,0x08,0x02},       //vertical   0:full, 1:sub2, 2:sub4
 		{0x35,0x09,0x00},// binning operation
 		{0x35,0x0A,0xFF},
 		{0x35,0x0B,0x01},

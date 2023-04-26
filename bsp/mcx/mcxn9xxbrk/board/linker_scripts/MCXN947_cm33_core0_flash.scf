@@ -57,8 +57,8 @@
 #define  m_flash1_start                0x00100000
 #define  m_flash1_size                 0x00100000
 
-;#define  m_sramx_start                 0x04000000
-;#define  m_sramx_size                  0x00018000
+#define  m_sramx_start                 0x04000000
+#define  m_sramx_size                  0x00018000
 
 
 #define  m_core1_image_start           0x000C0000
@@ -99,8 +99,9 @@ LR_m_text m_interrupts_start m_interrupts_size+m_text_size {   ; load region siz
     * (DataQuickAccess)
   }
   
-;  RW_m_data2 m_sramx_start m_sramx_size { ; RW data
-;    .ANY (+RW +ZI)
+;  RW_m_sramx m_sramx_start m_sramx_size { ; RW data
+;		// lv_draw*.o (+RO +ZI +RW)
+;		// lv_img*.o (+RO +ZI +RW)
 ;  }
   
   ARM_LIB_HEAP +0 EMPTY Heap_Size {    ; Heap region growing up

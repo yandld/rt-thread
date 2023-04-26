@@ -1,4 +1,4 @@
-#include "drv_lcd_capt.h"
+#include "drv_nxplcd_capt.h"
 
 #define CAPT_I2C_DEV_NAME       "i2c2"
 #define CAPT_I2C_ADDR           (0x5D)
@@ -28,7 +28,6 @@ int drv_capt_hw_init(void)
     capt_obj.gt911.user_data = capt_obj.parent.user_data = &capt_obj;
     capt_obj.gt911.ops.xfer = ctp_impl_xfer;
     
-
     if(gt911_ctp_init(&capt_obj.gt911) != GT911_SUCCESS)
     {
         return -RT_ERROR;

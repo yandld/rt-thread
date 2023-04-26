@@ -53,7 +53,7 @@ gt911_ret_t gt911_ctp_init(gt911_t *ctp) {
 }
 
 gt911_ret_t gt911_ctp_read(gt911_t *ctp, gt911_input_t *input) {
-    uint8_t rx_data[40];
+    uint8_t rx_data[40] = {0};
 
     if (gt911_ctp_read_reg(ctp, GT911_REG_COORD, rx_data, 1) != GT911_SUCCESS) {
         return GT911_FAIL;

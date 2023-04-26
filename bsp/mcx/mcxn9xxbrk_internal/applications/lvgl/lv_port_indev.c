@@ -1,6 +1,6 @@
 #include <lvgl.h>
 #include <rtdevice.h>
-#include <drv_lcd_capt.h>
+#include "drv_nxplcd_capt.h"
 
 
 
@@ -8,8 +8,8 @@ static void tp_read(lv_indev_drv_t * drv, lv_indev_data_t*data)
 {
     bool found_track = false;
     
-    gt911_input_t ctp_input;
-    
+    gt911_input_t ctp_input = {0};
+
     capt_t *capt = (capt_t*)drv->user_data;
     
     if(!capt)
@@ -17,9 +17,9 @@ static void tp_read(lv_indev_drv_t * drv, lv_indev_data_t*data)
         rt_kprintf("no capt device\r\n");
         return;
     }
-    
+
     gt911_ctp_read(&capt->gt911, &ctp_input);
-        
+
     for (uint8_t i = 0; i < ctp_input.num_pos; i++) 
     {
         if (ctp_input.pos[i].id == 0)

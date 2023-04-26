@@ -20,7 +20,7 @@
 #include "board.h"
 #include "clock_config.h"
 #include "drv_uart.h"
-
+#include "fsl_cache_lpcac.h"
 
 /**
  * This is the timer interrupt service routine.
@@ -45,6 +45,8 @@ void rt_hw_board_init()
     /* Hardware Initialization */
     BOARD_InitBootPins();
 
+    L1CACHE_EnableCodeCache();
+    
     CLOCK_EnableClock(kCLOCK_InputMux);
 
     CLOCK_EnableClock(kCLOCK_Port0);  
@@ -71,7 +73,7 @@ void rt_hw_board_init()
     
 
     /* This init has finished in secure side of TF-M  */
-    BOARD_BootClockPLL150M();
+    BOARD_InitBootClocks();
 
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
     /* set pend exception priority */

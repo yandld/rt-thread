@@ -5,10 +5,9 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#include "fsl_clock.h"
-#include "fsl_gpio.h"
 #include "gt911_ctp.h"
-#include "stdlib.h"
+
+
 
 typedef struct
 {
