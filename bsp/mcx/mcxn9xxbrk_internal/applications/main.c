@@ -46,8 +46,11 @@ int main(void)
     rt_kprintf("CoreClock:%d\r\n", CLOCK_GetCoreSysClkFreq());
     rt_kprintf("FROHF:%d\r\n", CLOCK_GetFreq(kCLOCK_FroHf));
     rt_kprintf("FLCOMM0:%d\r\n", CLOCK_GetLPFlexCommClkFreq(0));
+    rt_kprintf("FLCOMM1:%d\r\n", CLOCK_GetLPFlexCommClkFreq(1));
+    rt_kprintf("FLCOMM2:%d\r\n", CLOCK_GetLPFlexCommClkFreq(2));
     rt_kprintf("FLCOMM3:%d\r\n", CLOCK_GetLPFlexCommClkFreq(3));
     rt_kprintf("FLCOMM4:%d\r\n", CLOCK_GetLPFlexCommClkFreq(4));
+    rt_kprintf("FLCOMM5:%d\r\n", CLOCK_GetLPFlexCommClkFreq(5));
     
     rt_pin_mode(LEDB_PIN, PIN_MODE_OUTPUT);  /* Set GPIO as Output */
     rt_pin_mode(BUTTON_PIN, PIN_MODE_INPUT_PULLUP); 

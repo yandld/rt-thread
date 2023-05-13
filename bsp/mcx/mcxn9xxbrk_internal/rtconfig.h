@@ -91,10 +91,15 @@
 
 #define RT_USING_I2C
 #define RT_USING_SPI
+#define RT_USING_CAN
+//#define RT_CAN_USING_CANFD
+
 #define BSP_USING_I2C0
 #define BSP_USING_I2C1
 #define BSP_USING_I2C2
 #define BSP_USING_SPI3
+
+#define BSP_USING_CAN0
 //#define RT_I2C_BIT_DEBUG
 //#define RT_I2C_DEBUG
 //#define RT_USING_I2C_BITOPS

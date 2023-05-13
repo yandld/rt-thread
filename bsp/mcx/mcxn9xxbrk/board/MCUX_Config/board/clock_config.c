@@ -109,8 +109,8 @@ void BOARD_BootClockPLL180M(void)
         .pllctrl = SCG_APLLCTRL_SOURCE(0U) | SCG_APLLCTRL_SELI(27U) | SCG_APLLCTRL_SELP(13U),
         .pllndiv = SCG_APLLNDIV_NDIV(4U),
         .pllpdiv = SCG_APLLPDIV_PDIV(1U),
-        .pllmdiv = SCG_APLLMDIV_MDIV(62),
-        .pllRate = 1860000000U
+        .pllmdiv = SCG_APLLMDIV_MDIV(60),
+        .pllRate = 1800000000U
     };
     CLOCK_SetPLL0Freq(&pll0Setup);                       /*!< Configure PLL0 to the desired values */
     CLOCK_SetPll0MonitorMode(kSCG_Pll0MonitorDisable);    /* Pll0 Monitor is disabled */

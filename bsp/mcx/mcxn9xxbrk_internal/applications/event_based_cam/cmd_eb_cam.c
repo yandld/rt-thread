@@ -24,9 +24,14 @@ static rt_device_t cam[2];
 void smart_dma_g2rgb_init(void);
 void smart_dma_g2rgb_run(void *input, void *output, uint32_t size);
 
-uint8_t cam_buf[CAM_W*CAM_H]         __attribute__ ((section(".ARM.__at_0x04000000")));
-uint8_t cam_buf_last[CAM_W*CAM_H]    __attribute__ ((section(".ARM.__at_0x04008000")));
-uint8_t cam_buf_diff[CAM_W*CAM_H]    __attribute__ ((section(".ARM.__at_0x04010000")));
+//uint8_t cam_buf[CAM_W*CAM_H]         __attribute__ ((section(".ARM.__at_0x04000000")));
+//uint8_t prv_cam_buf[CAM_W*CAM_H]     __attribute__ ((section(".ARM.__at_0x04005000")));
+//uint8_t cam_buf_diff[CAM_W*CAM_H]    __attribute__ ((section(".ARM.__at_0x0400A000")));
+
+uint8_t cam_buf[CAM_W*CAM_H];
+uint8_t prv_cam_buf[CAM_W*CAM_H];
+uint8_t cam_buf_diff[CAM_W*CAM_H];
+
 uint16_t lcd_buf[CAM_W*CAM_H];
 int sum = 0, last_sum=0, diff_sum=0;
 
@@ -35,6 +40,7 @@ int rt_hw_hm0360_init(void);
 
 static rt_sem_t cam_sem[2];
 extern uint8_t cam_idx;
+int frame_cnt = 0;
 
 rt_err_t cam0_rx_indicate(rt_device_t dev, rt_size_t size)
 {    
@@ -42,16 +48,11 @@ rt_err_t cam0_rx_indicate(rt_device_t dev, rt_size_t size)
     return RT_EOK;
 }
 
-
 rt_err_t cam1_rx_indicate(rt_device_t dev, rt_size_t size)
 {    
     rt_sem_release(cam_sem[1]);
     return RT_EOK;
 }
-
-
-
-
 
 
 static void cam_thread_entry(void *parameter)
@@ -94,27 +95,38 @@ static void cam_thread_entry(void *parameter)
    
     while(1)
     {
+        if(cam_idx == 0)
+        {
+            cam[0]->rx_indicate = cam0_rx_indicate;
+            cam[1]->rx_indicate = RT_NULL;
+        }
+        
+        if(cam_idx == 1)
+        {
+            cam[0]->rx_indicate = RT_NULL;
+            cam[1]->rx_indicate = cam1_rx_indicate;
+        }
+        
         if(rt_sem_take(cam_sem[cam_idx], RT_WAITING_FOREVER) == RT_EOK)
         {
-            /* wait untill camera exporse stablize */
-            if(rt_tick_get_millisecond() > 2000)
+            sum = 0;
+            for(i=0; i<CAM_W*CAM_H; i++)
             {
-                sum = 0;
-                for(i=0; i<CAM_W*CAM_H; i++)
-                {
-                    cam_buf_diff[i] = abs(cam_buf[i] - cam_buf_last[i]);
-                    sum += cam_buf_diff[i];
-                }
-                
-                diff_sum = diff_sum*(ALPHA) + (1-ALPHA)*abs(sum - last_sum);
-                
-                memcpy(cam_buf_last, cam_buf, CAM_W*CAM_H);
-                last_sum = sum;
+                cam_buf_diff[i] = abs(cam_buf[i] - prv_cam_buf[i]);
+                sum += cam_buf_diff[i];
             }
 
+            rt_kprintf("idx:%d, sum:%d, last_sum:%d, frame_cnt:%d, diff_sum:%d\r\n", cam_idx, sum, last_sum, frame_cnt, diff_sum);
+
+            diff_sum = diff_sum*(ALPHA) + (1-ALPHA)*abs(sum - last_sum);
+            
             smart_dma_g2rgb_run(cam_buf, lcd_buf, CAM_W*CAM_H);
+            memcpy(prv_cam_buf, cam_buf, CAM_W*CAM_H);
+            last_sum = sum;
             cam_start_xfer(cam[cam_idx], cam_buf);
+            frame_cnt++;
         }
+
     }
 }
 
@@ -124,7 +136,6 @@ int eb_cam(void)
 {
     int i, j;
     
-    // SYSCON->AHBMATPRIO |= SYSCON_AHBMATPRIO_DMA1_MASK;
     rt_thread_t tid = rt_thread_find("tcam");
     
     if(tid == RT_NULL)

@@ -49,8 +49,12 @@ void lv_port_disp_init(void)
     disp_drv.hor_res = LCD_W;
     disp_drv.ver_res = LCD_H;
 
+    disp_drv.rotated = LV_DISP_ROT_180;
+    disp_drv.sw_rotate = 1;
+    
     /*Set a display buffer*/
-    disp_drv.draw_buf = &disp_buf;
+    disp_drv.draw_buf = &disp_buf; 
+
 
     /*Used to copy the buffer's content to the display*/
     disp_drv.flush_cb = disp_flush;

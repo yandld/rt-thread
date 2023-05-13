@@ -53,8 +53,8 @@ static  cam_device_t cam_obj[] =
         .name = "cam0",
         .i2c_bus_name = "i2c0",
         .LPSPIX = LPSPI5,
-        .DMAX = DMA0,
-        .rx_dma_ch = 1,
+        .DMAX = DMA1,
+        .rx_dma_ch = 5,
         .dma_req_src = kDmaRequestMuxLpFlexcomm5Rx,
     },
 #endif
@@ -65,7 +65,7 @@ static  cam_device_t cam_obj[] =
         .i2c_bus_name = "i2c1",
         .LPSPIX = LPSPI3,
         .DMAX = DMA1,
-        .rx_dma_ch = 2,
+        .rx_dma_ch = 6,
         .dma_req_src = kDmaRequestMuxLpFlexcomm3Rx,
     },
 #endif

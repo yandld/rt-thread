@@ -8,7 +8,6 @@
 #define GPIO_LCD_DC     (1*32+2)
 
 #define LCD_FLEXIO          FLEXIO0
-#define LCD_FLEXIO_FREQ     150000000
 #define LCD_FLEXIO_BAUD     16000000
 #define LCD_SPI_DEV_NAME    ("spi3")
 
@@ -136,7 +135,7 @@ int drv_nxplcd_init(void)
     
 
     CLOCK_AttachClk(kPLL0_to_FLEXIO);
-    CLOCK_SetClkDiv(kCLOCK_DivFlexioClk, CLOCK_GetPll0OutFreq() / LCD_FLEXIO_FREQ);
+    CLOCK_SetClkDiv(kCLOCK_DivFlexioClk, CLOCK_GetPll0OutFreq() / CLOCK_GetCoreSysClkFreq());
 
     lcd_flexio_obj.DMAX = DMA0;
     lcd_flexio_obj.sem = rt_sem_create("sem_lcd", 1, RT_IPC_FLAG_FIFO);

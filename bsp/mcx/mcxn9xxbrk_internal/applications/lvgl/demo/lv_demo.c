@@ -8,7 +8,7 @@ void lv_demo_benchmark(void);
 
 extern uint16_t lcd_buf[];
 extern int diff_sum;
-
+extern int frame_cnt;
 
  lv_img_dsc_t img_video = 
  {
@@ -65,20 +65,23 @@ static void timer_video_callback(lv_timer_t* timer)
 {
     lv_img_set_src(ui.img, &img_video);
     
-    
-    if(diff_sum < 2000)
+    if(frame_cnt > 20)
     {
-        lv_style_set_bg_color(&ui.style_panel, lv_palette_main(LV_PALETTE_GREEN));
-        lv_timer_set_period(ui.timer_blink, 200);
-        lv_label_set_text(ui.label_log, "#000000 NO MOTION#");
+        if(diff_sum < 3000)
+        {
+            lv_style_set_bg_color(&ui.style_panel, lv_palette_main(LV_PALETTE_GREEN));
+            lv_timer_set_period(ui.timer_blink, 200);
+            lv_label_set_text(ui.label_log, "#000000 NO MOTION#");
 
+        }
+        else
+        {
+            lv_style_set_bg_color(&ui.style_panel, lv_palette_main(LV_PALETTE_RED));
+            lv_label_set_text(ui.label_log, "#ff0000 MOTION DETECTED! #");
+            lv_timer_set_period(ui.timer_blink, 30);
+        }
     }
-    else
-    {
-        lv_style_set_bg_color(&ui.style_panel, lv_palette_main(LV_PALETTE_RED));
-        lv_label_set_text(ui.label_log, "#ff0000 MOTION DETECTED! #");
-        lv_timer_set_period(ui.timer_blink, 30);
-    }
+
     
 }
 
@@ -122,14 +125,13 @@ static void dd_event_handler(lv_event_t * e)
     if(code == LV_EVENT_VALUE_CHANGED)
     {
         cam_idx = lv_dropdown_get_selected(obj);
-        rt_kprintf("select cam %d\r\n", lv_dropdown_get_selected(obj));
+        frame_cnt = 0;
     }
 }
 
 
 void lv_user_gui_init(void)
 {
-
     int eb_cam(void);
     eb_cam();
     
@@ -161,6 +163,7 @@ void lv_user_gui_init(void)
     lv_label_set_long_mode(ui.label_log , LV_LABEL_LONG_SCROLL_CIRCULAR);
     lv_obj_set_width(ui.label_log , LV_SIZE_CONTENT);
     lv_obj_align(ui.label_log , LV_ALIGN_TOP_MID, 0, 32);
+    lv_label_set_text(ui.label_log, "#000000 NO MOTION#");
     lv_label_set_recolor(ui.label_log, true);
     
     lv_style_init(&ui.style_log);
