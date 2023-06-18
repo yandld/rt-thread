@@ -213,8 +213,10 @@ void app_can_init(uint32_t baud, uint32_t baudfd, uint8_t fd)
 }
 
 
-void app_send(uint8_t *buf, uint32_t id, uint8_t len)
+int app_can_send(uint8_t *buf, uint32_t id, uint8_t len)
 {
+    status_t status;
+    
     if(is_fd)
     {
         flexcan_fd_frame_t fd_txFrame = {0};
@@ -226,7 +228,7 @@ void app_send(uint8_t *buf, uint32_t id, uint8_t len)
         
         reverse_byte_order(buf, (uint8_t*)fd_txFrame.dataWord, len);
         FLEXCAN_SetFDTxMbConfig(EXAMPLE_CAN, TX_MB_IDX, true);
-        FLEXCAN_TransferFDSendBlocking(EXAMPLE_CAN, TX_MB_IDX, &fd_txFrame);
+        status = FLEXCAN_TransferFDSendBlocking(EXAMPLE_CAN, TX_MB_IDX, &fd_txFrame);
     }
     else
     {
@@ -238,8 +240,10 @@ void app_send(uint8_t *buf, uint32_t id, uint8_t len)
         
         reverse_byte_order(buf, (uint8_t*)&txFrame.dataWord0, len);
         FLEXCAN_SetTxMbConfig(EXAMPLE_CAN, TX_MB_IDX, true);
-        FLEXCAN_TransferSendBlocking(EXAMPLE_CAN, TX_MB_IDX, &txFrame);
+        status = FLEXCAN_TransferSendBlocking(EXAMPLE_CAN, TX_MB_IDX, &txFrame);
     }
+    
+    return (status == kStatus_Success)?(0):(1);
 }
 
 

@@ -24,7 +24,7 @@ int can_test(void)
 {
     int i;
 
-    app_can_init(1000*1000, 2*1000*1000, 0);
+    app_can_init(1000*1000, 4*1000*1000, 1);
     app_can_add_event_cb(app_can_event_cb, 0, NULL);
     
     uint8_t tx_data[64];
@@ -37,7 +37,7 @@ int can_test(void)
 
     while (1)
     {
-        app_send(tx_data, 0x123, 8);
+        app_can_send(tx_data, 0x123, 64);
         rt_thread_mdelay(1);
     }
 }

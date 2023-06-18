@@ -17,7 +17,7 @@
 #define CAM_H       (120)
 
 #define CAM_RST_PIN     (1*32+19)
-#define ALPHA           (0.8)
+#define ALPHA           (0.5)
 
 static rt_device_t cam[2];
 

@@ -44,9 +44,9 @@ void rt_hw_board_init()
 {
     /* Hardware Initialization */
     BOARD_InitBootPins();
-
     L1CACHE_EnableCodeCache();
     
+    CLOCK_EnableClock(kCLOCK_Freqme);
     CLOCK_EnableClock(kCLOCK_InputMux);
 
     CLOCK_EnableClock(kCLOCK_Port0);  
@@ -61,8 +61,16 @@ void rt_hw_board_init()
     CLOCK_EnableClock(kCLOCK_Gpio3);
     CLOCK_EnableClock(kCLOCK_Gpio4);  
 
-    CLOCK_EnableClock(kCLOCK_Pint);  
+    CLOCK_EnableClock(kCLOCK_Pint);
+    CLOCK_EnableClock(kCLOCK_Flexcan0);
+    CLOCK_EnableClock(kCLOCK_Flexcan1);
 
+    CLOCK_AttachClk(kFRO_HF_to_ADC0);
+    CLOCK_SetClkDiv(kCLOCK_DivAdc0Clk, 1u);
+    /* enable VREF */
+    SPC0->ACTIVE_CFG1 |= 0x1;
+    
+    
     CLOCK_EnableClock(kCLOCK_Dma0);  
     CLOCK_EnableClock(kCLOCK_Dma1);  
     

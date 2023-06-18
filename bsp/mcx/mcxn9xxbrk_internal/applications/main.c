@@ -31,6 +31,7 @@ void sync_in_cb(void *args)
     rt_kprintf("!!sync_in_cb\r\n");
 }
 
+
 int main(void)
 {
 #if defined(__CC_ARM)
@@ -43,14 +44,22 @@ int main(void)
     rt_kprintf("using gcc, version: %d.%d\n", __GNUC__, __GNUC_MINOR__);
 #endif
     
+    SYSCON->CLOCK_CTRL = 0xFFFFFFFF;
+    
     rt_kprintf("CoreClock:%d\r\n", CLOCK_GetCoreSysClkFreq());
-    rt_kprintf("FROHF:%d\r\n", CLOCK_GetFreq(kCLOCK_FroHf));
+    rt_kprintf("kCLOCK_FroHf:%d\r\n", CLOCK_GetFreq(kCLOCK_FroHf));
+    rt_kprintf("kCLOCK_Clk144M:%d\r\n", CLOCK_GetFreq(kCLOCK_Clk144M));
+    rt_kprintf("kCLOCK_ExtClk:%d\r\n", CLOCK_GetFreq(kCLOCK_ExtClk));
+    
+    
+    
     rt_kprintf("FLCOMM0:%d\r\n", CLOCK_GetLPFlexCommClkFreq(0));
     rt_kprintf("FLCOMM1:%d\r\n", CLOCK_GetLPFlexCommClkFreq(1));
     rt_kprintf("FLCOMM2:%d\r\n", CLOCK_GetLPFlexCommClkFreq(2));
     rt_kprintf("FLCOMM3:%d\r\n", CLOCK_GetLPFlexCommClkFreq(3));
     rt_kprintf("FLCOMM4:%d\r\n", CLOCK_GetLPFlexCommClkFreq(4));
     rt_kprintf("FLCOMM5:%d\r\n", CLOCK_GetLPFlexCommClkFreq(5));
+    
     
     rt_pin_mode(LEDB_PIN, PIN_MODE_OUTPUT);  /* Set GPIO as Output */
     rt_pin_mode(BUTTON_PIN, PIN_MODE_INPUT_PULLUP); 
@@ -78,6 +87,8 @@ int main(void)
         rt_thread_mdelay(200);               /* Delay 500mS */
         rt_pin_write(LEDB_PIN, PIN_LOW);     /* Set GPIO output 0 */
         rt_thread_mdelay(200);               /* Delay 500mS */
+        
+
     }
 }
 

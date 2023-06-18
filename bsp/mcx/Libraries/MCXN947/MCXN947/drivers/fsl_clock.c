@@ -309,11 +309,11 @@ status_t CLOCK_FROHFTrimConfig(firc_trim_config_t config)
 
     if (kSCG_FircTrimNonUpdate == config.trimMode)
     {
-        SCG0->FIRCSTAT = SCG_FIRCSTAT_TRIMFINE(config.trimFine);
+        //SCG0->FIRCSTAT = SCG_FIRCSTAT_TRIMFINE(config.trimFine);
     }
 
     /* Set trim mode. */
-    SCG0->FIRCCSR = (uint32_t)config.trimMode;
+  //  SCG0->FIRCCSR = (uint32_t)config.trimMode;
 
     if ((SCG0->FIRCCSR & SCG_FIRCCSR_FIRCERR_MASK) == SCG_FIRCCSR_FIRCERR_MASK)
     {
