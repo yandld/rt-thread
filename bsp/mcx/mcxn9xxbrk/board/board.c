@@ -67,8 +67,9 @@ void rt_hw_board_init()
 
     CLOCK_AttachClk(kFRO_HF_to_ADC0);
     CLOCK_SetClkDiv(kCLOCK_DivAdc0Clk, 1u);
+    
     /* enable VREF */
-    SPC0->ACTIVE_CFG1 |= 0x1;
+    SPC0->ACTIVE_CFG1 |= 0xFFFFFFFF;
     
     
     CLOCK_EnableClock(kCLOCK_Dma0);  
