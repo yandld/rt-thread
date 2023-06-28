@@ -36,7 +36,6 @@
 
 /* Memory Management */
 
-#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
@@ -48,7 +47,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50000
+#define RT_VER_NUM 0x50001
 #define ARCH_RISCV
 #define ARCH_RISCV_FPU
 #define ARCH_RISCV_FPU_S
@@ -74,6 +73,33 @@
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
 
+/* DFS: device virtual file system */
+
+#define RT_USING_DFS
+#define DFS_USING_POSIX
+#define DFS_USING_WORKDIR
+#define DFS_FD_MAX 16
+#define RT_USING_DFS_V1
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
+#define RT_USING_DFS_ELMFAT
+
+/* elm-chan's FatFs, Generic FAT Filesystem Module */
+
+#define RT_DFS_ELM_CODE_PAGE 437
+#define RT_DFS_ELM_WORD_ACCESS
+#define RT_DFS_ELM_USE_LFN_3
+#define RT_DFS_ELM_USE_LFN 3
+#define RT_DFS_ELM_LFN_UNICODE_0
+#define RT_DFS_ELM_LFN_UNICODE 0
+#define RT_DFS_ELM_MAX_LFN 255
+#define RT_DFS_ELM_DRIVES 2
+#define RT_DFS_ELM_MAX_SECTOR_SIZE 512
+#define RT_DFS_ELM_REENTRANT
+#define RT_DFS_ELM_MUTEX_TIMEOUT 3000
+#define RT_USING_DFS_DEVFS
+#define RT_USING_DFS_ROMFS
+
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
@@ -83,6 +109,12 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
+#define RT_USING_SDIO
+#define RT_SDIO_STACK_SIZE 512
+#define RT_SDIO_THREAD_PRIORITY 15
+#define RT_MMCSD_STACK_SIZE 2048
+#define RT_MMCSD_THREAD_PREORITY 22
+#define RT_MMCSD_MAX_PARTITION 16
 
 /* Using USB */
 
@@ -224,18 +256,15 @@
 
 #define BSP_USING_BL61X
 #define BSP_USING_ROMAPI
+#define BSP_USING_BL61X_MODULE_DEFAULT
 
 /* General Drivers Configuration */
 
-#define BSP_USING_GPIO
 
 /* General Purpose UARTs */
 
 #define BSP_USING_UART0
 #define UART0_TX_USING_GPIO21
 #define UART0_RX_USING_GPIO22
-#define BSP_USING_UART1
-#define UART1_TX_USING_GPIO16
-#define UART1_RX_USING_GPIO17
 
 #endif

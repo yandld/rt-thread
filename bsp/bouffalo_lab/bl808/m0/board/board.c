@@ -15,10 +15,6 @@
 #include "board.h"
 #include "drv_uart.h"
 
-#ifdef BSP_USING_SDH_SDCARD
-#include "sdh_sdcard.h"
-#endif
-
 static void system_clock_init(void)
 {
     /* wifipll/audiopll */
@@ -63,17 +59,6 @@ static void peripheral_clock_init(void)
     GLB_Set_CAM_CLK(ENABLE, GLB_CAM_CLK_WIFIPLL_96M, 3);
 
     GLB_Set_PKA_CLK_Sel(GLB_PKA_CLK_MCU_MUXPLL_160M);
-
-#ifdef BSP_USING_SDH_SDCARD
-    PERIPHERAL_CLOCK_SDH_ENABLE();
-    uint32_t tmp_val;
-    tmp_val = BL_RD_REG(PDS_BASE, PDS_CTL5);
-    uint32_t tmp_val2 = BL_GET_REG_BITS_VAL(tmp_val, PDS_CR_PDS_GPIO_KEEP_EN);
-    tmp_val2 &= ~(1 << 0);
-    tmp_val = BL_SET_REG_BITS_VAL(tmp_val, PDS_CR_PDS_GPIO_KEEP_EN, tmp_val2);
-    BL_WR_REG(PDS_BASE, PDS_CTL5, tmp_val);
-    GLB_AHB_MCU_Software_Reset(GLB_AHB_MCU_SW_SDH);
-#endif
 
 #ifdef BSP_USING_CSI
     GLB_CSI_Config_MIPIPLL(2, 0x21000);
@@ -184,16 +169,17 @@ void rt_hw_board_init(void)
     rt_components_board_init();
 #endif
 
+#ifdef BSP_USING_TRIPLECORE
     /* set CPU D0 boot XIP address and flash address */
     Tzc_Sec_Set_CPU_Group(GLB_CORE_ID_D0, 1);
     /* D0 boot from 0x58000000 */
     GLB_Set_CPU_Reset_Address(GLB_CORE_ID_D0, 0x58000000);
-    /* D0 image offset on flash is CONFIG_D0_FLASH_ADDR+0x1000(header) */
-    bflb_sf_ctrl_set_flash_image_offset(CONFIG_D0_FLASH_ADDR + 0x1000, 1, SF_CTRL_FLASH_BANK0);
+    /* D0 image offset on flash is CONFIG_D0_FLASH_ADDR */
+    bflb_sf_ctrl_set_flash_image_offset(CONFIG_D0_FLASH_ADDR, 1, SF_CTRL_FLASH_BANK0);
 
     Tzc_Sec_Set_CPU_Group(GLB_CORE_ID_LP, 0);
     /* LP boot from 0x580C0000 */
-    GLB_Set_CPU_Reset_Address(GLB_CORE_ID_LP, 0x580C0000);
+    GLB_Set_CPU_Reset_Address(GLB_CORE_ID_LP, 0x58000000 + CONFIG_LP_FLASH_ADDR);
 
     GLB_Release_CPU(GLB_CORE_ID_D0);
     GLB_Release_CPU(GLB_CORE_ID_LP);
@@ -202,6 +188,7 @@ void rt_hw_board_init(void)
     BL_WR_WORD(IPC_SYNC_ADDR1, IPC_SYNC_FLAG);
     BL_WR_WORD(IPC_SYNC_ADDR2, IPC_SYNC_FLAG);
     L1C_DCache_Clean_By_Addr(IPC_SYNC_ADDR1, 8);
+#endif
 }
 
 void rt_hw_cpu_reset(void)

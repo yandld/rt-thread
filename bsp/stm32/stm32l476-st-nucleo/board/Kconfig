@@ -20,6 +20,8 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_RTDUINO
         select BSP_USING_STLINK_TO_USART
         select BSP_USING_GPIO
+        select BSP_USING_TIM
+        select BSP_USING_TIM7
         select BSP_USING_ADC
         select BSP_USING_ADC1
         select BSP_USING_PWM
@@ -27,8 +29,8 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM2_CH2
         select BSP_USING_PWM2_CH3
         select BSP_USING_PWM3
-        select BSP_USING_PWM3_CH0
         select BSP_USING_PWM3_CH1
+        select BSP_USING_PWM3_CH2
         select BSP_USING_PWM4
         select BSP_USING_PWM4_CH1
         select BSP_USING_PWM17
@@ -176,6 +178,10 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_HWTIMER
         if BSP_USING_TIM
+            config BSP_USING_TIM7
+                bool "Enable TIM7"
+                default n
+
             config BSP_USING_TIM15
                 bool "Enable TIM15"
                 default n
@@ -210,11 +216,11 @@ menu "On-chip Peripheral Drivers"
             bool "Enable timer3 output PWM"
             default n
             if BSP_USING_PWM3
-                config BSP_USING_PWM3_CH0
-                    bool "Enable PWM3 channel0"
-                    default n
                 config BSP_USING_PWM3_CH1
                     bool "Enable PWM3 channel1"
+                    default n
+                config BSP_USING_PWM3_CH2
+                    bool "Enable PWM3 channel2"
                     default n
             endif
 
