@@ -16,16 +16,10 @@
 #include "dfs_fs.h"
 #include "drv_pin.h"
 
-
 #define LEDB_PIN        ((3*32)+4)
 #define BUTTON_PIN      ((0*32)+29)
 
-
-
-
 #include "fsl_lpuart.h"
-
-
 
 int main(void)
 {
@@ -41,9 +35,7 @@ int main(void)
     
     rt_pin_mode(LEDB_PIN, PIN_MODE_OUTPUT);  /* Set GPIO as Output */
     rt_pin_mode(BUTTON_PIN, PIN_MODE_INPUT_PULLUP); 
-    
-    
-   rt_kprintf("MCXN947 HelloWorld\r\n");
+    rt_kprintf("MCXN947 HelloWorld\r\n");
     
 #ifdef RT_USING_SDIO
     rt_thread_mdelay(2000);
@@ -57,7 +49,6 @@ int main(void)
     }
 #endif
 
-    
     while (1)
     {
         rt_pin_write(LEDB_PIN, PIN_HIGH);    /* Set GPIO output 1 */
