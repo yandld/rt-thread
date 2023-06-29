@@ -144,7 +144,7 @@ int eb_cam(void)
     }
     else
     {
-        rt_kprintf("%s alread exist\r\n", tid->name);
+        rt_kprintf("%s alread exist\r\n", tid->parent.name);
     }
 
     return RT_EOK;

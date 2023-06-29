@@ -165,8 +165,8 @@ void app_can_init(uint32_t baud, uint32_t baudfd, uint8_t fd)
     flexcan_config_t flexcanConfig;
     flexcan_rx_mb_config_t mbConfig;
 
-    CLOCK_SetClkDiv(kCLOCK_DivFlexcan0Clk, 1u);
-    CLOCK_AttachClk(kFRO_HF_to_FLEXCAN0);
+    CLOCK_SetClkDiv(kCLOCK_DivFlexcan0Clk, 2);
+    CLOCK_AttachClk(kPLL0_to_FLEXCAN0);
 
     FLEXCAN_GetDefaultConfig(&flexcanConfig);
     flexcanConfig.baudRate = baud;
@@ -187,6 +187,8 @@ void app_can_init(uint32_t baud, uint32_t baudfd, uint8_t fd)
         FLEXCAN_FDInit(EXAMPLE_CAN, &flexcanConfig, CLOCK_GetFlexcanClkFreq(0U), kFLEXCAN_64BperMB, true);
         FLEXCAN_SetFDRxMbConfig(EXAMPLE_CAN, RX_MB_IDX, &mbConfig, true);
         rxXfer.framefd = &fd_rx_frame;
+        
+
     }
     else
     {

@@ -87,7 +87,7 @@
 #define MIN_TIME_SEGMENT2 (2U)
 
 /* Define maximum CAN and CAN FD bit rate supported by FLEXCAN. */
-#define MAX_CANFD_BITRATE (8000000U)
+#define MAX_CANFD_BITRATE (10000000U)
 #define MAX_CAN_BITRATE   (1000000U)
 
 #if (defined(FSL_FEATURE_FLEXCAN_HAS_ERRATA_9595) && FSL_FEATURE_FLEXCAN_HAS_ERRATA_9595)
@@ -990,7 +990,7 @@ void FLEXCAN_FDInit(
     uint16_t maxDivider;
 
     /* Check bit rate value. */
-    assert((pConfig->bitRateFD <= 8000000U) && (tqFre <= sourceClock_Hz));
+    assert((pConfig->bitRateFD <= 10000000U) && (tqFre <= sourceClock_Hz));
 #if (defined(FSL_FEATURE_FLEXCAN_HAS_ENHANCED_BIT_TIMING_REG) && FSL_FEATURE_FLEXCAN_HAS_ENHANCED_BIT_TIMING_REG)
     assert((tqFre * MAX_EDPRESDIV) >= sourceClock_Hz);
     maxDivider = MAX_EDPRESDIV;
