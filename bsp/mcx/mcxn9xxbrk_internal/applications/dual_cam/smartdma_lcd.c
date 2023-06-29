@@ -89,7 +89,6 @@ void SmartDMA_WaitConvertDone(void)
 
 void smart_dma_g2rgb_run(void *input, void *output, uint32_t size)
 {
-
 	 SmartDMA_PrepareData(input, output, size);
 	 /* Set EX flag to let EZH start to refresh */
 	 SmartDMA_StartFormatConvert();
