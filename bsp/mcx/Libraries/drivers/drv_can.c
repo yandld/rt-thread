@@ -301,7 +301,7 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
 }
 
 
-static int can_send(struct rt_can_device *can_dev, const void *buf, rt_uint32_t boxno)
+static rt_ssize_t can_send(struct rt_can_device *can_dev, const void *buf, rt_uint32_t boxno)
 {
     struct imxrt_can *can;
     struct rt_can_msg *msg;
@@ -361,7 +361,7 @@ static int can_send(struct rt_can_device *can_dev, const void *buf, rt_uint32_t 
 }
 
 
-static int can_recv(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
+static rt_ssize_t can_recv(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
 {
     struct imxrt_can *can;
     struct rt_can_msg *pmsg;

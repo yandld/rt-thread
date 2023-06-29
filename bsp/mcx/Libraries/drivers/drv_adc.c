@@ -49,7 +49,7 @@ static struct mcx_adc mcx_adc_obj[] =
 
 };
 
-static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
+static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
     struct mcx_adc *adc = (struct mcx_adc *)device->parent.user_data;
 
@@ -79,7 +79,7 @@ static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
     return RT_EOK;
 }
 
-static rt_err_t at32_get_adc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t at32_get_adc_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
     struct mcx_adc *adc = (struct mcx_adc *)device->parent.user_data;
     
