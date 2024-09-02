@@ -14,15 +14,18 @@
 
 /* low level deinit here, this has implemented in cherryusb */
 
-#ifdef RT_CHERRYUSB_DEVICE_TEMPLATE_MSC
+#ifdef RT_CHERRYUSB_DEVICE
 int cherryusb_devinit(void)
 {
     extern void msc_ram_init(uint8_t busid, uintptr_t reg_base);
-
-    msc_ram_init(0, USBHS1__USBC_BASE);
+    extern void msc_storage_init(uint8_t busid, uintptr_t reg_base);
+    extern void cdc_acm_msc_init(uint8_t busid, uintptr_t reg_base);
+    
+    cdc_acm_msc_init(0, USBHS1__USBC_BASE);
+    
     return 0;
 }
-INIT_COMPONENT_EXPORT(cherryusb_devinit);
+INIT_FS_EXPORT(cherryusb_devinit);
 #endif
 
 #ifdef RT_CHERRYUSB_HOST

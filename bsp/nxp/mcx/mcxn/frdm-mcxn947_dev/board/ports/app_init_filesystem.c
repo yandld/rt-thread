@@ -31,6 +31,7 @@
 #define W25Q64_SPI_FLASH_CS_PIN     96
 
 #define W25Q64_FS_MOUNT_PATH        "/sf"
+#define SD_FS_MOUNT_PATH            "/sd"
 #endif
 
 static int filesystem_init(void)
@@ -40,6 +41,8 @@ static int filesystem_init(void)
     // Mount tmpfs
     if (dfs_mount(RT_NULL, TMPFS_MOUNT_PATH, "tmp", 0, 0) == 0)
     {
+        mkdir(W25Q64_FS_MOUNT_PATH, 0);
+        mkdir(SD_FS_MOUNT_PATH, 0);
         LOG_I("Tmpfs mounted to root.");
     }
     else
@@ -51,12 +54,6 @@ static int filesystem_init(void)
 #if defined(BSP_USING_SPI7) && defined(RT_USING_SFUD) && defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
     // SPI Flash initialization and mounting
 
-    if (mkdir(W25Q64_FS_MOUNT_PATH, 0) != 0)
-    {
-        LOG_E("Failed to create directory %s.", W25Q64_FS_MOUNT_PATH);
-        return -RT_ERROR;
-    }
-    
     struct rt_spi_device *spi_device = rt_malloc(sizeof(struct rt_spi_device));
 
     if (!spi_device)
@@ -111,6 +108,22 @@ static int filesystem_init(void)
     LOG_I("ELM FAT filesystem mounted on SPI Flash at %s.", W25Q64_FS_MOUNT_PATH);
 #endif
 
+    
+#ifdef RT_USING_SDIO
+    
+    rt_thread_mdelay(500);
+    
+    if (dfs_mount("sd", SD_FS_MOUNT_PATH, "elm", 0, NULL) == 0)
+    {
+        rt_kprintf("sd mounted to %s\n", SD_FS_MOUNT_PATH);
+    }
+    else
+    {
+        rt_kprintf("sd mount to %s failed\n", SD_FS_MOUNT_PATH);
+    }
+#endif
+    
     return RT_EOK;
 }
+
 INIT_ENV_EXPORT(filesystem_init);

@@ -1,0 +1,296 @@
+/*
+ * Copyright (c) 2024, sakumisu
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+ 
+#include <rtdevice.h>
+
+#include "usbd_core.h"
+#include "usbd_cdc_acm.h"
+#include "usbd_msc.h"
+#include "fsl_common.h"
+
+
+
+
+#define CDC_IN_EP  0x81
+#define CDC_OUT_EP 0x02
+#define CDC_INT_EP 0x83
+
+#define MSC_IN_EP  0x84
+#define MSC_OUT_EP 0x05
+
+
+#define USBD_VID           0xFFFF
+#define USBD_PID           0xFFFF
+#define USBD_MAX_POWER     100
+#define USBD_LANGID_STRING 1033
+
+/*!< config descriptor size */
+#define USB_CONFIG_SIZE (9 + CDC_ACM_DESCRIPTOR_LEN + MSC_DESCRIPTOR_LEN)
+
+#ifdef CONFIG_USB_HS
+#define MSC_MAX_MPS 512
+#else
+#define MSC_MAX_MPS 64
+#endif
+
+
+#ifdef CONFIG_USB_HS
+#define CDC_MAX_MPS 512
+#else
+#define CDC_MAX_MPS 64
+#endif
+
+#define BLOCK_DEV_NAME      "sd0"
+
+
+/*!< global descriptor */
+static const uint8_t cdc_msc_descriptor[] = {
+    USB_DEVICE_DESCRIPTOR_INIT(USB_2_0, 0xEF, 0x02, 0x01, USBD_VID, USBD_PID, 0x0100, 0x01),
+    USB_CONFIG_DESCRIPTOR_INIT(USB_CONFIG_SIZE, 0x03, 0x01, USB_CONFIG_BUS_POWERED, USBD_MAX_POWER),
+    CDC_ACM_DESCRIPTOR_INIT(0x00, CDC_INT_EP, CDC_OUT_EP, CDC_IN_EP, CDC_MAX_MPS, 0x02),
+    MSC_DESCRIPTOR_INIT(0x02, MSC_OUT_EP, MSC_IN_EP, MSC_MAX_MPS, 0x00),
+    ///////////////////////////////////////
+    /// string0 descriptor
+    ///////////////////////////////////////
+    USB_LANGID_INIT(USBD_LANGID_STRING),
+    ///////////////////////////////////////
+    /// string1 descriptor
+    ///////////////////////////////////////
+    0x14,                       /* bLength */
+    USB_DESCRIPTOR_TYPE_STRING, /* bDescriptorType */
+    'C', 0x00,                  /* wcChar0 */
+    'h', 0x00,                  /* wcChar1 */
+    'e', 0x00,                  /* wcChar2 */
+    'r', 0x00,                  /* wcChar3 */
+    'r', 0x00,                  /* wcChar4 */
+    'y', 0x00,                  /* wcChar5 */
+    'U', 0x00,                  /* wcChar6 */
+    'S', 0x00,                  /* wcChar7 */
+    'B', 0x00,                  /* wcChar8 */
+    ///////////////////////////////////////
+    /// string2 descriptor
+    ///////////////////////////////////////
+    0x26,                       /* bLength */
+    USB_DESCRIPTOR_TYPE_STRING, /* bDescriptorType */
+    'C', 0x00,                  /* wcChar0 */
+    'h', 0x00,                  /* wcChar1 */
+    'e', 0x00,                  /* wcChar2 */
+    'r', 0x00,                  /* wcChar3 */
+    'r', 0x00,                  /* wcChar4 */
+    'y', 0x00,                  /* wcChar5 */
+    'U', 0x00,                  /* wcChar6 */
+    'S', 0x00,                  /* wcChar7 */
+    'B', 0x00,                  /* wcChar8 */
+    ' ', 0x00,                  /* wcChar9 */
+    'C', 0x00,                  /* wcChar10 */
+    '-', 0x00,                  /* wcChar11 */
+    'M', 0x00,                  /* wcChar12 */
+    ' ', 0x00,                  /* wcChar13 */
+    'D', 0x00,                  /* wcChar14 */
+    'E', 0x00,                  /* wcChar15 */
+    'M', 0x00,                  /* wcChar16 */
+    'O', 0x00,                  /* wcChar17 */
+    ///////////////////////////////////////
+    /// string3 descriptor
+    ///////////////////////////////////////
+    0x16,                       /* bLength */
+    USB_DESCRIPTOR_TYPE_STRING, /* bDescriptorType */
+    '2', 0x00,                  /* wcChar0 */
+    '0', 0x00,                  /* wcChar1 */
+    '2', 0x00,                  /* wcChar2 */
+    '2', 0x00,                  /* wcChar3 */
+    '1', 0x00,                  /* wcChar4 */
+    '2', 0x00,                  /* wcChar5 */
+    '3', 0x00,                  /* wcChar6 */
+    '4', 0x00,                  /* wcChar7 */
+    '5', 0x00,                  /* wcChar8 */
+    '6', 0x00,                  /* wcChar9 */
+#ifdef CONFIG_USB_HS
+    ///////////////////////////////////////
+    /// device qualifier descriptor
+    ///////////////////////////////////////
+    0x0a,
+    USB_DESCRIPTOR_TYPE_DEVICE_QUALIFIER,
+    0x00,
+    0x02,
+    0x02,
+    0x02,
+    0x01,
+    0x40,
+    0x01,
+    0x00,
+#endif
+    0x00
+};
+
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t read_buffer[2048]; /* 2048 is only for test speed , please use CDC_MAX_MPS for common*/
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t write_buffer[2048];
+
+volatile bool ep_tx_busy_flag = false;
+
+static void usbd_event_handler(uint8_t busid, uint8_t event)
+{
+    switch (event) {
+        case USBD_EVENT_RESET:
+            break;
+        case USBD_EVENT_CONNECTED:
+            break;
+        case USBD_EVENT_DISCONNECTED:
+            break;
+        case USBD_EVENT_RESUME:
+            break;
+        case USBD_EVENT_SUSPEND:
+            break;
+        case USBD_EVENT_CONFIGURED:
+            ep_tx_busy_flag = false;
+            /* setup first out ep read transfer */
+            usbd_ep_start_read(busid, CDC_OUT_EP, read_buffer, 2048);
+            break;
+        case USBD_EVENT_SET_REMOTE_WAKEUP:
+            break;
+        case USBD_EVENT_CLR_REMOTE_WAKEUP:
+            break;
+
+        default:
+            break;
+    }
+}
+
+void usbd_cdc_acm_bulk_out(uint8_t busid, uint8_t ep, uint32_t nbytes)
+{
+    USB_LOG_RAW("actual out len:%d\r\n", nbytes);
+    /* setup next out ep read transfer */
+    usbd_ep_start_read(busid, CDC_OUT_EP, read_buffer, 2048);
+}
+
+void usbd_cdc_acm_bulk_in(uint8_t busid, uint8_t ep, uint32_t nbytes)
+{
+    USB_LOG_RAW("actual in len:%d\r\n", nbytes);
+
+    if ((nbytes % usbd_get_ep_mps(busid, ep)) == 0 && nbytes) {
+        /* send zlp */
+        usbd_ep_start_write(busid, CDC_IN_EP, NULL, 0);
+    } else {
+        ep_tx_busy_flag = false;
+    }
+}
+
+/*!< endpoint call back */
+struct usbd_endpoint cdc_out_ep = {
+    .ep_addr = CDC_OUT_EP,
+    .ep_cb = usbd_cdc_acm_bulk_out
+};
+
+struct usbd_endpoint cdc_in_ep = {
+    .ep_addr = CDC_IN_EP,
+    .ep_cb = usbd_cdc_acm_bulk_in
+};
+
+struct usbd_interface intf0;
+struct usbd_interface intf1;
+struct usbd_interface intf2;
+
+
+static struct rt_device_blk_geometry geometry;
+static rt_device_t blk_dev = RT_NULL;
+
+
+void usbd_msc_get_cap(uint8_t busid, uint8_t lun, uint32_t *block_num, uint32_t *block_size)
+{
+    if (blk_dev == RT_NULL)
+    {
+        rt_kprintf("Cannot find SD card device!\n");
+        return;
+    }
+
+    if (rt_device_control(blk_dev, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry) == RT_EOK)
+    {
+        *block_num = geometry.sector_count;
+        *block_size = geometry.bytes_per_sector;
+    }
+}
+
+int usbd_msc_sector_read(uint8_t busid, uint8_t lun, uint32_t sector, uint8_t *buffer, uint32_t length)
+{
+    rt_device_read(blk_dev, sector, buffer, length / geometry.bytes_per_sector);
+    return 0;
+}
+
+int usbd_msc_sector_write(uint8_t busid, uint8_t lun, uint32_t sector, uint8_t *buffer, uint32_t length)
+{
+    rt_device_write(blk_dev, sector, buffer, length / geometry.bytes_per_sector);
+    return 0;
+}
+
+
+void cdc_acm_msc_init(uint8_t busid, uintptr_t reg_base)
+{
+    rt_err_t res;
+
+    blk_dev = rt_device_find(BLOCK_DEV_NAME);
+    
+    if(blk_dev == RT_NULL)
+    {
+        USB_LOG_ERR("cannot found block dev:%s\n", BLOCK_DEV_NAME);
+        return ;
+    }
+
+    res = rt_device_open(blk_dev, RT_DEVICE_OFLAG_RDWR);
+    
+    if(res != RT_EOK)
+    {
+        USB_LOG_ERR("open fail %d\n", res);
+        return ;
+    }
+    
+#ifdef CONFIG_USBDEV_ADVANCE_DESC
+    usbd_desc_register(busid, &cdc_msc_descriptor);
+#else
+    usbd_desc_register(busid, cdc_msc_descriptor);
+#endif
+    usbd_add_interface(busid, usbd_cdc_acm_init_intf(busid, &intf0));
+    usbd_add_interface(busid, usbd_cdc_acm_init_intf(busid, &intf1));
+    usbd_add_endpoint(busid, &cdc_out_ep);
+    usbd_add_endpoint(busid, &cdc_in_ep);
+    usbd_add_interface(busid, usbd_msc_init_intf(busid, &intf2, MSC_OUT_EP, MSC_IN_EP));
+
+    usbd_initialize(busid, reg_base, usbd_event_handler);
+}
+
+
+
+
+
+
+/* low level init here, this has implemented in cherryusb */
+
+/* low level deinit here, this has implemented in cherryusb */
+
+#ifdef RT_CHERRYUSB_DEVICE
+int cherryusb_devinit(void)
+{
+    extern void msc_ram_init(uint8_t busid, uintptr_t reg_base);
+    extern void msc_storage_init(uint8_t busid, uintptr_t reg_base);
+    extern void cdc_acm_msc_init(uint8_t busid, uintptr_t reg_base);
+    
+    cdc_acm_msc_init(0, USBHS1__USBC_BASE);
+    
+    return 0;
+}
+INIT_FS_EXPORT(cherryusb_devinit);
+#endif
+
+#ifdef RT_CHERRYUSB_HOST
+#include "usbh_core.h"
+
+int cherryusb_hostinit(void)
+{
+    usbh_initialize(0, USBHS1__USBC_BASE);
+    return 0;
+}
+INIT_COMPONENT_EXPORT(cherryusb_hostinit);
+#endif
+
