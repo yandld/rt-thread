@@ -17,13 +17,11 @@
 
 #ifdef RT_USING_SDIO
 
-//#define MMCSD_DEBUG
 
-#ifdef MMCSD_DEBUG
-#define MMCSD_DGB       rt_kprintf
-#else
-#define MMCSD_DGB(fmt, ...)
-#endif
+#define DBG_TAG "drv.sdio"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
+
 
 
 #define USDHC_ADMA_TABLE_WORDS      (32U)        /* define the ADMA descriptor table length */
@@ -96,7 +94,7 @@ static void mcx_sdmmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
     cmd = req->cmd;
     RT_ASSERT(cmd != RT_NULL);
 
-    MMCSD_DGB("\tcmd->cmd_code: %02d, cmd->arg: %08x, cmd->flags: %08x --> ", cmd->cmd_code, cmd->arg, cmd->flags);
+    LOG_D("tcmd->cmd_code: %02d, cmd->arg: %08x, cmd->flags: %08x --> ", cmd->cmd_code, cmd->arg, cmd->flags);
 
     data = cmd->data;
 
@@ -165,13 +163,13 @@ static void mcx_sdmmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
         fsl_data.blockSize = data->blksize;
         fsl_data.blockCount = data->blks;
 
-        MMCSD_DGB(" blksize:%d, blks:%d ", fsl_data.blockSize, fsl_data.blockCount);
+        LOG_D(" blksize:%d, blks:%d ", fsl_data.blockSize, fsl_data.blockCount);
 
         if ((cmd->cmd_code == WRITE_BLOCK) || (cmd->cmd_code == WRITE_MULTIPLE_BLOCK))
         {
             if (buf)
             {
-                MMCSD_DGB(" write(data->buf to buf) ");
+                LOG_D(" write(data->buf to buf) ");
                 rt_memcpy(buf, data->buf, fsl_data.blockSize * fsl_data.blockCount);
                 fsl_data.txData = (uint32_t const *)buf;
             }
@@ -207,7 +205,7 @@ static void mcx_sdmmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
     if (error != kStatus_Success)
     {
         SDMMCHOST_ErrorRecovery(mmcsd->USDHC);
-        MMCSD_DGB(" ***USDHC_TransferBlocking error: %d*** --> \n", error);
+        LOG_D(" ***USDHC_TransferBlocking error: %d*** --> \n", error);
         cmd->err = -RT_ERROR;
     }
 
@@ -215,7 +213,7 @@ static void mcx_sdmmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
     {
         if (fsl_data.rxData)
         {
-            MMCSD_DGB("read copy buf to data->buf ");
+            LOG_D("read copy buf to data->buf ");
             rt_memcpy(data->buf, buf, fsl_data.blockSize * fsl_data.blockCount);
         }
 
@@ -228,13 +226,13 @@ static void mcx_sdmmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
         cmd->resp[2] = fsl_command.response[1];
         cmd->resp[1] = fsl_command.response[2];
         cmd->resp[0] = fsl_command.response[3];
-        MMCSD_DGB(" resp 0x%08X 0x%08X 0x%08X 0x%08X\n",
+        LOG_D(" resp 0x%08X 0x%08X 0x%08X 0x%08X\n",
                   cmd->resp[0], cmd->resp[1], cmd->resp[2], cmd->resp[3]);
     }
     else
     {
         cmd->resp[0] = fsl_command.response[0];
-        MMCSD_DGB(" resp 0x%08X\n", cmd->resp[0]);
+        LOG_D(" resp 0x%08X\n", cmd->resp[0]);
     }
 
     mmcsd_req_complete(host);
@@ -247,15 +245,15 @@ static void mcx_sdmmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
 
 static void mcx_sdmmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io_cfg)
 {
-    MMCSD_DGB("%s\r\n", __FUNCTION__);
+    LOG_D("%s\r\n", __FUNCTION__);
     struct mcx_mmcsd *mmcsd;
 
     mmcsd = (struct mcx_mmcsd *) host->private_data;
 
     uint32_t sdxc_clock = io_cfg->clock;
 
-    MMCSD_DGB("sdxc_clock:%d\r\n", sdxc_clock);
-    MMCSD_DGB("bus_width:%d\r\n", io_cfg->bus_width);
+    LOG_D("sdxc_clock:%d\r\n", sdxc_clock);
+    LOG_D("bus_width:%d\r\n", io_cfg->bus_width);
 
     if (sdxc_clock != 0U)
     {
@@ -303,7 +301,7 @@ int rt_hw_sdio_init(void)
     mmcsd = rt_malloc(sizeof(struct mcx_mmcsd));
     if (!mmcsd)
     {
-        MMCSD_DGB("alloc mci failed\n");
+        LOG_D("alloc mci failed\n");
         goto err;
     }
 
@@ -329,7 +327,7 @@ int rt_hw_sdio_init(void)
     CLOCK_SetClkDiv(kCLOCK_DivUSdhcClk, 1u);
     CLOCK_AttachClk(kFRO_HF_to_USDHC);
 
-    MMCSD_DGB("SDIO clock:%dHz\r\n", CLOCK_GetUsdhcClkFreq());
+    LOG_D("SDIO clock:%dHz\r\n", CLOCK_GetUsdhcClkFreq());
 
     /* Initializes SDHC. */
     usdhc_config_t config;

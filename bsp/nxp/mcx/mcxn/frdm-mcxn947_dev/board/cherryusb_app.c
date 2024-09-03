@@ -226,7 +226,7 @@ int usbd_msc_sector_write(uint8_t busid, uint8_t lun, uint32_t sector, uint8_t *
 }
 
 
-void cdc_acm_msc_init(uint8_t busid, uintptr_t reg_base)
+void cherryusb_init(uint8_t busid, uintptr_t reg_base)
 {
     rt_err_t res;
 
@@ -272,11 +272,7 @@ void cdc_acm_msc_init(uint8_t busid, uintptr_t reg_base)
 #ifdef RT_CHERRYUSB_DEVICE
 int cherryusb_devinit(void)
 {
-    extern void msc_ram_init(uint8_t busid, uintptr_t reg_base);
-    extern void msc_storage_init(uint8_t busid, uintptr_t reg_base);
-    extern void cdc_acm_msc_init(uint8_t busid, uintptr_t reg_base);
-    
-    cdc_acm_msc_init(0, USBHS1__USBC_BASE);
+    cherryusb_init(0, USBHS1__USBC_BASE);
     
     return 0;
 }
