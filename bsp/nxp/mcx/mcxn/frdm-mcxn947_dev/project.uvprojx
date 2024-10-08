@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
-              <Define>DEBUG, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, CPU_MCXN947VDF_cm33_core0, __RTTHREAD__, CONFIG_USB_HS, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, CPU_MCXN947VDF_cm33_core0, CONFIG_USB_HS, RT_USING_LIBC, __RTTHREAD__, DEBUG, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Libraries\MCXN947\MCXN947\drivers;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\usb\cherryusb\class\dfu;..\..\..\..\..\components\libc\compilers\common\include;packages\rw007-latest;..\..\..\..\..\components\drivers\usb\cherryusb\class\msc;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\dfs\dfs_v1\include;..\..\..\..\..\components\drivers\usb\cherryusb\core;..\..\..\..\..\components\net\sal\impl;..\..\..\..\..\components\drivers\usb\cherryusb\class\vendor\net;..\..\..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\..\..\components\net\sal\include;..\..\..\..\..\components\net\lwip\lwip-2.1.2\src\include;board\MCUX_Config\board;..\..\..\..\..\components\drivers\spi;..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\usb\cherryusb\class\midi;..\Libraries\drivers\config;.;..\..\..\..\..\components\drivers\spi\sfud\inc;..\..\..\..\..\components\drivers\usb\cherryusb\class\wireless;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\components\libc\posix\io\stdio;..\Libraries\drivers;..\..\..\..\..\include;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;packages\rw007-latest\inc;..\..\..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\..\..\components\drivers\usb\cherryusb\class\audio;..\..\..\..\..\libcpu\arm\cortex-m33;..\Libraries\CMSIS\Core\Include;..\..\..\..\..\components\drivers\include;packages\webnet-latest\inc;..\..\..\..\..\components\finsh;..\..\..\..\..\components\drivers\wlan;..\Libraries\MCXN947\MCXN947\drivers\romapi\nboot;..\..\..\..\..\components\drivers\usb\cherryusb\common;board;..\..\..\..\..\components\drivers\include;applications;..\..\..\..\..\components\net\lwip\port;..\..\..\..\..\components\drivers\usb\cherryusb\class\cdc;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\io\termios;..\Libraries\MCXN947\MCXN947\drivers\romapi\runbootloader;..\..\..\..\..\components\net\lwip\lwip-2.1.2\src\include\netif;..\..\..\..\..\components\net\sal\include\socket;..\..\..\..\..\components\net\sal\include\dfs_net;..\..\..\..\..\components\dfs\dfs_v1\filesystems\tmpfs;..\..\..\..\..\components\utilities\ulog;..\..\..\..\..\components\libc\posix\io\epoll;..\Libraries\MCXN947\MCXN947\drivers\romapi\mem_interface;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\utilities\ymodem;..\..\..\..\..\components\drivers\usb\cherryusb\class\hid;..\..\..\..\..\components\net\sal\include\socket\sys_socket;..\..\..\..\..\components\drivers\usb\cherryusb\osal;..\..\..\..\..\components\drivers\usb\cherryusb\class\video;..\Libraries\MCXN947\MCXN947\drivers\romapi\flash;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\net\netdev\include;..\Libraries\MCXN947\MCXN947;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\drivers\usb\cherryusb\class\vendor\serial</IncludePath>
+              <IncludePath>..\..\..\..\..\components\net\lwip\port;..\..\..\..\..\include;..\..\..\..\..\components\drivers\usb\cherryusb\class\vendor\net;..\..\..\..\..\components\dfs\dfs_v1\filesystems\tmpfs;board;packages\rw007-latest\inc;..\Libraries\CMSIS\Core\Include;packages\webnet-latest\inc;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\drivers\config;..\..\..\..\..\components\drivers\usb\cherryusb\core;..\..\..\..\..\components\drivers\smp;..\Libraries\MCXN947\MCXN947\drivers\romapi\flash;..\..\..\..\..\components\net\sal\include\dfs_net;..\..\..\..\..\components\drivers\spi\sfud\inc;..\..\..\..\..\libcpu\arm\cortex-m33;.;..\..\..\..\..\components\net\lwip\lwip-2.1.2\src\include\netif;..\..\..\..\..\components\drivers\usb\cherryusb\class\msc;..\..\..\..\..\components\drivers\usb\cherryusb\class\wireless;..\..\..\..\..\components\drivers\include;..\Libraries\drivers;..\Libraries\MCXN947\MCXN947\drivers;..\..\..\..\..\components\libc\posix\io\stdio;..\..\..\..\..\components\libc\posix\io\termios;..\..\..\..\..\components\finsh;..\Libraries\MCXN947\MCXN947\drivers\romapi\runbootloader;..\..\..\..\..\components\drivers\spi;..\..\..\..\..\components\drivers\wlan;..\..\..\..\..\components\net\lwip\lwip-2.1.2\src\include;..\..\..\..\..\components\net\sal\include\socket;..\..\..\..\..\components\utilities\ymodem;applications;..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\components\drivers\usb\cherryusb\class\audio;..\..\..\..\..\components\libc\compilers\common\include;..\Libraries\MCXN947\MCXN947\drivers\romapi\nboot;..\..\..\..\..\components\net\sal\impl;..\..\..\..\..\components\drivers\usb\cherryusb\class\video;..\..\..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\usb\cherryusb\class\midi;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\drivers\usb\cherryusb\class\cdc;..\..\..\..\..\components\utilities\ulog;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\net\netdev\include;..\..\..\..\..\components\drivers\usb\cherryusb\common;..\..\..\..\..\components\net\sal\include\socket\sys_socket;..\..\..\..\..\components\net\sal\include;..\..\..\..\..\components\drivers\include;..\Libraries\MCXN947\MCXN947;..\..\..\..\..\components\drivers\usb\cherryusb\osal;..\..\..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\..\..\components\libc\compilers\common\extension;..\Libraries\MCXN947\MCXN947\drivers\romapi\mem_interface;board\MCUX_Config\board;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\usb\cherryusb\class\dfu;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;packages\rw007-latest;..\..\..\..\..\components\dfs\dfs_v1\include;..\..\..\..\..\components\drivers\usb\cherryusb\class\vendor\serial;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\usb\cherryusb\class\hid</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -395,21 +395,6 @@
           <GroupName>CherryUSB</GroupName>
           <Files>
             <File>
-              <FileName>usbd_cdc_acm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\usb\cherryusb\class\cdc\usbd_cdc_acm.c</FilePath>
-            </File>
-            <File>
-              <FileName>usbd_hid.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\usb\cherryusb\class\hid\usbd_hid.c</FilePath>
-            </File>
-            <File>
-              <FileName>usbd_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\usb\cherryusb\core\usbd_core.c</FilePath>
-            </File>
-            <File>
               <FileName>usb_check.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\components\drivers\usb\cherryusb\platform\rtthread\usb_check.c</FilePath>
@@ -425,9 +410,9 @@
               <FilePath>..\..\..\..\..\components\drivers\usb\cherryusb\platform\rtthread\usb_msh.c</FilePath>
             </File>
             <File>
-              <FileName>usb_osal_rtthread.c</FileName>
+              <FileName>usbd_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\usb\cherryusb\osal\usb_osal_rtthread.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\usb\cherryusb\core\usbd_core.c</FilePath>
             </File>
             <File>
               <FileName>usb_dc_chipidea.c</FileName>
@@ -435,9 +420,24 @@
               <FilePath>..\..\..\..\..\components\drivers\usb\cherryusb\port\chipidea\usb_dc_chipidea.c</FilePath>
             </File>
             <File>
+              <FileName>usbd_hid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\drivers\usb\cherryusb\class\hid\usbd_hid.c</FilePath>
+            </File>
+            <File>
               <FileName>usb_glue_mcx.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\components\drivers\usb\cherryusb\port\chipidea\usb_glue_mcx.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbd_cdc_acm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\drivers\usb\cherryusb\class\cdc\usbd_cdc_acm.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_osal_rtthread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\drivers\usb\cherryusb\osal\usb_osal_rtthread.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1330,9 +1330,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>block_dev.c</FileName>
+              <FileName>dev_block.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\sdio\block_dev.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\sdio\dev_block.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1386,9 +1386,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>gpt.c</FileName>
+              <FileName>dev_gpt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\sdio\gpt.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\sdio\dev_gpt.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1442,9 +1442,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>mmc.c</FileName>
+              <FileName>dev_mmc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\sdio\mmc.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\sdio\dev_mmc.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1498,9 +1498,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>mmcsd_core.c</FileName>
+              <FileName>dev_mmcsd_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\sdio\mmcsd_core.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\sdio\dev_mmcsd_core.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1554,9 +1554,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>sd.c</FileName>
+              <FileName>dev_sd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\sdio\sd.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\sdio\dev_sd.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1610,9 +1610,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>sdio.c</FileName>
+              <FileName>dev_sdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\sdio\sdio.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\sdio\dev_sdio.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1666,9 +1666,177 @@
               </FileOption>
             </File>
             <File>
-              <FileName>serial.c</FileName>
+              <FileName>dev_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\serial\serial.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\serial\dev_serial.c</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>1</IncludeInBuild>
+                  <AlwaysBuild>0</AlwaysBuild>
+                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
+                  <PublicsOnly>0</PublicsOnly>
+                  <StopOnExitCode>3</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                </CommonProperty>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <uGnu>2</uGnu>
+                    <useXO>2</useXO>
+                    <v6Lang>0</v6Lang>
+                    <v6LangP>0</v6LangP>
+                    <vShortEn>2</vShortEn>
+                    <vShortWch>2</vShortWch>
+                    <v6Lto>2</v6Lto>
+                    <v6WtE>2</v6WtE>
+                    <v6Rtti>2</v6Rtti>
+                    <VariousControls>
+                      <MiscControls>  -std=c99</MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+            <File>
+              <FileName>dev_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\drivers\spi\dev_spi.c</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>1</IncludeInBuild>
+                  <AlwaysBuild>0</AlwaysBuild>
+                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
+                  <PublicsOnly>0</PublicsOnly>
+                  <StopOnExitCode>3</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                </CommonProperty>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <uGnu>2</uGnu>
+                    <useXO>2</useXO>
+                    <v6Lang>0</v6Lang>
+                    <v6LangP>0</v6LangP>
+                    <vShortEn>2</vShortEn>
+                    <vShortWch>2</vShortWch>
+                    <v6Lto>2</v6Lto>
+                    <v6WtE>2</v6WtE>
+                    <v6Rtti>2</v6Rtti>
+                    <VariousControls>
+                      <MiscControls>  -std=c99</MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+            <File>
+              <FileName>dev_spi_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\drivers\spi\dev_spi_core.c</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>1</IncludeInBuild>
+                  <AlwaysBuild>0</AlwaysBuild>
+                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
+                  <PublicsOnly>0</PublicsOnly>
+                  <StopOnExitCode>3</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                </CommonProperty>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <uGnu>2</uGnu>
+                    <useXO>2</useXO>
+                    <v6Lang>0</v6Lang>
+                    <v6LangP>0</v6LangP>
+                    <vShortEn>2</vShortEn>
+                    <vShortWch>2</vShortWch>
+                    <v6Lto>2</v6Lto>
+                    <v6WtE>2</v6WtE>
+                    <v6Rtti>2</v6Rtti>
+                    <VariousControls>
+                      <MiscControls>  -std=c99</MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+            <File>
+              <FileName>dev_spi_flash_sfud.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\drivers\spi\dev_spi_flash_sfud.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1834,9 +2002,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>spi_core.c</FileName>
+              <FileName>dev_wlan.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\spi\spi_core.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\wlan\dev_wlan.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1890,9 +2058,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>spi_dev.c</FileName>
+              <FileName>dev_wlan_cfg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\spi\spi_dev.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\wlan\dev_wlan_cfg.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1946,9 +2114,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>spi_flash_sfud.c</FileName>
+              <FileName>dev_wlan_cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\spi\spi_flash_sfud.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\wlan\dev_wlan_cmd.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -2002,9 +2170,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>wlan_cfg.c</FileName>
+              <FileName>dev_wlan_lwip.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\wlan\wlan_cfg.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\wlan\dev_wlan_lwip.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -2058,9 +2226,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>wlan_cmd.c</FileName>
+              <FileName>dev_wlan_mgnt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\wlan\wlan_cmd.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\wlan\dev_wlan_mgnt.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -2114,9 +2282,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>wlan_dev.c</FileName>
+              <FileName>dev_wlan_prot.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\wlan\wlan_dev.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\wlan\dev_wlan_prot.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -2170,177 +2338,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>wlan_lwip.c</FileName>
+              <FileName>dev_wlan_workqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\wlan\wlan_lwip.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
-                    <VariousControls>
-                      <MiscControls>  -std=c99</MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-            <File>
-              <FileName>wlan_mgnt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\wlan\wlan_mgnt.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
-                    <VariousControls>
-                      <MiscControls>  -std=c99</MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-            <File>
-              <FileName>wlan_prot.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\wlan\wlan_prot.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
-                    <VariousControls>
-                      <MiscControls>  -std=c99</MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-            <File>
-              <FileName>wlan_workqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\wlan\wlan_workqueue.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\wlan\dev_wlan_workqueue.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -2973,16 +2973,6 @@
               <FilePath>..\..\..\..\..\components\finsh\msh_file.c</FilePath>
             </File>
             <File>
-              <FileName>msh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\finsh\msh.c</FilePath>
-            </File>
-            <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\finsh\shell.c</FilePath>
-            </File>
-            <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\components\finsh\cmd.c</FilePath>
@@ -2991,6 +2981,16 @@
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\components\finsh\msh_parse.c</FilePath>
+            </File>
+            <File>
+              <FileName>msh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\finsh\msh.c</FilePath>
+            </File>
+            <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3281,6 +3281,62 @@
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\src\irq.c</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>1</IncludeInBuild>
+                  <AlwaysBuild>0</AlwaysBuild>
+                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
+                  <PublicsOnly>0</PublicsOnly>
+                  <StopOnExitCode>3</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                </CommonProperty>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <uGnu>2</uGnu>
+                    <useXO>2</useXO>
+                    <v6Lang>0</v6Lang>
+                    <v6LangP>0</v6LangP>
+                    <vShortEn>2</vShortEn>
+                    <vShortWch>2</vShortWch>
+                    <v6Lto>2</v6Lto>
+                    <v6WtE>2</v6WtE>
+                    <v6Rtti>2</v6Rtti>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\klibc\kerrno.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -3939,34 +3995,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>fsl_lpspi.c</FileName>
+              <FileName>fsl_powerquad_basic.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpspi.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_common_arm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_common_arm.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_sai_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_sai_edma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_opamp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_opamp.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_clock.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_powerquad_data.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_data.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_basic.c</FilePath>
             </File>
             <File>
               <FileName>fsl_pdm_edma.c</FileName>
@@ -3974,34 +4005,24 @@
               <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_pdm_edma.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_flexspi_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexspi_edma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_pdm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_pdm.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_usdhc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_usdhc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_tdet.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_tdet.c</FilePath>
-            </File>
-            <File>
               <FileName>fsl_nboot.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\MCXN947\MCXN947\drivers\romapi\nboot\src\fsl_nboot.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_flexio_i2c_master.c</FileName>
+              <FileName>fsl_flexio_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_i2c_master.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_tsi_v6.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_tsi_v6.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_sai_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_sai_edma.c</FilePath>
             </File>
             <File>
               <FileName>fsl_sai.c</FileName>
@@ -4009,24 +4030,34 @@
               <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_sai.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_trdc.c</FileName>
+              <FileName>fsl_vref.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_trdc.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_vref.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_erm.c</FileName>
+              <FileName>fsl_tdet.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_erm.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_tdet.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_flexio_spi.c</FileName>
+              <FileName>fsl_flexio_mculcd_edma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_spi.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_mculcd_edma.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_qdc.c</FileName>
+              <FileName>fsl_enet.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_qdc.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_enet.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_flexcan_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexcan_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_flexio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio.c</FilePath>
             </File>
             <File>
               <FileName>fsl_intm.c</FileName>
@@ -4034,9 +4065,69 @@
               <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_intm.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_gpio.c</FileName>
+              <FileName>fsl_cache_lpcac.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_gpio.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_cache_lpcac.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_vbat.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_vbat.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_dac14.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_dac14.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpadc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpadc.c</FilePath>
+            </File>
+            <File>
+              <FileName>system_MCXN947_cm33_core0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\system_MCXN947_cm33_core0.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_powerquad_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_data.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_powerquad_math.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_math.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_flexcan.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexcan.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_sema42.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_sema42.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpuart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpuart.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_flexio_spi_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_spi_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpcmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpcmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_i3c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_i3c.c</FilePath>
             </File>
             <File>
               <FileName>fsl_flash.c</FileName>
@@ -4044,34 +4135,44 @@
               <FilePath>..\Libraries\MCXN947\MCXN947\drivers\romapi\flash\src\fsl_flash.c</FilePath>
             </File>
             <File>
+              <FileName>fsl_pdm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_pdm.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_puf_v3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_puf_v3.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_reset.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_reset.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_flexspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexspi.c</FilePath>
+            </File>
+            <File>
               <FileName>fsl_crc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_crc.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_lptmr.c</FileName>
+              <FileName>fsl_irtc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lptmr.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_irtc.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_vref.c</FileName>
+              <FileName>fsl_mem_interface.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_vref.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\romapi\mem_interface\src\fsl_mem_interface.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_utick.c</FileName>
+              <FileName>fsl_itrc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_utick.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_runbootloader.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\romapi\runbootloader\src\fsl_runbootloader.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_evtg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_evtg.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_itrc.c</FilePath>
             </File>
             <File>
               <FileName>fsl_smartcard_phy_emvsim.c</FileName>
@@ -4084,189 +4185,9 @@
               <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_ctimer.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_enet.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_enet.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_cache.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_cache.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_common.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_wuu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_wuu.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_vbat.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_vbat.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_smartcard_emvsim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_smartcard_emvsim.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_cache_lpcac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_cache_lpcac.c</FilePath>
-            </File>
-            <File>
               <FileName>fsl_eim.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_eim.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_lpadc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpadc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_inputmux.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_inputmux.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_puf_v3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_puf_v3.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_cdog.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_cdog.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_mrt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_mrt.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexcan.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexcan.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_syspm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_syspm.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_dac.c</FilePath>
-            </File>
-            <File>
-              <FileName>startup_MCXN947_cm33_core0.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\arm\startup_MCXN947_cm33_core0.s</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_pint.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_pint.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_mem_interface.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\romapi\mem_interface\src\fsl_mem_interface.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexio_uart_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_uart_edma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_lpuart_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpuart_edma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_smartdma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_smartdma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_freqme.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_freqme.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_ostimer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_ostimer.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_smartdma_mcxn.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_smartdma_mcxn.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_irtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_irtc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_sema42.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_sema42.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_tsi_v6.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_tsi_v6.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_lpuart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpuart.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_itrc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_itrc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_lpi2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpi2c.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_edma_soc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_edma_soc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_powerquad_transform.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_transform.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_power.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_power.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_lpcmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpcmp.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_edma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexio_mculcd_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_mculcd_edma.c</FilePath>
             </File>
             <File>
               <FileName>fsl_gdet.c</FileName>
@@ -4274,64 +4195,14 @@
               <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_gdet.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_plu.c</FileName>
+              <FileName>fsl_smartdma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_plu.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_smartdma.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_ewm.c</FileName>
+              <FileName>fsl_flexio_uart_edma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_ewm.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_lpi2c_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpi2c_edma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexio_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexcan_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexcan_edma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_wwdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_wwdt.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_powerquad_math.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_math.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_i3c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_i3c.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_cmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_cmc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_i3c_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_i3c_edma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_lpflexcomm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpflexcomm.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_pwm.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_uart_edma.c</FilePath>
             </File>
             <File>
               <FileName>fsl_sctimer.c</FileName>
@@ -4339,9 +4210,204 @@
               <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_sctimer.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_sinc.c</FileName>
+              <FileName>fsl_spc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_sinc.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_spc.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_edma_soc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_edma_soc.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_i3c_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_i3c_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_cmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_cmc.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_syspm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_syspm.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_flexio_mculcd_smartdma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_mculcd_smartdma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_inputmux.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_inputmux.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_ostimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_ostimer.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpuart_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpuart_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lptmr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lptmr.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_utick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_utick.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_ewm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_ewm.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_clock.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_mrt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_mrt.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_powerquad_filter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_filter.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_usdhc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_usdhc.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_erm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_erm.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_wuu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_wuu.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_common_arm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_common_arm.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_opamp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_opamp.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_powerquad_matrix.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_matrix.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpi2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpi2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_pwm.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_runbootloader.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\romapi\runbootloader\src\fsl_runbootloader.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_evtg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_evtg.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_freqme.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_freqme.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_cdog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_cdog.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_pint.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_pint.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_qdc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_qdc.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_flexio_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_plu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_plu.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_smartdma_mcxn.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_smartdma_mcxn.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpi2c_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpi2c_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_power.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_power.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_cache.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_cache.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_smartcard_emvsim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_smartcard_emvsim.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_powerquad_transform.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_transform.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_MCXN947_cm33_core0.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\arm\startup_MCXN947_cm33_core0.s</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpspi.c</FilePath>
             </File>
             <File>
               <FileName>fsl_flexio_mculcd.c</FileName>
@@ -4354,44 +4420,29 @@
               <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpspi_edma.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_powerquad_matrix.c</FileName>
+              <FileName>fsl_sinc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_matrix.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_sinc.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_flexio.c</FileName>
+              <FileName>fsl_flexio_i2c_master.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_i2c_master.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_powerquad_basic.c</FileName>
+              <FileName>fsl_wwdt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_basic.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_wwdt.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_reset.c</FileName>
+              <FileName>fsl_flexspi_edma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_reset.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexspi_edma.c</FilePath>
             </File>
             <File>
-              <FileName>system_MCXN947_cm33_core0.c</FileName>
+              <FileName>fsl_trdc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\system_MCXN947_cm33_core0.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_dac14.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_dac14.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexio_mculcd_smartdma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_mculcd_smartdma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexio_spi_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_spi_edma.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_trdc.c</FilePath>
             </File>
             <File>
               <FileName>fsl_smartdma_rt500.c</FileName>
@@ -4399,19 +4450,24 @@
               <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_smartdma_rt500.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_powerquad_filter.c</FileName>
+              <FileName>fsl_edma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_powerquad_filter.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_edma.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_spc.c</FileName>
+              <FileName>fsl_dac.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_spc.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_dac.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_flexspi.c</FileName>
+              <FileName>fsl_lpflexcomm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexspi.c</FilePath>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpflexcomm.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_common.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -4790,14 +4846,9 @@
           <GroupName>WebNet</GroupName>
           <Files>
             <File>
-              <FileName>wn_module_asp.c</FileName>
+              <FileName>webnet.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\webnet-latest\module\wn_module_asp.c</FilePath>
-            </File>
-            <File>
-              <FileName>wn_module_alias.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\webnet-latest\module\wn_module_alias.c</FilePath>
+              <FilePath>packages\webnet-latest\src\webnet.c</FilePath>
             </File>
             <File>
               <FileName>wn_sample_upload.c</FileName>
@@ -4805,9 +4856,14 @@
               <FilePath>packages\webnet-latest\samples\wn_sample_upload.c</FilePath>
             </File>
             <File>
-              <FileName>webnet.c</FileName>
+              <FileName>wn_request.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\webnet-latest\src\webnet.c</FilePath>
+              <FilePath>packages\webnet-latest\src\wn_request.c</FilePath>
+            </File>
+            <File>
+              <FileName>wn_mimetype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\webnet-latest\src\wn_mimetype.c</FilePath>
             </File>
             <File>
               <FileName>wn_session.c</FileName>
@@ -4815,14 +4871,19 @@
               <FilePath>packages\webnet-latest\src\wn_session.c</FilePath>
             </File>
             <File>
-              <FileName>wn_module_cgi.c</FileName>
+              <FileName>wn_utils.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\webnet-latest\module\wn_module_cgi.c</FilePath>
+              <FilePath>packages\webnet-latest\src\wn_utils.c</FilePath>
             </File>
             <File>
-              <FileName>wn_mimetype.c</FileName>
+              <FileName>wn_module_log.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\webnet-latest\src\wn_mimetype.c</FilePath>
+              <FilePath>packages\webnet-latest\module\wn_module_log.c</FilePath>
+            </File>
+            <File>
+              <FileName>wn_module_alias.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\webnet-latest\module\wn_module_alias.c</FilePath>
             </File>
             <File>
               <FileName>wn_module.c</FileName>
@@ -4840,6 +4901,16 @@
               <FilePath>packages\webnet-latest\module\wn_module_upload.c</FilePath>
             </File>
             <File>
+              <FileName>wn_module_cgi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\webnet-latest\module\wn_module_cgi.c</FilePath>
+            </File>
+            <File>
+              <FileName>wn_module_asp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\webnet-latest\module\wn_module_asp.c</FilePath>
+            </File>
+            <File>
               <FileName>wn_module_ssi.c</FileName>
               <FileType>1</FileType>
               <FilePath>packages\webnet-latest\module\wn_module_ssi.c</FilePath>
@@ -4850,24 +4921,9 @@
               <FilePath>packages\webnet-latest\module\wn_module_index.c</FilePath>
             </File>
             <File>
-              <FileName>wn_module_log.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\webnet-latest\module\wn_module_log.c</FilePath>
-            </File>
-            <File>
-              <FileName>wn_utils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\webnet-latest\src\wn_utils.c</FilePath>
-            </File>
-            <File>
               <FileName>wn_module_auth.c</FileName>
               <FileType>1</FileType>
               <FilePath>packages\webnet-latest\module\wn_module_auth.c</FilePath>
-            </File>
-            <File>
-              <FileName>wn_request.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\webnet-latest\src\wn_request.c</FilePath>
             </File>
           </Files>
         </Group>

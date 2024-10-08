@@ -23,7 +23,7 @@
 
 #if defined(BSP_USING_SPI7) && defined(RT_USING_SFUD) && defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
 #include <dfs_elm.h>
-#include "spi_flash_sfud.h"
+#include "dev_spi_flash_sfud.h"
 
 #define W25Q64_SPI_DEVICE_NAME      "spi70"
 #define W25Q64_SPI_BUS_NAME         "spi7"
@@ -74,8 +74,12 @@ static int filesystem_init(void)
         .data_width = 8,
         .mode = RT_SPI_MASTER | RT_SPI_MODE_3 | RT_SPI_MSB,
         .max_hz = 50 * 1000 * 1000,
-    };
+    }; 
+
+    rt_spi_take_bus(spi_device);
+
     ret = rt_spi_configure(spi_device, &cfg);
+    
     if (ret != RT_EOK)
     {
         LOG_E("SPI bus configuration failed.");
